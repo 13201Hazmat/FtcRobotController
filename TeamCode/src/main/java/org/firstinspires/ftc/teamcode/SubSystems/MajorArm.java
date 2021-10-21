@@ -143,12 +143,12 @@ public class MajorArm {
         }
         if ((currentArmPosition == ARM_POSITION.LEVEL_3)) {
             previousArmPosition = currentArmPosition;
-            moveArmLevelCapstonePosition();
+            moveArmCapstonePosition();
             return;
         }
         if ((currentArmPosition == ARM_POSITION.CAPSTONE)) {
             previousArmPosition = currentArmPosition;
-            moveArmLevelParkedPosition();
+            moveArmParkingPosition();
             return;
         }
     }
@@ -157,7 +157,7 @@ public class MajorArm {
     public void moveArmDownOne() {
         if ((currentArmPosition == ARM_POSITION.PARKED)) {
             previousArmPosition = currentArmPosition;
-            moveArmLevelCapstonePosition();
+            moveArmCapstonePosition();
             return;
         }
         if ((currentArmPosition == ARM_POSITION.CAPSTONE)) {
@@ -172,18 +172,14 @@ public class MajorArm {
         }
         if ((currentArmPosition == ARM_POSITION.LEVEL_2)) {
             previousArmPosition = currentArmPosition;
-            moveArmLevelLevelOnePosition();
+            moveArmLevelOnePosition();
             return;
         }
         if ((currentArmPosition == ARM_POSITION.LEVEL_1)) {
             previousArmPosition = currentArmPosition;
-            moveArmLevelPickupPosition();
+            moveArmPickupPosition();
             return;
         }
     }
 
-    public void moveArmLevelPickupPosition(){}
-    public void moveArmLevelLevelOnePosition(){}
-    public void moveArmLevelCapstonePosition(){}
-    public void moveArmLevelParkedPosition(){}
 }
