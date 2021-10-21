@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,8 +27,8 @@ public class MajorArm {
     public Servo majorClawServo;
 
     public enum MAJOR_CLAW_STATE {
-        CLAW_OPEN,
-        CLAW_CLOSED,
+        OPEN,
+        CLOSED,
     }
 
     public DcMotorEx majorArmMotor;
@@ -43,25 +44,25 @@ public class MajorArm {
 
     public MajorArm(HardwareMap hardwareMap) {
         majorArmMotor = hardwareMap.get(DcMotorEx.class, "arm_rotate");
-        majorArmGrip = hardwareMap.servo.get("arm_grip");
+        majorClawServo = hardwareMap.servo.get("arm_grip");
     }
 
     public static int baselineEncoderCount = 0;
-    public static int CLAW_OPEN = __;
-    public static int CLAW_CLOSED = __;
-    public MAJOR_CLAW_STATE majorClawState = MAJOR_CLAW_STATE.OPENED;
-    public static int PICKUP = __;
-    public static int LEVEL_1 = __;
-    public static int LEVEL_2 = __;
-    public static int LEVEL_3 = __;
-    public static int CAPSTONE = __;
-    public static int PARKED = __;
+    public static int CLAW_OPEN = 0;
+    public static int CLAW_CLOSED = 1;
+    public MAJOR_CLAW_STATE majorClawState = MAJOR_CLAW_STATE.OPEN;
+    public static int PICKUP = 0;
+    public static int LEVEL_1 = 100;
+    public static int LEVEL_2 = 200;
+    public static int LEVEL_3 = 300;
+    public static int CAPSTONE = 400;
+    public static int PARKED = 500;
     public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
     public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;
 
     public void initMajorArm(){
         turnArmBrakeModeOn();
-        majorClawServo.setPosition(CLAW.CLOSED);
+        majorClawServo.setPosition(CLAW_CLOSED);
         majorClawState = MAJOR_CLAW_STATE.CLOSED;
     }
 
@@ -79,11 +80,11 @@ public class MajorArm {
     }
 
     public void changeGripState() {
-        if ((majorClawState == MAJOR_CLAW.OPEN)) {
-            majorClawServo.setPosition(CLAW.CLOSED);
+        if ((majorClawState == MAJOR_CLAW_STATE.OPEN)) {
+            majorClawServo.setPosition(CLAW_CLOSED);
             majorClawState = MAJOR_CLAW_STATE.CLOSED;
-        } else if ((majorClawState == MAJOR_CLAW.CLOSED)) {
-            majorClawServo.setPosition(CLAW.OPEN);
+        } else if ((majorClawState == MAJOR_CLAW_STATE.CLOSED)) {
+            majorClawServo.setPosition(CLAW_OPEN);
             majorClawState = MAJOR_CLAW_STATE.OPEN;
         }
     }
@@ -96,7 +97,7 @@ public class MajorArm {
 //change the level of the Arm to Pickup
     public void moveArmPickupPosition() {
         turnArmBrakeModeOff();
-        majorArmMotor.setTargetPosition(PICKUP + EncoderCount);
+        majorArmMotor.setTargetPosition(PICKUP + baselineEncoderCount);
         currentArmPosition = ARM_POSITION.PICKUP;
     }
 //change the level of the arm to Level One
@@ -120,11 +121,11 @@ public class MajorArm {
 //change the level of the arm to the parking
     public void moveArmParkingPosition() {
         turnArmBrakeModeOff();
-        majorArmMotor.setTargetPosition(PARKING + baselineEncoderCount);
-        currentArmPosition = ARM_POSITION.PARKING;
+        majorArmMotor.setTargetPosition(PARKED + baselineEncoderCount);
+        currentArmPosition = ARM_POSITION.PARKED;
     }
     //change the level of the Arm to Level 1
-    public moveArmUpOne() {
+    public void moveArmUpOne() {
         if ((currentArmPosition == ARM_POSITION.PICKUP)) {
             previousArmPosition = currentArmPosition;
             moveArmLevelOnePosition();
@@ -145,7 +146,7 @@ public class MajorArm {
             moveArmLevelCapstonePosition();
             return;
         }
-        if ((currentArmPosition == ARM_POSITION.LEVEL_CAPSTONE)) {
+        if ((currentArmPosition == ARM_POSITION.CAPSTONE)) {
             previousArmPosition = currentArmPosition;
             moveArmLevelParkedPosition();
             return;
@@ -153,8 +154,8 @@ public class MajorArm {
     }
 
     //change the level of the Arm by one Down
-    public moveArmDownOne() {
-        if ((currentArmPosition == ARM_POSITION.PARKING)) {
+    public void moveArmDownOne() {
+        if ((currentArmPosition == ARM_POSITION.PARKED)) {
             previousArmPosition = currentArmPosition;
             moveArmLevelCapstonePosition();
             return;
@@ -174,10 +175,15 @@ public class MajorArm {
             moveArmLevelLevelOnePosition();
             return;
         }
-        if ((currentArmPosition == ARM_POSITION.LEVEL_ONE)) {
+        if ((currentArmPosition == ARM_POSITION.LEVEL_1)) {
             previousArmPosition = currentArmPosition;
             moveArmLevelPickupPosition();
             return;
         }
     }
+
+    public void moveArmLevelPickupPosition(){}
+    public void moveArmLevelLevelOnePosition(){}
+    public void moveArmLevelCapstonePosition(){}
+    public void moveArmLevelParkedPosition(){}
 }
