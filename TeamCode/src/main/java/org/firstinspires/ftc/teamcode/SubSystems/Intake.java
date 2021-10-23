@@ -22,8 +22,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 public class Intake {
 
-    //TODO: Update code as needed for intake
-
     public DcMotor intakeMotor = null;
 
 
