@@ -182,4 +182,6 @@ public class MajorArm {
         }
     }
 
+    //TODO: Add code MajorArm Slight drop (reduce by 50 counts, dont change state when left trigger is pressed.
+
 }
