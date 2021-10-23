@@ -31,8 +31,7 @@ public class TestIntake extends LinearOpMode {
 
         /* Create Subsystem Objects*/
         driveTrain = new DriveTrain(hardwareMap);
-        //TODO: Declare subsystem to be tested
-        intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap);   /*Subsystem to be tested*/
         /* Create Controllers */
         gamepadTestController = new GamepadTestController(gamepad1, driveTrain);
 
@@ -56,22 +55,23 @@ public class TestIntake extends LinearOpMode {
             while (opModeIsActive()) {
                 gamepadTestController.runByGamepadControl();
 
-                //TODO: Add Test Code here
+
                 if (gamepadTestController.getDpad_downPress()) {
-                    //TODO: Check this logic.. the expectation is : when button is pressed, and if motor is not stopped, stop the motor; and if motor is stopped, start the motor
-                    intake.startForwardIntakeMotor();
-                    if(intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
-                    } else if(intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+                    if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+                        intake.startForwardIntakeMotor();
+                    }
+                    else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
                         intake.stopIntakeMotor();
                     }
                 }
 
                 //Reverse Intake motors and run - in case of stuck state)
-                //TODO: The persisitant button was not liked by our drivers.. change this to same logic as dpad_downPress.. except now it is on dpad_upPress and direction is REVERSING
-                if (gamepadTestController.getDpad_upPersistent()) {
-                    intake.startReverseIntakeMotor();
-                } else if (intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
-                    intake.stopIntakeMotor();
+                if (gamepadTestController.getDpad_upPress()) {
+                    if (intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING) {
+                        intake.startReverseIntakeMotor();
+                    } else if (intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+                        intake.stopIntakeMotor();
+                    }
                 }
 
                 if(DEBUG_FLAG) {

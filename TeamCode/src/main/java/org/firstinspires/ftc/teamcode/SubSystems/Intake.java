@@ -51,11 +51,19 @@ public class Intake {
 
     }
 
-    /**
-     * runIntakeMotor checks if the intake is not running and runs the intake
-     */
+
     public void startForwardIntakeMotor() {
-        //TODO: Correct the function name or direction.. Forward = RUNNING, Reverse = REVERSING
+        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+            runIntakeMotor(DcMotor.Direction.FORWARD, intakeMotorPower2);
+            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING;
+        }
+    }
+
+    /**
+     * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
+     * sets intake motor state to REVERSING
+     */
+    public void startReverseIntakeMotor() {
         if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING) {
             runIntakeMotor(DcMotor.Direction.REVERSE, intakeMotorPower1);
             intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING;
@@ -74,17 +82,8 @@ public class Intake {
     }
 
     /**
-     * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
-     * ets intake motor state to REVERSING
+     * runIntakeMotor checks if the intake is not running and runs the intake
      */
-    public void startReverseIntakeMotor() {
-        //TODO: Correct the function name or direction.. Forward = RUNNING, Reverse = REVERSING
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
-            runIntakeMotor(DcMotor.Direction.FORWARD, intakeMotorPower2);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING;
-        }
-    }
-
     private void runIntakeMotor(DcMotor.Direction direction, double power){
         intakeMotor.setDirection(direction);
         intakeMotor.setPower(power);
