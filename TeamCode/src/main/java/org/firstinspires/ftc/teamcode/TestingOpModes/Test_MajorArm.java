@@ -63,12 +63,16 @@ public class Test_MajorArm extends LinearOpMode {
                 if (gamepadTestController.getDpad_upPress()) {
                     majorArm.moveArmUpOne();
                 }
-                if (gamepadTestController.getLeftTriggerPress()) {
+                if(gamepadTestController.getButtonAPress()){
+                    majorArm.changeGripState();
+                }
+                if(gamepadTestController.getButtonXPress()){
                     majorArm.moveArmCapstonePosition();
                 }
-                if (gamepadTestController.getLeftBumperPress()) {
+                if(gamepadTestController.getButtonXPress()){
                     majorArm.moveArmPickupPosition();
                 }
+
                 if(DEBUG_FLAG) {
                     printDebugMessages();
                     telemetry.update();

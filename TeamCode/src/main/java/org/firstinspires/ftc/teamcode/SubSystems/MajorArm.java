@@ -43,8 +43,8 @@ public class MajorArm {
     }
 
     public MajorArm(HardwareMap hardwareMap) {
-        majorArmMotor = hardwareMap.get(DcMotorEx.class, "arm_rotate");
-        majorClawServo = hardwareMap.servo.get("arm_grip");
+        majorArmMotor = hardwareMap.get(DcMotorEx.class, "major_arm_motor");
+        majorClawServo = hardwareMap.servo.get("major_claw_servo");
     }
 
     public static int baselineEncoderCount = 0;
@@ -60,10 +60,16 @@ public class MajorArm {
     public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
     public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;
 
+    public boolean runArmToLevelState = false;
+
     public void initMajorArm(){
         turnArmBrakeModeOn();
         majorClawServo.setPosition(CLAW_CLOSED);
         majorClawState = MAJOR_CLAW_STATE.CLOSED;
+        majorArmMotor.setTargetPosition(PARKED);
+        majorArmMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        currentArmPosition = ARM_POSITION.PARKED;
+        previousArmPosition = ARM_POSITION.PARKED;
     }
 
     public MAJOR_CLAW_STATE getMajorClawState() {
@@ -71,6 +77,21 @@ public class MajorArm {
     }
     public ARM_POSITION getArmPosition() {
         return currentArmPosition;
+    }
+
+    public void runArmToLevel(double power){
+        majorArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (runArmToLevelState == true || majorArmMotor.isBusy() == true){
+            majorArmMotor.setPower(power);
+            runArmToLevelState = false;
+        } else {
+            majorArmMotor.setPower(0.0);
+        }
+    }
+    public void resetArm(){
+        DcMotor.RunMode runMode = majorArmMotor.getMode();
+        majorArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        majorArmMotor.setMode(runMode);
     }
     public void turnArmBrakeModeOn(){
         majorArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
