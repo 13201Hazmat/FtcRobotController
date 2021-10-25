@@ -28,21 +28,23 @@ public class Elevator {
     public DcMotor elevatorMotor = null;
 
 
-    public enum ELEVATOR_MOTOR_STATE {
-        COLLECT,
+    public enum ELEVATOR_STATE {
+        ZERO,
         FIRST,
         SECOND,
         THIRD,
         SLIGHTLY_DOWN
     }
 
-    public ELEVATOR_MOTOR_STATE elevatorMotorState = ELEVATOR_MOTOR_STATE.COLLECT;
+    public ELEVATOR_STATE elevatorState = ELEVATOR_STATE.ZERO;
+    //goBuilda 312rpm Motor encoder values
 
-    public double elevatorMotorPower1 = 0.95;//0.9;
-    public static int COLLECT = (int) 0.0;
-    public static int FIRST = (int) 0.25;
-    public static int SECOND = (int) 0.5;
-    public static int THIRD = (int) 0.75;
+    public static int baselineEncoderCount = 0;
+    public static int ELEVATOR_STATE_ZERO = 0;
+    public static int ELEVATOR_STATE_FIRST = 200;
+    public static int ELEVATOR_STATE_SECOND = 300;
+    public static int ELEVATOR_STATE_THIRD = 400;
+    public static int ELEVATOR_STATE_SLIGHTLY_DOWN = -100;
 
     public enum ELEVATOR_BUTTON_STATE {
         ON,
@@ -62,15 +64,16 @@ public class Elevator {
     /**
      * runIntakeMotor checks if the intake is not running and runs the intake
      */
-    public void startCollectForwardElevatorMotor() {
-        if(elevatorMotorState == ELEVATOR_MOTOR_STATE.COLLECT) {
-            runElevatorMotor(DcMotor.Direction.REVERSE, elevatorMotor);
-            elevatorMotorState = ELEVATOR_MOTOR_STATE.COLLECT;
+    public void startZeroForwardElevator() {
+        if(elevatorState == ELEVATOR_STATE.ZERO) {
+            runElevator(DcMotor.Direction.FORWARD, ELEVATOR_STATE_ZERO);
+            elevatorState = ELEVATOR_STATE.ZERO;
         }
     }
 
-    private void runElevatorMotor(DcMotorSimple.Direction reverse, DcMotor elevatorMotor) {
+    private void runElevator(DcMotorSimple.Direction reverse, int elevatorMotor) {
     }
+
 
 
     /**
@@ -78,9 +81,9 @@ public class Elevator {
      * and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED
      */
     public void stopFirstElevatorMotor() {
-        if(elevatorMotorState != ELEVATOR_MOTOR_STATE.FIRST) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, 0.0);
-            elevatorMotorState = ELEVATOR_MOTOR_STATE.FIRST;
+        if(elevatorState != ELEVATOR_STATE.FIRST) {
+            runElevatorMotor(DcMotor.Direction.FORWARD,ELEVATOR_STATE_FIRST);
+            elevatorState = ELEVATOR_STATE.FIRST;
        }
     }
 
@@ -88,29 +91,29 @@ public class Elevator {
      * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
      * ets intake motor state to REVERSING
      */
-    public void startSecondElevatorMotor() {
-        if(elevatorMotorState != ELEVATOR_MOTOR_STATE.SECOND) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, elevatorMotorPower1);
-            elevatorMotorState = ELEVATOR_MOTOR_STATE.SECOND;
+    public void startSecondElevator() {
+        if(elevatorState != ELEVATOR_STATE.SECOND) {
+            runElevatorMotor(DcMotor.Direction.FORWARD, ELEVATOR_STATE_SECOND);
+            elevatorState = ELEVATOR_STATE.SECOND;
         }
     }
 
 
 
-    public void startThirdElevatorMotor() {
-        if(elevatorMotorState != ELEVATOR_MOTOR_STATE.THIRD) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, elevatorMotorPower1);
-            elevatorMotorState = ELEVATOR_MOTOR_STATE.THIRD;
+    public void startThirdElevator() {
+        if(elevatorState != ELEVATOR_STATE.THIRD) {
+            runElevatorMotor(DcMotor.Direction.FORWARD, ELEVATOR_STATE_THIRD);
+            elevatorState = ELEVATOR_STATE.THIRD;
         }
     }
 
 
 
 
-    public void startSlightlyDownElevatorMotor() {
-        if(elevatorMotorState != ELEVATOR_MOTOR_STATE.SLIGHTLY_DOWN) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, elevatorMotorPower1);
-            elevatorMotorState = ELEVATOR_MOTOR_STATE.SLIGHTLY_DOWN;
+    public void startSlightlyDownElevator() {
+        if(elevatorState != ELEVATOR_STATE.SLIGHTLY_DOWN) {
+            runElevatorMotor(DcMotor.Direction.FORWARD,ELEVATOR_STATE_SLIGHTLY_DOWN );
+            elevatorState = ELEVATOR_STATE.SLIGHTLY_DOWN;
         }
     }
 
@@ -136,7 +139,7 @@ public class Elevator {
     /**
      * Returns Intake motor state
      */
-    public ELEVATOR_MOTOR_STATE getSubsystemMotorState() {
-        return elevatorMotorState;
+    public ELEVATOR_STATE getSubsystemMotorState() {
+        return elevatorState;
     }
 }
