@@ -57,20 +57,24 @@ public class Test_MajorArm extends LinearOpMode {
                 gamepadTestController.runByGamepadControl();
 
                 //TODO: Add Test Code here
-                if (gamepadTestController.getDpad_downPress()) {
+                if (gamepadTestController.getButtonXPress()){
                     majorArm.moveArmDownOne();
                 }
-                if (gamepadTestController.getDpad_upPress()) {
+                if (gamepadTestController.getButtonBPress()) {
                     majorArm.moveArmUpOne();
                 }
                 if(gamepadTestController.getButtonAPress()){
-                    majorArm.changeGripState();
+                    majorArm.moveArmPickupPosition();
                 }
-                if(gamepadTestController.getButtonXPress()){
+                if(gamepadTestController.getButtonYPress()){
                     majorArm.moveArmCapstonePosition();
                 }
-                if(gamepadTestController.getButtonXPress()){
-                    majorArm.moveArmPickupPosition();
+                if(gamepadTestController.getRightTriggerPress()){
+                    majorArm.moveArmParkingPosition();
+                }
+
+                if (majorArm.runArmToLevelState) {
+                    majorArm.runArmToLevel(majorArm.ARM_MOTOR_POWER);
                 }
 
                 if(DEBUG_FLAG) {
@@ -102,7 +106,8 @@ public class Test_MajorArm extends LinearOpMode {
         telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
         telemetry.addData("Battery Power : ", driveTrain.getBatteryVoltage(hardwareMap));
 
-        telemetry.addData("Subsystem1 State : ",majorArm.getArmPosition());
+        telemetry.addData("Major Arm Position : ",majorArm.getArmPosition());
+        telemetry.addData("Major Claw State : ",majorArm.getMajorClawState());
 
         //Add logic for debug print Logic
 
