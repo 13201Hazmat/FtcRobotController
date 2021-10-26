@@ -37,7 +37,7 @@ public class Spinner {
     public double spinnerMotorPower = 0.5;
     //public SUBSYSTEM1_BUTTON_STATE subsystem1ButtonState;
 
-    public HardwareMap hardwareMap; {
+    public Spinner (HardwareMap hardwareMap) {
         spinnerMotor = hardwareMap.dcMotor.get("spinner_motor");
     }
 
