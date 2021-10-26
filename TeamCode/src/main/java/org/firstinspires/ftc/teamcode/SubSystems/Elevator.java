@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
 
 /**
  * Definition of Subsystem Class <BR>
@@ -23,28 +25,33 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 public class Elevator {
 
-    //TODO: Update code as needed for Subsystem1
-
-    public DcMotor elevatorMotor = null;
-
+    public DcMotorEx elevatorMotor = null;
 
     public enum ELEVATOR_STATE {
-        ZERO,
-        FIRST,
-        SECOND,
-        THIRD,
-        SLIGHTLY_DOWN
+        LEVEL_0,
+        LEVEL_1,
+        LEVEL_2,
+        LEVEL_3,
     }
 
-    public ELEVATOR_STATE elevatorState = ELEVATOR_STATE.ZERO;
-    //goBuilda 312rpm Motor encoder values
+    public ELEVATOR_STATE elevatorState = ELEVATOR_STATE.LEVEL_0;
+
+    // Encoder values for 5203 Gobilda 312rpm motor yyyy encoder counts / revolution
+    //5203 Series Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 24mm Length 8mm REX Shaft, 312 RPM, 3.3 - 5V Encoder)
+    //Encoder Resolution: 537.7 PPR at the Output Shaft
+    //https://www.gobilda.com/5203-series-yellow-jacket-planetary-gear-motor-19-2-1-ratio-24mm-length-8mm-rex-shaft-312-rpm-3-3-5v-encoder/
 
     public static int baselineEncoderCount = 0;
-    public static int ELEVATOR_STATE_ZERO = 0;
-    public static int ELEVATOR_STATE_FIRST = 200;
-    public static int ELEVATOR_STATE_SECOND = 300;
-    public static int ELEVATOR_STATE_THIRD = 400;
-    public static int ELEVATOR_STATE_SLIGHTLY_DOWN = -100;
+    public static int ELEVATOR_LEVEL0_POSITION_COUNT = 0;
+    public static int ELEVATOR_LEVEL1_POSITION_COUNT = 200;
+    public static int ELEVATOR_LEVEL2_POSITION_COUNT = 300;
+    public static int ELEVATOR_LEVEL3_POSITION_COUNT = 400;
+    public static int ELEVATOR_DELTA_SLIGHTLY_DOWN = -100;
+
+    public int elevatorPositionCount = ELEVATOR_LEVEL0_POSITION_COUNT;
+
+    public static double POWER_NO_CARGO = 0.5;
+    public static double POWER_WITH_CARGO = 0.5;
 
     public enum ELEVATOR_BUTTON_STATE {
         ON,
@@ -53,93 +60,140 @@ public class Elevator {
     public ELEVATOR_BUTTON_STATE elevatorButtonState;
 
     public Elevator(HardwareMap hardwareMap) {
-        elevatorMotor = hardwareMap.dcMotor.get("frmotor");
-        //subsystem1Servo = hardwareMap.servo.get("servotest");
+        elevatorMotor =  hardwareMap.get(DcMotorEx.class, "elevator_motor");;
     }
 
+    /**
+     * Initialization for the Elevator
+     */
     public void initElevator(){
-
+        elevatorMotor.setPositionPIDFCoefficients(5.0);
+        elevatorMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetElevator();
+        moveElevatorLevel0Position();
+        turnElevatorBrakeModeOff();
     }
 
     /**
-     * runIntakeMotor checks if the intake is not running and runs the intake
+     * Reset Elevator Encoder
      */
-    public void startZeroForwardElevator() {
-        if(elevatorState == ELEVATOR_STATE.ZERO) {
-            runElevator(DcMotor.Direction.FORWARD, ELEVATOR_STATE_ZERO);
-            elevatorState = ELEVATOR_STATE.ZERO;
+    public void resetElevator(){
+        DcMotor.RunMode runMode = elevatorMotor.getMode();
+        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevatorMotor.setMode(runMode);
+    }
+
+    /**
+     * Method to set Elevator brake mode to ON when Zero (0.0) power is applied. <BR>
+     * To be used when arm is above groundlevel
+     * setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+     */
+    public void turnElevatorBrakeModeOn(){
+        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    /**
+     * Method to set Elevtor brake mode to OFF when Zero (0.0) power is applied. <BR>
+     * To be used when arm is on groundlevel or blockLevel[0]
+     * setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+     */
+    public void turnElevatorBrakeModeOff(){
+        elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+
+    public boolean runElevatorToLevelState = false;
+    public double motorPowerToRun = POWER_NO_CARGO;
+
+
+    /**
+     * Method to run motor to set to the set position
+     */
+    public void runElevatorToLevel(double power){
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (runElevatorToLevelState == true || elevatorMotor.isBusy() == true){
+            elevatorMotor.setPower(power);
+            runElevatorToLevelState = false;
+        } else {
+            elevatorMotor.setPower(0.0);
         }
     }
 
-    private void runElevator(DcMotorSimple.Direction reverse, int elevatorMotor) {
-    }
-
-
-
     /**
-     * stopIntakeMotor checks if the intake has stopped and if its not, it sets the intake power to 0
-     * and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED
+     * Move Elevator to Level 0
      */
-    public void stopFirstElevatorMotor() {
-        if(elevatorState != ELEVATOR_STATE.FIRST) {
-            runElevatorMotor(DcMotor.Direction.FORWARD,ELEVATOR_STATE_FIRST);
-            elevatorState = ELEVATOR_STATE.FIRST;
-       }
+    public void moveElevatorLevel0Position() {
+        turnElevatorBrakeModeOff();
+        elevatorPositionCount = ELEVATOR_LEVEL0_POSITION_COUNT + baselineEncoderCount;
+        elevatorMotor.setTargetPosition(elevatorPositionCount);
+        motorPowerToRun = POWER_NO_CARGO;
+        runElevatorToLevelState = true;
+        elevatorState = ELEVATOR_STATE.LEVEL_0;
     }
 
     /**
-     * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
-     * ets intake motor state to REVERSING
+     * Move Elevator to Level 1
      */
-    public void startSecondElevator() {
-        if(elevatorState != ELEVATOR_STATE.SECOND) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, ELEVATOR_STATE_SECOND);
-            elevatorState = ELEVATOR_STATE.SECOND;
+    public void moveElevatorLevel1Position() {
+        turnElevatorBrakeModeOn();
+        elevatorPositionCount = ELEVATOR_LEVEL1_POSITION_COUNT + baselineEncoderCount;
+        elevatorMotor.setTargetPosition(elevatorPositionCount);
+        motorPowerToRun = POWER_NO_CARGO;
+        runElevatorToLevelState = true;
+        elevatorState = ELEVATOR_STATE.LEVEL_1;
+    }
+
+    /**
+     * Move Elevator to Level 2
+     */
+    public void moveElevatorLevel2Position() {
+        turnElevatorBrakeModeOn();
+        elevatorPositionCount = ELEVATOR_LEVEL2_POSITION_COUNT + baselineEncoderCount;
+        elevatorMotor.setTargetPosition(elevatorPositionCount);
+        motorPowerToRun = POWER_NO_CARGO;
+        runElevatorToLevelState = true;
+        elevatorState = ELEVATOR_STATE.LEVEL_2;
+    }
+
+    /**
+     * Move Elevator to Level 2
+     */
+    public void moveElevatorLevel3Position() {
+        turnElevatorBrakeModeOn();
+        elevatorPositionCount = ELEVATOR_LEVEL3_POSITION_COUNT + baselineEncoderCount;
+        elevatorMotor.setTargetPosition(elevatorPositionCount);
+        motorPowerToRun = POWER_NO_CARGO;
+        runElevatorToLevelState = true;
+        elevatorState = ELEVATOR_STATE.LEVEL_3;
+    }
+
+    /**
+     * Move Elevator to Level 2
+     */
+    public void moveElevatorSlightlyDown(){
+        turnElevatorBrakeModeOn();
+        if ((elevatorPositionCount <=ELEVATOR_LEVEL3_POSITION_COUNT) &&
+                elevatorPositionCount >= ELEVATOR_LEVEL1_POSITION_COUNT + ELEVATOR_DELTA_SLIGHTLY_DOWN){
+            elevatorPositionCount = elevatorPositionCount - ELEVATOR_DELTA_SLIGHTLY_DOWN;
+            elevatorMotor.setTargetPosition(elevatorPositionCount);
+            motorPowerToRun = POWER_NO_CARGO;
+            runElevatorToLevelState = true;
         }
-    }
-
-
-
-    public void startThirdElevator() {
-        if(elevatorState != ELEVATOR_STATE.THIRD) {
-            runElevatorMotor(DcMotor.Direction.FORWARD, ELEVATOR_STATE_THIRD);
-            elevatorState = ELEVATOR_STATE.THIRD;
-        }
-    }
-
-
-
-
-    public void startSlightlyDownElevator() {
-        if(elevatorState != ELEVATOR_STATE.SLIGHTLY_DOWN) {
-            runElevatorMotor(DcMotor.Direction.FORWARD,ELEVATOR_STATE_SLIGHTLY_DOWN );
-            elevatorState = ELEVATOR_STATE.SLIGHTLY_DOWN;
-        }
-    }
-
-    private void runElevatorMotor(DcMotor.Direction direction, double power){
-        elevatorMotor.setDirection(direction);
-        elevatorMotor.setPower(power);
-    }
-
-    /**
-     * set Intake gripper position to hold.. to ensure intake is within robot dimensions at start
-     */
-    public void setIntakeReleaseHold(){
-
-    }
-
-    /**
-     * set Intake gripper position to release
-     */
-    public void setIntakeReleaseOpen(){
-
     }
 
     /**
      * Returns Intake motor state
      */
-    public ELEVATOR_STATE getSubsystemMotorState() {
+    public ELEVATOR_STATE getElevatorState() {
         return elevatorState;
     }
+
+    /**
+     * Returns Intake motor state
+     */
+    public int getElevatorPositionCount() {
+        return elevatorPositionCount;
+    }
+
+
 }
