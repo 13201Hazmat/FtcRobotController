@@ -168,7 +168,7 @@ public class Elevator {
     }
 
     /**
-     * Move Elevator to Level 2
+     * Move Elevator Slightly Down
      */
     public void moveElevatorSlightlyDown(){
         turnElevatorBrakeModeOn();
