@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
+import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 
 /**
  * Ultimate Goal TeleOp mode <BR>
@@ -21,7 +21,7 @@ public class Test_Magazine extends LinearOpMode {
 
     public GamepadTestController gamepadTestController;
     public DriveTrain driveTrain;
-    public SubsystemTemplate subsystemTemplate;
+    public Magazine magazine;
 
     //public Vuforia Vuforia1;
     public Pose2d startPose = GameField.ORIGINPOSE;
@@ -32,12 +32,12 @@ public class Test_Magazine extends LinearOpMode {
         /* Create Subsystem Objects*/
         driveTrain = new DriveTrain(hardwareMap);
         //TODO: Declare subsystem to be tested
-        subsystemTemplate = new SubsystemTemplate(hardwareMap);
+        magazine = new Magazine(hardwareMap);
         /* Create Controllers */
         gamepadTestController = new GamepadTestController(gamepad1, driveTrain);
 
         /* Set Initial State of any subsystem when TeleOp is to be started*/
-        subsystemTemplate.initSubsystem1();
+        magazine.initMagazine();
 
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
@@ -56,21 +56,37 @@ public class Test_Magazine extends LinearOpMode {
             while (opModeIsActive()) {
                 gamepadTestController.runByGamepadControl();
 
-                //TODO: Add Test Code here
-                if (gamepadTestController.getDpad_downPress()) {
-                    if(subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE1) {
-                        subsystemTemplate.startForwardSubsystem1Motor();
-                    } else if(subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE2) {
-                        subsystemTemplate.stopSubsystem1Motor();
+                //Test Code
+                if (gamepadTestController.getButtonAPress()) {
+                    if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.COLLECT) {
+                        magazine.moveMagazineToCollect();
+                    }
+
+                }
+                if (gamepadTestController.getButtonXPress()) {
+                    if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                       magazine.moveMagazineToTransport();
+                    }
+                }
+                if (gamepadTestController.getButtonYPress()) {
+                    if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                        magazine.moveMagazineToTransport();
                     }
                 }
 
-                //Reverse Intake motors and run - in case of stuck state)
-                if (gamepadTestController.getDpad_upPersistent()) {
-                    subsystemTemplate.startReverseSubsystem1Motor();
-                } else if (subsystemTemplate.getSubsystemMotorState() == SubsystemTemplate.SUBSYSTEM1_MOTOR_STATE.STATE3){
-                    subsystemTemplate.stopSubsystem1Motor();
+                if (gamepadTestController.getButtonBPress()) {
+                    if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                        magazine.moveMagazineToTransport();
+                    }
                 }
+                if (gamepadTestController.getRightBumperPress()) {
+                    if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                        magazine.moveMagazineToDrop();
+                    } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
+                        magazine.moveMagazineToTransport();
+                    }
+                }
+
 
                 if(DEBUG_FLAG) {
                     printDebugMessages();
@@ -101,7 +117,7 @@ public class Test_Magazine extends LinearOpMode {
         telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
         telemetry.addData("Battery Power : ", driveTrain.getBatteryVoltage(hardwareMap));
 
-        telemetry.addData("Subsystem1 State : ", subsystemTemplate.getSubsystemMotorState());
+        telemetry.addData("Magazine State : ", magazine.getMagazineServoState());
 
         //Add logic for debug print Logic
 

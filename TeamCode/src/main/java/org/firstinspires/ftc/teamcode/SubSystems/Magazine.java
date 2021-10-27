@@ -47,13 +47,13 @@ public class Magazine {
     }
 
     public void initMagazine(){
-        moveMagazineServoToCollect();
+        moveMagazineToCollect();
     }
 
     /**
      * Sets magazineServo to collect position
      */
-    public void moveMagazineServoToCollect(){
+    public void moveMagazineToCollect(){
         if (magazineServoState !=MAGAZINE_SERVO_STATE.COLLECT) {
             magazineServo.setPosition(MAGAZINE_SERVO_COLLECT_POSITION);
             magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
@@ -63,7 +63,7 @@ public class Magazine {
     /**
      * sets magazineServo to transport position
      */
-    public void moveMagazineServoToTransport(){
+    public void moveMagazineToTransport(){
         if (magazineServoState !=MAGAZINE_SERVO_STATE.TRANSPORT) {
             magazineServo.setPosition(MAGAZINE_SERVO_TRANSPORT_POSITION);
             magazineServoState = MAGAZINE_SERVO_STATE.TRANSPORT;
@@ -73,7 +73,7 @@ public class Magazine {
     /**
      * sets magazineServo to flipped position
      */
-    public void moveMagazineServoToFlipped(){
+    public void moveMagazineToDrop(){
         if (magazineServoState !=MAGAZINE_SERVO_STATE.COLLECT) {
             magazineServo.setPosition(MAGAZINE_SERVO_FLIPPED_POSITION);
             magazineServoState = MAGAZINE_SERVO_STATE.DROP;
@@ -84,7 +84,7 @@ public class Magazine {
      * Returns Magazine servo state
      * @return
      */
-    public Servo getMagazineServoState() {
-        return magazineServo;
+    public MAGAZINE_SERVO_STATE getMagazineServoState() {
+        return magazineServoState;
     }
 }

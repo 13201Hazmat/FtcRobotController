@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Examples.HzArmUltimateGoal;
-
 /**
  * Definition of Subsystem Class <BR>
  *
@@ -46,7 +44,9 @@ public class Elevator {
     public static int ELEVATOR_LEVEL1_POSITION_COUNT = 200;
     public static int ELEVATOR_LEVEL2_POSITION_COUNT = 300;
     public static int ELEVATOR_LEVEL3_POSITION_COUNT = 400;
-    public static int ELEVATOR_DELTA_SLIGHTLY_DOWN = -100;
+    public static int ELEVATOR_LEVELMAX_POSITION_COUNT = 500;
+    public static int ELEVATOR_DELTA_SLIGHTLY_DOWN_DELTA_COUNT = 50;
+    public static int ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT = 50;
 
     public int elevatorPositionCount = ELEVATOR_LEVEL0_POSITION_COUNT;
 
@@ -173,8 +173,22 @@ public class Elevator {
     public void moveElevatorSlightlyDown(){
         turnElevatorBrakeModeOn();
         if ((elevatorPositionCount <=ELEVATOR_LEVEL3_POSITION_COUNT) &&
-                elevatorPositionCount >= ELEVATOR_LEVEL1_POSITION_COUNT + ELEVATOR_DELTA_SLIGHTLY_DOWN){
-            elevatorPositionCount = elevatorPositionCount - ELEVATOR_DELTA_SLIGHTLY_DOWN;
+                elevatorPositionCount >= ELEVATOR_LEVEL1_POSITION_COUNT + ELEVATOR_DELTA_SLIGHTLY_DOWN_DELTA_COUNT){
+            elevatorPositionCount = elevatorPositionCount - ELEVATOR_DELTA_SLIGHTLY_DOWN_DELTA_COUNT;
+            elevatorMotor.setTargetPosition(elevatorPositionCount);
+            motorPowerToRun = POWER_NO_CARGO;
+            runElevatorToLevelState = true;
+        }
+    }
+
+    /**
+     * Move Elevator Slightly Up
+     */
+    public void moveElevatorSlightlyUp(){
+        turnElevatorBrakeModeOn();
+        if ((elevatorPositionCount > ELEVATOR_LEVEL3_POSITION_COUNT) &&
+                elevatorPositionCount <= ELEVATOR_LEVELMAX_POSITION_COUNT - ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT){
+            elevatorPositionCount = elevatorPositionCount + ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT;
             elevatorMotor.setTargetPosition(elevatorPositionCount);
             motorPowerToRun = POWER_NO_CARGO;
             runElevatorToLevelState = true;
