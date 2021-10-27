@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.TestingOpModes;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
@@ -58,21 +61,27 @@ public class Test_Spinner extends LinearOpMode {
                 gamepadTestController.runByGamepadControl();
 
                 //TODO: Add Test Code here
-                if (gamepadTestController.getLeftBumperPress()) {
-                    if(spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
-                        spinner.runSpinnerMotorClockwise();
-                    } else if(spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
-                        spinner.stopSpinnerMotor();
+                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                    if (gamepadTestController.getLeftBumperPress()) {
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                            spinner.runSpinnerMotorClockwise();
+                        } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                            spinner.stopSpinnerMotor();
+                        }
+                    }
+
+                    //Reverse Intake motors and run - in case of stuck state)
+                    if (gamepadTestController.getLeftBumperPress() && gamepadTestController.getStartPersistent()) {
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                            spinner.runSpinnerMotorAnticlockwise();
+                        } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                            spinner.stopSpinnerMotor();
+                        }
                     }
                 }
 
-                //Reverse Intake motors and run - in case of stuck state)
-                if (gamepadTestController.getLeftBumperPress() && gamepadTestController.getStartPersistent()) {
-                    if(spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
-                        spinner.runSpinnerMotorAnticlockwise();
-                    } else if(spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
-                        spinner.stopSpinnerMotor();
-                    }
+                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                    //TODO: Update code so that the direction of motor is reversed
                 }
 
                 if(DEBUG_FLAG) {
@@ -85,6 +94,48 @@ public class Test_Spinner extends LinearOpMode {
         }
         GameField.poseSetInAutonomous = false;
     }
+
+    public void selectGamePlan(){
+        telemetry.setAutoClear(true);
+
+        //***** Select Alliance ******
+        telemetry.addData("Enter PLaying Alliance :", "(Blue: (X),    Red: (B))");
+        telemetry.update();
+
+        //Add logic to select autonomous mode based on keypad entry
+        while (!isStopRequested()) {
+
+            if (gamepadTestController.getButtonBPress()) {
+                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                GameField.ALLIANCE_FACTOR = -1;
+                telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
+                break;
+            }
+            if (gamepadTestController.getButtonXPress()) {
+                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                GameField.ALLIANCE_FACTOR = 1;
+                telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
+                break;
+            }
+            telemetry.update();
+        }
+        telemetry.update();
+        safeWait(200);
+
+    }
+
+    /**
+     * Safe method to wait so that stop button is also not missed
+     * @param time time in ms to wait
+     */
+    public void safeWait(double time){
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!isStopRequested() && timer.time() < time){
+            //Wait
+        }
+    }
+
 
     /**
      * Method to add debug messages. Update as telemetry.addData.
