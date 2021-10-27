@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Definition of Subsystem Class <BR>
+ * Definition of Magazine Class <BR>
  *
- * Example : Intake consists of system provided intake controls and adds functionality to the selection made on intake. <BR>
+ * Example : Magazine consists of system provided magazine controls and adds functionality to the selection made on magazine. <BR>
  *
  * The states are as followed: <BR>
  *     <emsp>SUBSYSTEM1_SERVO_LEVEL1 for one state - example if intake motor is running, stopped, or reversing </emsp> <BR>
@@ -21,57 +20,58 @@ import com.qualcomm.robotcore.hardware.Servo;
  *     sets intake motor state to REVERSING</emsp> <BR>
  */
 public class Magazine {
+    
 
     //TODO: Update code as needed for Magazine
 
-    public Servo subsystem1Servo = null;
+    public Servo magazineServo = null;
 
-    public static final double SUBSYSTEM1_SERVO_LEVEL1 = 0.6;
-    public static final double SUBSYSTEM1_SERVO_LEVEL2 = 0.35;
+    public static final double MAGAZINE_SERVO_PARKED = 0;
+    public static final double MAGAZINE_SERVO_FLIPPED = 0.65;
 
-    public enum SUBSYSTEM1_SERVO_STATE {
-        STATE1,
-        STATE2,
-        STATE3
+    public double magazineServoState = MAGAZINE_SERVO_PARKED;
+
+    public enum MAGAZINE_SERVO_STATE {
+        PARKED,
+        FLIPPED
     }
 
-    public SUBSYSTEM1_SERVO_STATE subsystem1ServoState = SUBSYSTEM1_SERVO_STATE.STATE1;
-
-    public double subsystem1MotorPower1 = 0.95;//0.9;
-    public double subsystem1MotorPower2 = 0.8;
-
-    public enum SUBSYSTEM1_BUTTON_STATE {
+    public enum MAGAZINE_BUTTON_STATE {
         ON,
         OFF
     }
-    public SUBSYSTEM1_BUTTON_STATE subsystem1ButtonState;
+    public MAGAZINE_BUTTON_STATE magazineButtonState;
 
     public Magazine(HardwareMap hardwareMap) {
-        subsystem1Servo = hardwareMap.servo.get("servotest");
+        magazineServo = hardwareMap.servo.get("magazine_servo");
     }
 
     public void initMagazine(){
-
+        magazineServo.setDirection(Servo.Direction.FORWARD);
+        moveMagazineServoToParked();
     }
 
     /**
-     * set Intake gripper position to hold.. to ensure intake is within robot dimensions at start
+     * Sets magazineServo to parked position
      */
-    public void setSubsystem1ServoLevel1(){
-        subsystem1Servo.setPosition(SUBSYSTEM1_SERVO_LEVEL1);
+    public void moveMagazineServoToParked(){
+        magazineServo.setPosition(MAGAZINE_SERVO_PARKED);
+        magazineServoState = MAGAZINE_SERVO_PARKED;
     }
 
     /**
-     * set Intake gripper position to release
+     * set
      */
-    public void setSubsystem1ServoLevel2(){
-        subsystem1Servo.setPosition(SUBSYSTEM1_SERVO_LEVEL2);
+    public void moveMagazineServoToFlipped(){
+        magazineServo.setPosition(MAGAZINE_SERVO_FLIPPED);
+        magazineServoState = (int) MAGAZINE_SERVO_FLIPPED;
     }
 
     /**
-     * Returns Intake motor state
+     * Returns Magazine servo state
+     * @return
      */
-    public SUBSYSTEM1_SERVO_STATE getSubsystemMotorState() {
-        return subsystem1ServoState;
+    public double getMagazineServoState() {
+        return magazineServoState;
     }
 }
