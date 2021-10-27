@@ -44,7 +44,6 @@ public class Intake {
 
     public Intake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.dcMotor.get("intake_motor");
-        //intakeServo = hardwareMap.servo.get("servotest");
     }
 
     public void initIntake(){
