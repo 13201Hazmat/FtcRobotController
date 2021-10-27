@@ -25,16 +25,14 @@ public class Magazine {
 
     public Servo magazineServo = null;
 
-    public static final int MAGAZINE_SERVO_COLLECT = 0;
-    public static final double MAGAZINE_SERVO_TRANSPORT = 0.30;
-    public static final double MAGAZINE_SERVO_FLIPPED = 0.65;
-
-
+    public static final int MAGAZINE_SERVO_COLLECT_POSITION = 0;
+    public static final double MAGAZINE_SERVO_TRANSPORT_POSITION = 0.30;
+    public static final double MAGAZINE_SERVO_FLIPPED_POSITION = 0.65;
 
     public enum MAGAZINE_SERVO_STATE {
         COLLECT,
         TRANSPORT,
-        FLIPPED
+        DROP
     }
 
     public enum MAGAZINE_BUTTON_STATE {
@@ -42,14 +40,13 @@ public class Magazine {
         OFF
     }
     public MAGAZINE_BUTTON_STATE magazineButtonState;
-    public MAGAZINE_SERVO_STATE magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
+    public MAGAZINE_SERVO_STATE magazineServoState = MAGAZINE_SERVO_STATE.TRANSPORT;
 
     public Magazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.servo.get("magazine_servo");
     }
 
     public void initMagazine(){
-        magazineServo.setDirection(Servo.Direction.FORWARD);
         moveMagazineServoToCollect();
     }
 
@@ -57,24 +54,30 @@ public class Magazine {
      * Sets magazineServo to collect position
      */
     public void moveMagazineServoToCollect(){
-        magazineServo.setPosition(MAGAZINE_SERVO_COLLECT);
-        magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
+        if (magazineServoState !=MAGAZINE_SERVO_STATE.COLLECT) {
+            magazineServo.setPosition(MAGAZINE_SERVO_COLLECT_POSITION);
+            magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
+        }
     }
 
     /**
      * sets magazineServo to transport position
      */
     public void moveMagazineServoToTransport(){
-        magazineServo.setPosition(MAGAZINE_SERVO_TRANSPORT);
-        magazineServoState = MAGAZINE_SERVO_STATE.TRANSPORT;
+        if (magazineServoState !=MAGAZINE_SERVO_STATE.TRANSPORT) {
+            magazineServo.setPosition(MAGAZINE_SERVO_TRANSPORT_POSITION);
+            magazineServoState = MAGAZINE_SERVO_STATE.TRANSPORT;
+        }
     }
 
     /**
      * sets magazineServo to flipped position
      */
     public void moveMagazineServoToFlipped(){
-        magazineServo.setPosition(MAGAZINE_SERVO_FLIPPED);
-        magazineServoState = MAGAZINE_SERVO_STATE.FLIPPED;
+        if (magazineServoState !=MAGAZINE_SERVO_STATE.COLLECT) {
+            magazineServo.setPosition(MAGAZINE_SERVO_FLIPPED_POSITION);
+            magazineServoState = MAGAZINE_SERVO_STATE.DROP;
+        }
     }
 
     /**
