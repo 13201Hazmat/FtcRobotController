@@ -26,12 +26,12 @@ public class Intake {
 
 
     public enum INTAKE_MOTOR_STATE {
-        INTAKE_MOTOR_RUNNING,
-        INTAKE_MOTOR_STOPPED,
-        INTAKE_MOTOR_REVERSING
+        RUNNING,
+        STOPPED,
+        REVERSING
     }
 
-    public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED;
+    public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
 
     public double intakeMotorPower1 = 0.95;//0.9;
     public double intakeMotorPower2 = 0.8;
@@ -53,9 +53,9 @@ public class Intake {
 
 
     public void startForwardIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+        if(intakeMotorState != INTAKE_MOTOR_STATE.RUNNING) {
             runIntakeMotor(DcMotor.Direction.FORWARD, intakeMotorPower2);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING;
+            intakeMotorState = INTAKE_MOTOR_STATE.RUNNING;
         }
     }
 
@@ -64,9 +64,9 @@ public class Intake {
      * sets intake motor state to REVERSING
      */
     public void startReverseIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING) {
+        if(intakeMotorState != INTAKE_MOTOR_STATE.REVERSING) {
             runIntakeMotor(DcMotor.Direction.REVERSE, intakeMotorPower1);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING;
+            intakeMotorState = INTAKE_MOTOR_STATE.REVERSING;
         }
     }
 
@@ -75,9 +75,9 @@ public class Intake {
      * and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED
      */
     public void stopIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+        if(intakeMotorState != INTAKE_MOTOR_STATE.STOPPED) {
             runIntakeMotor(DcMotor.Direction.FORWARD, 0.0);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED;
+            intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
        }
     }
 
