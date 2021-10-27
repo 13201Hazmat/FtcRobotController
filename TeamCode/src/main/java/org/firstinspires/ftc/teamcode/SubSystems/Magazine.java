@@ -20,19 +20,20 @@ import com.qualcomm.robotcore.hardware.Servo;
  *     sets intake motor state to REVERSING</emsp> <BR>
  */
 public class Magazine {
-    
 
     //TODO: Update code as needed for Magazine
 
     public Servo magazineServo = null;
 
-    public static final double MAGAZINE_SERVO_PARKED = 0;
+    public static final int MAGAZINE_SERVO_COLLECT = 0;
+    public static final double MAGAZINE_SERVO_TRANSPORT = 0.30;
     public static final double MAGAZINE_SERVO_FLIPPED = 0.65;
 
-    public double magazineServoState = MAGAZINE_SERVO_PARKED;
+
 
     public enum MAGAZINE_SERVO_STATE {
-        PARKED,
+        COLLECT,
+        TRANSPORT,
         FLIPPED
     }
 
@@ -41,6 +42,7 @@ public class Magazine {
         OFF
     }
     public MAGAZINE_BUTTON_STATE magazineButtonState;
+    public MAGAZINE_SERVO_STATE magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
 
     public Magazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.servo.get("magazine_servo");
@@ -48,30 +50,38 @@ public class Magazine {
 
     public void initMagazine(){
         magazineServo.setDirection(Servo.Direction.FORWARD);
-        moveMagazineServoToParked();
+        moveMagazineServoToCollect();
     }
 
     /**
-     * Sets magazineServo to parked position
+     * Sets magazineServo to collect position
      */
-    public void moveMagazineServoToParked(){
-        magazineServo.setPosition(MAGAZINE_SERVO_PARKED);
-        magazineServoState = MAGAZINE_SERVO_PARKED;
+    public void moveMagazineServoToCollect(){
+        magazineServo.setPosition(MAGAZINE_SERVO_COLLECT);
+        magazineServoState = MAGAZINE_SERVO_STATE.COLLECT;
     }
 
     /**
-     * set
+     * sets magazineServo to transport position
+     */
+    public void moveMagazineServoToTransport(){
+        magazineServo.setPosition(MAGAZINE_SERVO_TRANSPORT);
+        magazineServoState = MAGAZINE_SERVO_STATE.TRANSPORT;
+    }
+
+    /**
+     * sets magazineServo to flipped position
      */
     public void moveMagazineServoToFlipped(){
         magazineServo.setPosition(MAGAZINE_SERVO_FLIPPED);
-        magazineServoState = (int) MAGAZINE_SERVO_FLIPPED;
+        magazineServoState = MAGAZINE_SERVO_STATE.FLIPPED;
     }
 
     /**
      * Returns Magazine servo state
      * @return
      */
-    public double getMagazineServoState() {
-        return magazineServoState;
+    public Servo getMagazineServoState() {
+        return magazineServo;
     }
 }
