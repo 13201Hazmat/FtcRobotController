@@ -5,6 +5,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.Elevator;
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
+import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
+import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
@@ -50,23 +55,32 @@ public class GamepadController {
     //Create object reference to objects to systems passed from TeleOp
     public Gamepad hzGamepad1, hzGamepad2;
     public DriveTrain driveTrain;
-    public SubsystemTemplate subsystemTemplate;
-    //TODO: Replace name of Subsystem1 and Declare more subsystems
+    public Intake intake;
+    public Elevator elevator;
+    public Magazine magazine;
+    public Spinner spinner;
+    public MajorArm majorArm;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      */
-    //TODO: Replace name of Subsystem1 and Add more Subsystems in declaration
     public GamepadController(Gamepad hzGamepad1,
                              Gamepad hzGamepad2,
                              DriveTrain driveTrain,
-                             SubsystemTemplate subsystemTemplate) {
+                             Intake intake,
+                             Elevator elevator,
+                             Magazine magazine,
+                             Spinner spinner,
+                             MajorArm majorArm) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
         this.driveTrain = driveTrain;
-        this.subsystemTemplate = subsystemTemplate;
-        //TODO: line to point object for more subsystems
+        this.intake = intake;
+        this.elevator = elevator;
+        this.magazine = magazine;
+        this.spinner = spinner;
+        this.majorArm = majorArm;
     }
 
     /**
@@ -75,6 +89,11 @@ public class GamepadController {
     public void runByGamepadControl(){
         runSubsystem1Control();
         //TODO: Add run functions for more Subsystems added
+        runIntake();
+        runElevator();
+        runMagazine();
+        runSpinner();
+        runMajorArm();
         runDriveControl_byRRDriveModes();
     }
 
@@ -156,7 +175,36 @@ public class GamepadController {
     }
 
     //TODO: Add controller code for more subsystems as above
-
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runIntake(){ //this function should be at LaunchController's place after order change
+    }
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runElevator(){ //this function should be at LaunchController's place after order change
+    }
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runSpinner(){ //this function should be at LaunchController's place after order change
+    }
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runMagazine(){ //this function should be at LaunchController's place after order change
+    }
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runMajorArm(){ //this function should be at LaunchController's place after order change
+    }
 
     //*********** KEY PAD MODIFIERS BELOW ***********
 
