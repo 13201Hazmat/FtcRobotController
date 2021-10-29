@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadControllerTemplate;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
@@ -19,7 +19,7 @@ public class TeleOpModeTemplate extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;
 
-    public GamepadController gamepadController;
+    public GamepadControllerTemplate gamepadController;
     public DriveTrain driveTrain;
     public SubsystemTemplate subsystemTemplate;
     //TODO: Replace name of Subsystem1 and Declare more subsystems
@@ -36,7 +36,7 @@ public class TeleOpModeTemplate extends LinearOpMode {
         //TODO: Replace name of Subsystem1 and Declare more subsystems
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, subsystemTemplate);
+        gamepadController = new GamepadControllerTemplate(gamepad1, gamepad2, driveTrain, subsystemTemplate);
 
         /* Get last position after Autonomous mode ended from static class set in Autonomous */
         if ( GameField.poseSetInAutonomous == true) {

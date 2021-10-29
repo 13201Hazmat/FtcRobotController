@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Controllers.AutonomousController;
+import org.firstinspires.ftc.teamcode.Controllers.AutonomousControllerTemplate;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadControllerTemplate;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
@@ -37,8 +38,8 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;
 
-    public GamepadController gamepadController;
-    public AutonomousController autonomousController;
+    public GamepadControllerTemplate gamepadControllerTemplate;
+    public AutonomousControllerTemplate autonomousController;
     public DriveTrain driveTrain;
     public SubsystemTemplate subsystemTemplate;
     //TODO: Replace name of Subsystem1 and Declare more subsystems
@@ -65,8 +66,8 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
         //TODO: Replace name of Subsystem1 and Declare more subsystems
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1,gamepad2, driveTrain, subsystemTemplate);
-        autonomousController = new AutonomousController(driveTrain, subsystemTemplate);
+        gamepadControllerTemplate = new GamepadControllerTemplate(gamepad1,gamepad2, driveTrain, subsystemTemplate);
+        autonomousController = new AutonomousControllerTemplate(driveTrain, subsystemTemplate);
 
         //Key Pay inputs to select Game Plan;
         selectGamePlan(); //TODO: Update function with more selections as needed
@@ -210,13 +211,13 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
 
         //Add logic to select autonomous mode based on keypad entry
         while (!isStopRequested()) {
-            if (gamepadController.gp1GetButtonBPress()) {
+            if (gamepadControllerTemplate.gp1GetButtonBPress()) {
                 GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 GameField.ALLIANCE_FACTOR = -1;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
-            if (gamepadController.gp1GetButtonXPress()) {
+            if (gamepadControllerTemplate.gp1GetButtonXPress()) {
                 GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 GameField.ALLIANCE_FACTOR = 1;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
@@ -232,14 +233,14 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
         telemetry.addData("Enter Start Pose :", "(STARTPOS_1: (A) ,    STARTPOS_2: (Y))");
         while (!isStopRequested()) {
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (gamepadController.gp1GetButtonAPress()) {
+                if (gamepadControllerTemplate.gp1GetButtonAPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_1;
                     startPose = GameField.RED_STARTPOS_1;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
                     telemetry.addData("Start Pose : ", "RED_STARTPOS_1");
                     break;
                 }
-                if (gamepadController.gp1GetButtonYPress()) {
+                if (gamepadControllerTemplate.gp1GetButtonYPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_2;
                     startPose = GameField.RED_STARTPOS_2;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
@@ -248,14 +249,14 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
                 }
             }
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (gamepadController.gp1GetButtonAPress()) {
+                if (gamepadControllerTemplate.gp1GetButtonAPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_1;
                     startPose = GameField.BLUE_STARTPOS_1;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
                     telemetry.addData("Start Pose : ", "BLUE_STARTPOS_1");
                     break;
                 }
-                if (gamepadController.gp1GetButtonYPress()) {
+                if (gamepadControllerTemplate.gp1GetButtonYPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_2;
                     startPose = GameField.BLUE_STARTPOS_2;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;

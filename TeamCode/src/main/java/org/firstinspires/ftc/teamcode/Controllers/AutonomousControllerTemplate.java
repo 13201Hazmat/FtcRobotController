@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
  * 
  */
 
-public class AutonomousController {
+public class AutonomousControllerTemplate {
 
     //Create gamepad object reference to connect to gamepad1
     public DriveTrain driveTrain;
@@ -38,8 +38,8 @@ public class AutonomousController {
      *
      * TODO: Add more subsystems in declaration
      */
-    public AutonomousController(DriveTrain driveTrain,
-                                SubsystemTemplate subsystemTemplate) {
+    public AutonomousControllerTemplate(DriveTrain driveTrain,
+                                        SubsystemTemplate subsystemTemplate) {
         this.driveTrain = driveTrain;
         this.subsystemTemplate = subsystemTemplate;
         //TODO: Add more subsystems
