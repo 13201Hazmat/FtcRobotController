@@ -77,6 +77,10 @@ public class Test_MajorArm extends LinearOpMode {
                     majorArm.runArmToLevel(majorArm.ARM_MOTOR_POWER);
                 }
 
+                if(gamepadTestController.getRightBumperPress()){
+                    majorArm.changeClawState();
+                }
+
                 if(DEBUG_FLAG) {
                     printDebugMessages();
                     telemetry.update();

@@ -181,29 +181,79 @@ public class GamepadController {
      */
     public void runIntake(){ //this function should be at LaunchController's place after order change
     }
+
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runElevator(){ //this function should be at LaunchController's place after order change
     }
+
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runSpinner(){ //this function should be at LaunchController's place after order change
+        //TODO: Add Test Code here
+        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            if (gp1GetLeftBumperPress()) {
+                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                    spinner.runSpinnerMotorClockwise();
+                } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                    spinner.stopSpinnerMotor();
+                }
+            }
+
+            //Reverse Intake motors and run - in case of stuck state)
+            if (gp1GetLeftBumperPress() && gp1GetStart()) {
+                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                    spinner.runSpinnerMotorAnticlockwise();
+                } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                    spinner.stopSpinnerMotor();
+                }
+            }
+        }
+
+        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+            //TODO: Update code so that the direction of motor is reversed
+        }
     }
+
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runMagazine(){ //this function should be at LaunchController's place after order change
     }
+
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runMajorArm(){ //this function should be at LaunchController's place after order change
+        if (gp2GetButtonXPress()){
+            majorArm.moveArmDownOne();
+        }
+        if (gp2GetButtonBPress()) {
+            majorArm.moveArmUpOne();
+        }
+        if(gp2GetButtonAPress()){
+            majorArm.moveArmPickupPosition();
+        }
+        if(gp2GetButtonYPress()){
+            majorArm.moveArmCapstonePosition();
+        }
+        if(gp2GetRightTriggerPress()){
+            majorArm.moveArmParkingPosition();
+        }
+
+        if (majorArm.runArmToLevelState) {
+            majorArm.runArmToLevel(majorArm.ARM_MOTOR_POWER);
+        }
+
+        if(gp2GetRightBumperPress()){
+            majorArm.changeClawState();
+        }
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********

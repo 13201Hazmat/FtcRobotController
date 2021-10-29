@@ -105,7 +105,7 @@ public class MajorArm {
         majorArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    public void changeGripState() {
+    public void changeClawState() {
         if ((majorClawState == MAJOR_CLAW_STATE.OPEN)) {
             majorClawServo.setPosition(CLAW_CLOSED);
             majorClawState = MAJOR_CLAW_STATE.CLOSED;
