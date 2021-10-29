@@ -118,6 +118,7 @@ public class GamepadTestController {
     boolean gp1Dpad_upLast = false;
     boolean gp1Dpad_downLast = false;
     boolean gp1LeftTriggerLast = false;
+    boolean gp1RightTriggerLast = false;
 
     /**
      * Method to convert linear map from gamepad1 stick input to a cubic map
@@ -207,6 +208,15 @@ public class GamepadTestController {
             isPressedLeftTrigger = true;
         }
         gp1LeftTriggerLast = (getLeftTrigger()>0.7);
+        return isPressedLeftTrigger;
+    }
+
+    public boolean getRightTriggerPress() {
+        boolean isPressedLeftTrigger = false;
+        if (!gp1RightTriggerLast && (getRightTrigger()>0.7)) {
+            isPressedLeftTrigger = true;
+        }
+        gp1RightTriggerLast = (getRightTrigger()>0.7);
         return isPressedLeftTrigger;
     }
 
