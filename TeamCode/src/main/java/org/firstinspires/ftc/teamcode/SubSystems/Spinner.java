@@ -84,5 +84,9 @@ public class Spinner {
     public SPINNER_MOTOR_STATE getSpinnerMotorState() {
         return spinnerMotorState;
     }
+
+    public double getSpinnerMotorPower(){
+        return spinnerMotor.getPower();
+    }
 }
 

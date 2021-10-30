@@ -76,14 +76,6 @@ public class MajorArm {
         previousArmState = ARM_STATE.PARKED;
     }
 
-    public MAJOR_CLAW_STATE getMajorClawState() {
-        return majorClawState;
-    }
-
-    public ARM_STATE getArmPosition() {
-        return currentArmState;
-    }
-
     public void runArmToLevel(double power){
         majorArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (runArmToLevelState == true || majorArmMotor.isBusy() == true){
@@ -248,6 +240,18 @@ public class MajorArm {
             moveArmPickupPosition();
             return;
         }
+    }
+
+    public int getMajorArmPositionCount(){
+        return majorArmMotor.getCurrentPosition();
+    }
+
+    public MAJOR_CLAW_STATE getMajorClawState() {
+        return majorClawState;
+    }
+
+    public ARM_STATE getArmPosition() {
+        return currentArmState;
     }
 
     //TODO: Add code MajorArm Slight drop (reduce by 50 counts, dont change state when left trigger is pressed.

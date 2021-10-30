@@ -33,7 +33,7 @@ public class Intake {
 
     public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
 
-    public double intakeMotorPower1 = 0.95;//0.9;
+    public double intakeMotorPower1 = 1.0;//0.9;
     public double intakeMotorPower2 = 0.8;
 
     /*public enum INTAKE_BUTTON_STATE {
@@ -95,4 +95,7 @@ public class Intake {
     public INTAKE_MOTOR_STATE getIntakeMotorState() {
         return intakeMotorState;
     }
+
+    public double getIntakeMotorPower(){
+    return intakeMotor.getPower();}
 }
