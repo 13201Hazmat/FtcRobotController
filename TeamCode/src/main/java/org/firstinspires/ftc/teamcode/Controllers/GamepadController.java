@@ -37,7 +37,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
  *     <emsp>gp1GetLeftStickX(), gp2GetLeftStickX()</emsp>
  *     <emsp>gp1GetLeftStickY(), gp2GetLeftStickY()</emsp>
  *     <emsp>gp1GetRightStickX(), gp2GetRightStickX()</emsp>
- *     <emsp>gp1GetRightStickY(), gp2GetRightStickY()</emsp>
+ *     <emsp>gp1GetRightStickY(), gp2p;'l
+ *     =GetRightStickY()</emsp>
  *     <emsp>gp1GetLeftTrigger(), gp2GetRightTrigger()</emsp>
  *     <emsp>gp1GetLeftTriggerPress(), gp2GetRightTriggerPress for toggle value()</emsp>
  *     <emsp>gp1GetLeftBumper(), gp2GetRightBumper()</emsp>
@@ -194,28 +195,44 @@ public class GamepadController {
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runSpinner(){ //this function should be at LaunchController's place after order change
-        //TODO: Add Test Code here
-        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        if (!gp1GetStart()) { //Normal condition, start not pressed
             if (gp1GetLeftBumperPress()) {
-                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
-                    spinner.runSpinnerMotorClockwise();
-                } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                //Spinner is running
+                if (spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.CLOCKWISE ||
+                        spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
                     spinner.stopSpinnerMotor();
+                } else {
+                    //Spinner not running
+                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                            spinner.runSpinnerMotorClockwise();
+                        }
+                    } else { //if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE)
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                            spinner.runSpinnerMotorAnticlockwise();
+                        }
+                    }
                 }
             }
-
-            //Reverse Intake motors and run - in case of stuck state)
-            if (gp1GetLeftBumperPress() && gp1GetStart()) {
-                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
-                    spinner.runSpinnerMotorAnticlockwise();
-                } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+        } else { //Alternate  condition, start pressed
+            if (gp1GetLeftBumperPress()) {
+                //Spinner is running
+                if (spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.CLOCKWISE ||
+                        spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
                     spinner.stopSpinnerMotor();
+                } else {
+                    //Spinner not running
+                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                            spinner.runSpinnerMotorAnticlockwise();
+                        }
+                    } else { //if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE)
+                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                            spinner.runSpinnerMotorClockwise();
+                        }
+                    }
                 }
             }
-        }
-
-        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-            //TODO: Update code so that the direction of motor is reversed
         }
     }
 
@@ -245,6 +262,16 @@ public class GamepadController {
         }
         if(gp2GetRightTriggerPress()){
             majorArm.moveArmParkingPosition();
+        }
+
+        if (!gp2GetStart()) {
+            if (gp2GetLeftTriggerPress()) {
+                majorArm.moveMajorArmSlightlyDown();
+            }
+        } else {
+            if (gp2GetLeftTriggerPress()) {
+                majorArm.moveMajorArmSlightlyUp();
+            }
         }
 
         if (majorArm.runArmToLevelState) {

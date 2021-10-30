@@ -79,14 +79,25 @@ public class Test_Elevator extends LinearOpMode {
                 if (gamepadTestController.getButtonBPress()){
                     if (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_3) {
                         elevator.moveElevatorLevel3Position();
+
                     }
                 }
 
-                if (gamepadTestController.getLeftTriggerPress()){
-                    if ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
-                            (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)){
-                        elevator.moveElevatorSlightlyDown();
+                if (!gamepadTestController.getStartPersistent()) {
+                    if (gamepadTestController.getLeftTriggerPress()) {
+                        if ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
+                                (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)) {
+                            elevator.moveElevatorSlightlyDown();
+                        }
                     }
+                } else {
+                    if (gamepadTestController.getLeftTriggerPress()) {
+                        elevator.moveElevatorSlightlyUp();
+                    }
+                }
+
+                if (elevator.runElevatorToLevelState){
+                    elevator.runElevatorToLevel(elevator.motorPowerToRun);
                 }
 
                 if(DEBUG_FLAG) {

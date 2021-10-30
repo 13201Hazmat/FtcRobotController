@@ -171,9 +171,9 @@ public class Elevator {
      * Move Elevator Slightly Down
      */
     public void moveElevatorSlightlyDown(){
-        turnElevatorBrakeModeOn();
         if ((elevatorPositionCount <=ELEVATOR_LEVEL3_POSITION_COUNT) &&
                 elevatorPositionCount >= ELEVATOR_LEVEL1_POSITION_COUNT + ELEVATOR_DELTA_SLIGHTLY_DOWN_DELTA_COUNT){
+            turnElevatorBrakeModeOn();
             elevatorPositionCount = elevatorPositionCount - ELEVATOR_DELTA_SLIGHTLY_DOWN_DELTA_COUNT;
             elevatorMotor.setTargetPosition(elevatorPositionCount);
             motorPowerToRun = POWER_NO_CARGO;
@@ -185,9 +185,9 @@ public class Elevator {
      * Move Elevator Slightly Up
      */
     public void moveElevatorSlightlyUp(){
-        turnElevatorBrakeModeOn();
         if ((elevatorPositionCount > ELEVATOR_LEVEL3_POSITION_COUNT) &&
                 elevatorPositionCount <= ELEVATOR_LEVELMAX_POSITION_COUNT - ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT){
+            turnElevatorBrakeModeOn();
             elevatorPositionCount = elevatorPositionCount + ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT;
             elevatorMotor.setTargetPosition(elevatorPositionCount);
             motorPowerToRun = POWER_NO_CARGO;

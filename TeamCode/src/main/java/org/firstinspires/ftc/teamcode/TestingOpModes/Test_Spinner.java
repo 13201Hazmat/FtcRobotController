@@ -43,6 +43,8 @@ public class Test_Spinner extends LinearOpMode {
         /* Set Initial State of any subsystem when TeleOp is to be started*/
         spinner.initSpinner();
 
+        selectGamePlan();
+
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
 
@@ -60,28 +62,44 @@ public class Test_Spinner extends LinearOpMode {
             while (opModeIsActive()) {
                 gamepadTestController.runByGamepadControl();
 
-                //TODO: Add Test Code here
-                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (!gamepadTestController.getStartPersistent()) { //Normal condition, start not pressed
                     if (gamepadTestController.getLeftBumperPress()) {
-                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
-                            spinner.runSpinnerMotorClockwise();
-                        } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                        //Spinner is running
+                        if (spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.CLOCKWISE ||
+                                spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
                             spinner.stopSpinnerMotor();
+                        } else {
+                            //Spinner not running
+                            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                                    spinner.runSpinnerMotorClockwise();
+                                }
+                            } else { //if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE)
+                                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                                    spinner.runSpinnerMotorAnticlockwise();
+                                }
+                            }
                         }
                     }
-
-                    //Reverse Intake motors and run - in case of stuck state)
-                    if (gamepadTestController.getLeftBumperPress() && gamepadTestController.getStartPersistent()) {
-                        if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
-                            spinner.runSpinnerMotorAnticlockwise();
-                        } else if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.STOPPED) {
+                } else { //Alternate  condition, start pressed
+                    if (gamepadTestController.getLeftBumperPress()) {
+                        //Spinner is running
+                        if (spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.CLOCKWISE ||
+                                spinner.getSpinnerMotorState() == Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
                             spinner.stopSpinnerMotor();
+                        } else {
+                            //Spinner not running
+                            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
+                                    spinner.runSpinnerMotorAnticlockwise();
+                                }
+                            } else { //if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE)
+                                if (spinner.getSpinnerMotorState() != Spinner.SPINNER_MOTOR_STATE.CLOCKWISE) {
+                                    spinner.runSpinnerMotorClockwise();
+                                }
+                            }
                         }
                     }
-                }
-
-                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                    //TODO: Update code so that the direction of motor is reversed
                 }
 
                 if(DEBUG_FLAG) {

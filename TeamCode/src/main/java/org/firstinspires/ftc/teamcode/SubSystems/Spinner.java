@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Definition of Subsystem Class <BR>
@@ -42,9 +40,10 @@ public class Spinner {
     }
 
     public void initSpinner(){
+        spinnerMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
-    private void runSpinnerMotorMotor(DcMotor.Direction direction, double power){
+    private void runSpinnerMotor(DcMotor.Direction direction, double power){
         spinnerMotor.setDirection(direction);
         spinnerMotor.setPower(power);
     }
@@ -53,7 +52,7 @@ public class Spinner {
      */
     public void runSpinnerMotorClockwise() {
         if(spinnerMotorState != SPINNER_MOTOR_STATE.CLOCKWISE) {
-            runSpinnerMotorMotor(DcMotor.Direction.FORWARD, spinnerMotorPower);
+            runSpinnerMotor(DcMotor.Direction.FORWARD, spinnerMotorPower);
             spinnerMotorState = SPINNER_MOTOR_STATE.CLOCKWISE;
         }
     }
@@ -64,7 +63,7 @@ public class Spinner {
      */
     public void runSpinnerMotorAnticlockwise() {
         if(spinnerMotorState != SPINNER_MOTOR_STATE.ANTICLOCKWISE) {
-            runSpinnerMotorMotor(DcMotor.Direction.REVERSE, spinnerMotorPower);
+            runSpinnerMotor(DcMotor.Direction.REVERSE, spinnerMotorPower);
             spinnerMotorState = SPINNER_MOTOR_STATE.ANTICLOCKWISE;
        }
     }
@@ -75,7 +74,7 @@ public class Spinner {
      */
     public void stopSpinnerMotor() {
         if(spinnerMotorState != SPINNER_MOTOR_STATE.STOPPED) {
-                runSpinnerMotorMotor(DcMotor.Direction.FORWARD, 0.0);
+                runSpinnerMotor(DcMotor.Direction.FORWARD, 0.0);
                 spinnerMotorState = Spinner.SPINNER_MOTOR_STATE.STOPPED;
         }
     }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.Elevator;
 import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
 
 /**
@@ -71,6 +72,16 @@ public class Test_MajorArm extends LinearOpMode {
                 }
                 if(gamepadTestController.getRightTriggerPress()){
                     majorArm.moveArmParkingPosition();
+                }
+
+                if (!gamepadTestController.getStartPersistent()) {
+                    if (gamepadTestController.getLeftTriggerPress()) {
+                        majorArm.moveMajorArmSlightlyDown();
+                    }
+                } else {
+                    if (gamepadTestController.getLeftTriggerPress()) {
+                        majorArm.moveMajorArmSlightlyUp();
+                    }
                 }
 
                 if (majorArm.runArmToLevelState) {
