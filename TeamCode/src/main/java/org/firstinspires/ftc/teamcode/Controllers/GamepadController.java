@@ -88,7 +88,6 @@ public class GamepadController {
      *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
     public void runByGamepadControl(){
-        runSubsystem1Control();
         //TODO: Add run functions for more Subsystems added
         runIntake();
         runElevator();
@@ -148,39 +147,30 @@ public class GamepadController {
     }
 
 
-    /**
-     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
-     * direction in order for a stuck ring to be out of intake. <BR>
-     */
-    public void runSubsystem1Control(){ //this function should be at LaunchController's place after order change
-        //TODO: Add logic for state of Subsubsystem1 to be set when a key entry is made
-        /* Example
-        if (getLeftTriggerPress()) {
-            gpHzArmUltimateGoal.moveArmByTrigger();
-        }
-
-        if (gpHzArmUltimateGoal.runArmToLevelState) {
-            gpHzArmUltimateGoal.runArmToLevel(gpHzArmUltimateGoal.motorPowerToRun);
-        }
-
-        //Toggle Arm Grip actions
-        if (getLeftBumperPress()) {
-            if(gpHzArmUltimateGoal.getGripServoState() == HzArmUltimateGoal.GRIP_SERVO_STATE.OPENED) {
-                gpHzArmUltimateGoal.closeGrip();
-            } else if(gpHzArmUltimateGoal.getGripServoState() == HzArmUltimateGoal.GRIP_SERVO_STATE.CLOSED) {
-                gpHzArmUltimateGoal.openGrip();
-            }
-        }*/
-
-
-    }
-
     //TODO: Add controller code for more subsystems as above
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runIntake(){ //this function should be at LaunchController's place after order change
+        if (gp1GetDpad_downPress()) {
+            if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.RUNNING &&
+            elevator.getElevatorState() == Elevator.ELEVATOR_STATE.LEVEL_0) {
+                intake.startForwardIntakeMotor();
+            }
+            else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.STOPPED) {
+                intake.stopIntakeMotor();
+            }
+        }
+
+        //Reverse Intake motors and run - in case of stuck state)
+        if (gp1GetDpad_upPress()) {
+            if (intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.REVERSING) {
+                intake.startReverseIntakeMotor();
+            } else if (intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.STOPPED) {
+                intake.stopIntakeMotor();
+            }
+        }
     }
 
     /**
@@ -188,6 +178,75 @@ public class GamepadController {
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runElevator(){ //this function should be at LaunchController's place after order change
+        //TODO: Protect turning on grip only when elevator motor is not moving
+
+        if (gp1GetButtonAPress()){
+            if (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) {
+                elevator.moveElevatorLevel0Position();
+            }
+            if (elevator.runElevatorToLevelState){
+                elevator.runElevatorToLevel(elevator.motorPowerToRun);
+            }
+            if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.COLLECT) {
+                magazine.moveMagazineToCollect();
+            }
+        }
+
+        if (gp1GetButtonXPress()){
+            if(intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.RUNNING){
+                intake.stopIntakeMotor();
+            }
+            if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                magazine.moveMagazineToTransport();
+            }
+            if (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1) {
+                elevator.moveElevatorLevel1Position();
+            }
+
+        }
+
+        if (gp1GetButtonYPress()){
+            if(intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.RUNNING){
+                intake.stopIntakeMotor();
+            }
+            if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                magazine.moveMagazineToTransport();
+            }
+            if (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_2) {
+                elevator.moveElevatorLevel2Position();
+            }
+
+        }
+
+        if (gp1GetButtonBPress()){
+            if(intake.getIntakeMotorState() == Intake.INTAKE_MOTOR_STATE.RUNNING){
+                intake.stopIntakeMotor();
+            }
+            if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                magazine.moveMagazineToTransport();
+            }
+            if (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_3) {
+                elevator.moveElevatorLevel3Position();
+            }
+
+        }
+
+        if (!gp1GetStart()) {
+            if (gp1GetLeftTriggerPress()) {
+                if ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
+                        (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)) {
+                    elevator.moveElevatorSlightlyDown();
+                }
+            }
+        } else {
+            if (gp1GetLeftTriggerPress()) {
+                elevator.moveElevatorSlightlyUp();
+            }
+        }
+
+        if (elevator.runElevatorToLevelState){
+            elevator.runElevatorToLevel(elevator.motorPowerToRun);
+        }
     }
 
     /**
@@ -241,6 +300,13 @@ public class GamepadController {
      * direction in order for a stuck ring to be out of intake. <BR>
      */
     public void runMagazine(){ //this function should be at LaunchController's place after order change
+        if (gp1GetRightBumperPress()) {
+            if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                magazine.moveMagazineToDrop();
+            } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
+                magazine.moveMagazineToTransport();
+            }
+        }
     }
 
     /**
