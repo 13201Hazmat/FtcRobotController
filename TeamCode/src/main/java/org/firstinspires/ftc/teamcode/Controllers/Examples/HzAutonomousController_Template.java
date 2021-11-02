@@ -66,7 +66,7 @@ public class HzAutonomousController_Template {
     AUTO_SUBSYSTEM1_STATE autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.STOP;
 
     /**
-     * set Launch Target PowerShot2 state
+     * Determine the commands to be called from Autonomous mode
      */
     public void setSubsystem1ToState(){
         autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.START;
