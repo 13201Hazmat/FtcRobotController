@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.firstinspires.ftc.teamcode.Controllers.Examples.HzAutonomousControllerUltimateGoal;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
@@ -67,6 +68,15 @@ public class AutonomousControllerTemplate {
         //TODO:Update Subsystem states as appropriate
     }
     AUTO_SUBSYSTEM1_STATE autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.STOP;
+
+    /**
+     * set Launch Target PowerShot2 state
+     */
+    public void setSubsystem1ToState(){
+        autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.START;
+        runAutoControl();
+    }
+
 
     //TODO: Add states for each Subsystem
 
