@@ -57,13 +57,13 @@ public class Test_MinorArm extends LinearOpMode {
                 gamepadTestController.runByGamepadControl();
 
                 //TODO: Add Test Code here
-                if (gamepadTestController.getButtonXPress()){
+                if (gamepadTestController.getDpad_downPress()){
                     minorArm.moveMinorArmDownOne();
                 }
-                if (gamepadTestController.getButtonBPress()) {
+                if (gamepadTestController.getDpad_upPress()) {
                     minorArm.moveMinorArmUpOne();
                 }
-                if(gamepadTestController.getRightBumperPress()){
+                if(gamepadTestController.getLeftBumperPress()){
                     minorArm.changeMinorClawState();
                 }
 
@@ -96,9 +96,8 @@ public class Test_MinorArm extends LinearOpMode {
         telemetry.addData("PoseEstimate :", driveTrain.poseEstimate);
         telemetry.addData("Battery Power : ", driveTrain.getBatteryVoltage(hardwareMap));
 
-        telemetry.addData("Minor Arm Position : ",minorArm.getMinorServoPosition());
+        telemetry.addData("Minor Arm Position : ",minorArm.getMinorServoState());
         telemetry.addData("Minor Claw State : ",minorArm.getMinorClawState());
-        telemetry.addData("Minor Arm Position Count :", minorArm.getMinorServoPosition());
 
         //Add logic for debug print Logic
 
