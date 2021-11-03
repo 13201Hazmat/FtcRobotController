@@ -156,6 +156,9 @@ public class GamepadController {
         if (gp1GetDpad_downPress()) {
             if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.RUNNING &&
             elevator.getElevatorState() == Elevator.ELEVATOR_STATE.LEVEL_0) {
+                if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.COLLECT) {
+                    magazine.moveMagazineToCollect();
+                }
                 intake.startForwardIntakeMotor();
             }
             else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.STOPPED) {
@@ -233,10 +236,10 @@ public class GamepadController {
 
         if (!gp1GetStart()) {
             if (gp1GetLeftTriggerPress()) {
-                if ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
-                        (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)) {
+                // ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
+                  //    (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)) {
                     elevator.moveElevatorSlightlyDown();
-                }
+                //
             }
         } else {
             if (gp1GetLeftTriggerPress()) {
@@ -301,10 +304,18 @@ public class GamepadController {
      */
     public void runMagazine(){ //this function should be at LaunchController's place after order change
         if (gp1GetRightBumperPress()) {
-            if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
-                magazine.moveMagazineToDrop();
-            } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
-                magazine.moveMagazineToTransport();
+            if(elevator.getElevatorState() != Elevator.ELEVATOR_STATE.LEVEL_0) {
+                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                    magazine.moveMagazineToDrop();
+                } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
+                    magazine.moveMagazineToTransport();
+                }
+            } else{
+                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT ) {
+                    magazine.moveMagazineToCollect();
+                } else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.RUNNING) {
+                    magazine.moveMagazineToTransport();
+                }
             }
         }
     }

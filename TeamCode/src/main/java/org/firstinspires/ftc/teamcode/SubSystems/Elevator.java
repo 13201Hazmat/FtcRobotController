@@ -185,7 +185,7 @@ public class Elevator {
      * Move Elevator Slightly Up
      */
     public void moveElevatorSlightlyUp(){
-        if ((elevatorPositionCount > ELEVATOR_LEVEL3_POSITION_COUNT) &&
+        if ((elevatorPositionCount > ELEVATOR_LEVEL0_POSITION_COUNT) &&
                 elevatorPositionCount <= ELEVATOR_LEVELMAX_POSITION_COUNT - ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT){
             turnElevatorBrakeModeOn();
             elevatorPositionCount = elevatorPositionCount + ELEVATOR_DELTA_SLIGHTLY_UP_DELTA_COUNT;

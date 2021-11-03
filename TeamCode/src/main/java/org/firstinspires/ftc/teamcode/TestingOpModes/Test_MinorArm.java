@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.MinorArm;
  *  *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
  *
  */
-@TeleOp(name = "Test_MajorArm", group = "Test")
+@TeleOp(name = "Test_MinorArm", group = "Test")
 public class Test_MinorArm extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;
