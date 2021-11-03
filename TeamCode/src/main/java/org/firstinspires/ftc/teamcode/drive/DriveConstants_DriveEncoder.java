@@ -26,8 +26,8 @@ public class DriveConstants_DriveEncoder {
     //public static final double TICKS_PER_REV = 1;
     //public static final double MAX_RPM = 1;
 
-    public static final double TICKS_PER_REV = 537.7 ;
-    public static final double MAX_RPM = 312 ;
+    public static final double TICKS_PER_REV = 1;//537.7 ;
+    public static final double MAX_RPM = 1;//312 ;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -38,9 +38,9 @@ public class DriveConstants_DriveEncoder {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    /*public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));*/
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.01, 14.7);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.01, 14.7);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -55,11 +55,11 @@ public class DriveConstants_DriveEncoder {
     //public static double TRACK_WIDTH = 1; // in
 
     //Main Robot Calibration Parameters
-    public static double WHEEL_RADIUS = 1.8898;// in
+    public static double WHEEL_RADIUS = 2;//1.8898;// in
     //EDIT THIS FOR STRAIGHT TEST
-    public static double GEAR_RATIO = 44.0/60.0;// output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 1;//44.0/60.0;// output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
-    public static double TRACK_WIDTH = 15.64;  // in
+    public static double TRACK_WIDTH = 1;//15.64;  // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -78,16 +78,16 @@ public class DriveConstants_DriveEncoder {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    //public static double MAX_VEL = 30;
-    //public static double MAX_ACCEL = 30;
-    //public static double MAX_ANG_VEL = Math.toRadians(60);
-    //public static double MAX_ANG_ACCEL = Math.toRadians(60);
+    public static double MAX_VEL = 30;
+    public static double MAX_ACCEL = 30;
+    public static double MAX_ANG_VEL = Math.toRadians(60);
+    public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
     //85% max velocity 312 rpm motor - 100% = 52.48180821614297
-    public static double MAX_VEL = 52.48180821614297;
-    public static double MAX_ACCEL = 52.48180821614297;
-    public static double MAX_ANG_VEL = Math.toRadians(184.02607784577722);
-    public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
+    //public static double MAX_VEL = 52.48180821614297;
+    //public static double MAX_ACCEL = 52.48180821614297;
+    //public static double MAX_ANG_VEL = Math.toRadians(184.02607784577722);
+    //public static double MAX_ANG_ACCEL = Math.toRadians(184.02607784577722);
 
 
     public static double encoderTicksToInches(double ticks) {

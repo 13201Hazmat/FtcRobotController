@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Controllers.Examples;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.firstinspires.ftc.teamcode.Controllers.AutonomousControllerTemplate;
 import org.firstinspires.ftc.teamcode.GameOpModes.Examples.HzGameFieldUltimateGoal;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
@@ -64,6 +65,13 @@ public class HzAutonomousController_Template {
     }
     AUTO_SUBSYSTEM1_STATE autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.STOP;
 
+    /**
+     * Determine the commands to be called from Autonomous mode
+     */
+    public void setSubsystem1ToState(){
+        autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.START;
+        runAutoControl();
+    }
 
     /**
      * run Intake Control State machine response
