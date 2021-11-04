@@ -67,6 +67,7 @@ public class MajorArm {
     public boolean runArmToLevelState = false;
 
     public void initMajorArm(){
+        resetArm();
         turnArmBrakeModeOff();
         majorClawServo.setPosition(CLAW_CLOSED);
         majorClawState = MAJOR_CLAW_STATE.OPEN;
@@ -78,7 +79,7 @@ public class MajorArm {
 
     public void runArmToLevel(double power){
         majorArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (runArmToLevelState == true || majorArmMotor.isBusy() == true){
+        if (runArmToLevelState == true) {//|| majorArmMotor.isBusy() == true){
             majorArmMotor.setPower(power);
             runArmToLevelState = false;
         } else {
@@ -161,8 +162,8 @@ public class MajorArm {
      * Move Major Arm Slightly Down
      */
     public void moveMajorArmSlightlyDown(){
-        if ((currentArmPositionCount >= PARKED_POSITION_COUNT) &&
-                currentArmPositionCount <= PICKUP_POSITION_COUNT + MAJORARM_DELTA_COUNT){
+        if (//(currentArmPositionCount >= PARKED_POSITION_COUNT) &&
+                currentArmPositionCount >= PICKUP_POSITION_COUNT + MAJORARM_DELTA_COUNT){
             turnArmBrakeModeOn();
             currentArmPositionCount = currentArmPositionCount - MAJORARM_DELTA_COUNT;
             majorArmMotor.setTargetPosition(currentArmPositionCount);
@@ -174,8 +175,8 @@ public class MajorArm {
      * MoveMajor Arm Slightly Up
      */
     public void moveMajorArmSlightlyUp(){
-        if ((currentArmPositionCount < PICKUP_POSITION_COUNT) &&
-                currentArmPositionCount >= PARKED_POSITION_COUNT - MAJORARM_DELTA_COUNT){
+        if ((//currentArmPositionCount > PICKUP_POSITION_COUNT) &&
+                currentArmPositionCount <= PARKED_POSITION_COUNT - MAJORARM_DELTA_COUNT)){
             turnArmBrakeModeOn();
             currentArmPositionCount = currentArmPositionCount + MAJORARM_DELTA_COUNT;
             majorArmMotor.setTargetPosition(currentArmPositionCount);

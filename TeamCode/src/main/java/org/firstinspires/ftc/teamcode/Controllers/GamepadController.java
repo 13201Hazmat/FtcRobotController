@@ -236,10 +236,7 @@ public class GamepadController {
 
         if (!gp1GetStart()) {
             if (gp1GetLeftTriggerPress()) {
-                // ((elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_0) &&
-                  //    (elevator.elevatorState != Elevator.ELEVATOR_STATE.LEVEL_1)) {
-                    elevator.moveElevatorSlightlyDown();
-                //
+                elevator.moveElevatorSlightlyDown();
             }
         } else {
             if (gp1GetLeftTriggerPress()) {
