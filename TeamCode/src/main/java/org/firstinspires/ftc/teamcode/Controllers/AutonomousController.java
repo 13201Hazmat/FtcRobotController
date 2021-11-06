@@ -167,15 +167,48 @@ public class AutonomousController {
         LEVEL_2,
         LEVEL_3,
     }
-    //TODO: Add state variable and initializes
+    AUTO_ELEVATOR_STATE autoElevatorState = AUTO_ELEVATOR_STATE.LEVEL_0;
 
     public void moveAutoElevatorLevel0(){
-        //TODO : Add code
+        autoElevatorState = AUTO_ELEVATOR_STATE.LEVEL_0;
+        runAutoControl();
     }
-    //TODO : Add other Levels
+
+    public void moveAutoElevatorLevel1(){
+        autoElevatorState = AUTO_ELEVATOR_STATE.LEVEL_1;
+        runAutoControl();
+    }
+
+    public void moveAutoElevatorLevel2(){
+        autoElevatorState = AUTO_ELEVATOR_STATE.LEVEL_2;
+        runAutoControl();
+    }
+
+    public void moveAutoElevatorLevel3(){
+        autoElevatorState = AUTO_ELEVATOR_STATE.LEVEL_3;
+        runAutoControl();
+    }
 
     public void runAutoElevator() {
-        //TODO : Add code
+        if (elevator.elevatorState == Elevator.ELEVATOR_STATE.LEVEL_0){
+            elevator.moveElevatorLevel0Position();
+            autoMagazineState = AUTO_MAGAZINE_STATE.COLLECT;
+
+        } else {
+            autoIntakeState = AUTO_INTAKE_STATE.STOPPED;
+            autoMagazineState = AUTO_MAGAZINE_STATE.TRANSPORT;
+            switch (elevator.elevatorState){
+                case LEVEL_1:
+                    elevator.moveElevatorLevel1Position();
+                    break;
+                case LEVEL_2:
+                    elevator.moveElevatorLevel2Position();
+                    break;
+                case LEVEL_3:
+                    elevator.moveElevatorLevel3Position();
+                    break;
+            }
+        }
     }
 
     /**
@@ -184,16 +217,40 @@ public class AutonomousController {
      *      moveAutoMagazineToTransport()
      *      moveAutoMagazineToDrop()
      */
-    //TODO: Add command methods
     enum AUTO_MAGAZINE_STATE{
         COLLECT,
         TRANSPORT,
         DROP,
     }
-    //TODO: Add state variable and initializs
+    AUTO_MAGAZINE_STATE autoMagazineState = AUTO_MAGAZINE_STATE.COLLECT;
+
+    public void moveAutoMagazineToCollect(){
+        autoMagazineState = AUTO_MAGAZINE_STATE.COLLECT;
+        runAutoControl();
+    }
+
+    public void moveAutoMagazineToTransport(){
+        autoMagazineState = AUTO_MAGAZINE_STATE.TRANSPORT;
+        runAutoControl();
+    }
+
+    public void moveAutoMagazineToDrop(){
+        autoMagazineState = AUTO_MAGAZINE_STATE.DROP;
+        runAutoControl();
+    }
 
     public void runAutoMagazine() {
-        //TODO : Add code
+        switch (autoMagazineState){
+            case TRANSPORT:
+                magazine.moveMagazineToTransport();
+                break;
+            case DROP :
+                magazine.moveMagazineToDrop();
+                break;
+            case COLLECT:
+                magazine.moveMagazineToCollect();
+                break;
+        }
     }
 
     /**
