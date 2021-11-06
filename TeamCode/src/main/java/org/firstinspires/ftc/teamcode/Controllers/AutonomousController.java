@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
  *
  * HzAutoControl consists of methods to control the robot subsystems in autonomous mode <BR>
  * This is set up as a state machine. And replicates all commands as in the gamepad <BR>
- * 
+ *
  */
 
 public class AutonomousController {
