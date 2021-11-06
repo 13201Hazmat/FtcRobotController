@@ -102,12 +102,20 @@ public class MajorArm {
 
     public void changeClawState() {
         if ((majorClawState == MAJOR_CLAW_STATE.OPEN)) {
-            majorClawServo.setPosition(CLAW_CLOSED);
-            majorClawState = MAJOR_CLAW_STATE.CLOSED;
+            closeClaw();
         } else if ((majorClawState == MAJOR_CLAW_STATE.CLOSED)) {
-            majorClawServo.setPosition(CLAW_OPEN);
-            majorClawState = MAJOR_CLAW_STATE.OPEN;
+            openClaw();
         }
+    }
+
+    public void closeClaw(){
+        majorClawServo.setPosition(CLAW_CLOSED);
+        majorClawState = MAJOR_CLAW_STATE.CLOSED;
+    }
+
+    public void openClaw(){
+        majorClawServo.setPosition(CLAW_OPEN);
+        majorClawState = MAJOR_CLAW_STATE.OPEN;
     }
 
     //change the level of the Arm to Capstone

@@ -138,14 +138,18 @@ public class AutonomousController {
     }
 
     public void stopAutoIntake(){
-        //TODO : Add code
+        autoIntakeState = AUTO_INTAKE_STATE.STOPPED;
+        runAutoControl();
     }
 
     public void runAutoIntake() {
-        if (autoIntakeState == AUTO_INTAKE_STATE.RUNNING) {
-            //TODO: Add code
+        if (autoIntakeState == AUTO_INTAKE_STATE.RUNNING && elevator.getElevatorState() == Elevator.ELEVATOR_STATE.LEVEL_0) {
+            if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.COLLECT) {
+                magazine.moveMagazineToCollect();
+            }
+            intake.startForwardIntakeMotor();
         } else { //(autoIntakeState == AUTO_INTAKE_STATE.STOPPED)
-            //TODO : Add code
+            intake.stopIntakeMotor();
         }
     }
 
@@ -163,9 +167,9 @@ public class AutonomousController {
         LEVEL_2,
         LEVEL_3,
     }
-    //TODO: Add state variable and initializs
+    //TODO: Add state variable and initializes
 
-    public void moveAutoELevatorLevel0(){
+    public void moveAutoElevatorLevel0(){
         //TODO : Add code
     }
     //TODO : Add other Levels
@@ -200,23 +204,86 @@ public class AutonomousController {
         PICKUP,
         PARKED,
     }
-    //TODO: Add state variable and initializs
+    AUTO_MAJOR_ARM_STATE autoMajorArmState = AUTO_MAJOR_ARM_STATE.PARKED;
 
+    public void pickupAutoMajorArm(){
+        autoMajorArmState = AUTO_MAJOR_ARM_STATE.PICKUP;
+        runAutoControl();
+    }
+
+    public void parkAutoMajorArm(){
+        autoMajorArmState = AUTO_MAJOR_ARM_STATE.PARKED;
+        runAutoControl();
+    }
     public enum AUTO_MAJOR_CLAW_STATE {
         OPEN,
         CLOSED,
     }
-    //TODO: Add state variable and initializs
+    AUTO_MAJOR_CLAW_STATE autoMajorClawState = AUTO_MAJOR_CLAW_STATE.CLOSED;
+
+    public void openAutoMajorClaw(){
+        autoMajorClawState = AUTO_MAJOR_CLAW_STATE.OPEN;
+        runAutoControl();
+    }
+
+    public void closeAutoMajorClaw(){
+        autoMajorClawState = AUTO_MAJOR_CLAW_STATE.CLOSED;
+        runAutoControl();
+    }
 
     public void runAutoMajorArm() {
-        //TODO : Add code
+        if(autoMajorArmState == AUTO_MAJOR_ARM_STATE.PARKED){
+            majorArm.moveArmParkingPosition();
+        }
+        else{
+            majorArm.moveArmPickupPosition();
+        }
+
+        if(autoMajorClawState == AUTO_MAJOR_CLAW_STATE.OPEN){
+            majorArm.openClaw();
+        }
+        else{
+            majorArm.closeClaw();
+        }
     }
 
     /**
      * Spinner Commands :
      */
+
+    public enum AUTO_SPINNER_STATE{
+        CLOCKWISE,
+        ANTICLOCKWISE,
+        STOPPED,
+    }
+
+    AUTO_SPINNER_STATE autoSpinnerState = AUTO_SPINNER_STATE.STOPPED;
+
+    public void startAutoSpinnerCW() {
+    autoSpinnerState = AUTO_SPINNER_STATE.CLOCKWISE;
+    runAutoControl();
+    }
+
+    public void startAutoSpinnerCCW() {
+        autoSpinnerState = AUTO_SPINNER_STATE.ANTICLOCKWISE;
+        runAutoControl();
+    }
+
+    public void stopAutoSpinner(){
+        autoSpinnerState = AUTO_SPINNER_STATE.STOPPED;
+        runAutoControl();
+    }
+
     public void runAutoSpinner() {
-        //TODO : Add code
+        if(autoSpinnerState == AUTO_SPINNER_STATE.CLOCKWISE){
+            spinner.runSpinnerMotorClockwise();
+        }
+        else if(autoSpinnerState == AUTO_SPINNER_STATE.ANTICLOCKWISE){
+            spinner.runSpinnerMotorAnticlockwise();
+        }
+        else{
+            spinner.stopSpinnerMotor();
+        }
     }
 
 }
