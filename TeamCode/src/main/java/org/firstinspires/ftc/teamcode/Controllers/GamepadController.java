@@ -249,6 +249,29 @@ public class GamepadController {
         }
     }
 
+
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
+    public void runMagazine(){ //this function should be at LaunchController's place after order change
+        if (gp1GetRightBumperPress()) {
+            if(elevator.getElevatorState() != Elevator.ELEVATOR_STATE.LEVEL_0) {
+                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
+                    magazine.moveMagazineToDrop();
+                } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
+                    magazine.moveMagazineToTransport();
+                }
+            } else{
+                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT ) {
+                    magazine.moveMagazineToCollect();
+                } else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.RUNNING) {
+                    magazine.moveMagazineToTransport();
+                }
+            }
+        }
+    }
+
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
@@ -295,27 +318,6 @@ public class GamepadController {
         }
     }
 
-    /**
-     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
-     * direction in order for a stuck ring to be out of intake. <BR>
-     */
-    public void runMagazine(){ //this function should be at LaunchController's place after order change
-        if (gp1GetRightBumperPress()) {
-            if(elevator.getElevatorState() != Elevator.ELEVATOR_STATE.LEVEL_0) {
-                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT) {
-                    magazine.moveMagazineToDrop();
-                } else if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.DROP) {
-                    magazine.moveMagazineToTransport();
-                }
-            } else{
-                if (magazine.getMagazineServoState() == Magazine.MAGAZINE_SERVO_STATE.TRANSPORT ) {
-                    magazine.moveMagazineToCollect();
-                } else if(intake.getIntakeMotorState() != Intake.INTAKE_MOTOR_STATE.RUNNING) {
-                    magazine.moveMagazineToTransport();
-                }
-            }
-        }
-    }
 
     /**
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite

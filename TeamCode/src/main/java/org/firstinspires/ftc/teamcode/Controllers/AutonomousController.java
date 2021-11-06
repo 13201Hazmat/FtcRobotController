@@ -94,36 +94,6 @@ public class AutonomousController {
         runAutoControl();
     }
 
-
-    //TODO: Add states for each Subsystem
-
-    enum AUTO_INTAKE_STATE{
-        RUNNING,
-        STOPPED,
-    }
-
-    enum  AUTO_ELEVATOR_STATE{
-        LEVEL_0,
-        LEVEL_1,
-        LEVEL_2,
-        LEVEL_3,
-    }
-
-    enum AUTO_MAGAZINE_STATE{
-        COLLECT,
-        TRANSPORT,
-        DROP,
-    }
-
-    enum AUTO_MAJOR_ARM_STATE{
-        PICKUP,
-        PARKED,
-    }
-    public enum AUTO_MAJOR_CLAW_STATE {
-        OPEN,
-        CLOSED,
-    }
-
     /**
      * run Intake Control State machine response
      * Also deactivate Launch readiness when Intake is started
@@ -149,24 +119,103 @@ public class AutonomousController {
 
     //TODO: Add more run Subsystem Control functions
 
-    public void runAutoIntake() {
+    /**
+     * Intake Commands :
+     *      startAutoIntake()
+     *      stopAutoIntake()
+     */
 
+    enum AUTO_INTAKE_STATE{
+        RUNNING,
+        STOPPED,
     }
+    AUTO_INTAKE_STATE autoIntakeState = AUTO_INTAKE_STATE.STOPPED;
+
+    public void startAutoIntake(){
+        autoIntakeState = AUTO_INTAKE_STATE.RUNNING;
+        runAutoControl();
+    }
+
+    public void stopAutoIntake(){
+        //TODO : Add code
+    }
+
+    public void runAutoIntake() {
+        if (autoIntakeState == AUTO_INTAKE_STATE.RUNNING) {
+            //TODO: Add code
+        } else { //(autoIntakeState == AUTO_INTAKE_STATE.STOPPED)
+            //TODO : Add code
+        }
+    }
+
+    /**
+     * Elevator Commands :
+     *      moveAutoElevatorLevel0()
+     *      moveAutoElevatorLevel1()
+     *      moveAutoElevatorLevel2()
+     *      moveAutoElevatorLevel3()
+     */
+
+    enum  AUTO_ELEVATOR_STATE{
+        LEVEL_0,
+        LEVEL_1,
+        LEVEL_2,
+        LEVEL_3,
+    }
+    //TODO: Add state variable and initializs
+
+    public void moveAutoELevatorLevel0(){
+        //TODO : Add code
+    }
+    //TODO : Add other Levels
 
     public void runAutoElevator() {
-
+        //TODO : Add code
     }
+
+    /**
+     * Magazine Commands :
+     *      moveAutoMagazineToCollect()
+     *      moveAutoMagazineToTransport()
+     *      moveAutoMagazineToDrop()
+     */
+    //TODO: Add command methods
+    enum AUTO_MAGAZINE_STATE{
+        COLLECT,
+        TRANSPORT,
+        DROP,
+    }
+    //TODO: Add state variable and initializs
 
     public void runAutoMagazine() {
-
+        //TODO : Add code
     }
 
-    public void runAutoSpinner() {
+    /**
+     * Major Arm Commands :
+     */
 
+    enum AUTO_MAJOR_ARM_STATE{
+        PICKUP,
+        PARKED,
     }
+    //TODO: Add state variable and initializs
+
+    public enum AUTO_MAJOR_CLAW_STATE {
+        OPEN,
+        CLOSED,
+    }
+    //TODO: Add state variable and initializs
 
     public void runAutoMajorArm() {
+        //TODO : Add code
+    }
 
+    /**
+     * Spinner Commands :
+     */
+    public void runAutoSpinner() {
+        //TODO : Add code
     }
 
 }
