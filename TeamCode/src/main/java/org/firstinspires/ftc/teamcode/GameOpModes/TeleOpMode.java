@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
-import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
+import org.firstinspires.ftc.teamcode.SubSystems.MinorArm;
 
 /**
  * Ultimate Goal TeleOp mode <BR>
@@ -31,6 +31,7 @@ public class TeleOpMode extends LinearOpMode {
     public Magazine magazine;
     public Spinner spinner;
     public MajorArm majorArm;
+    public MinorArm minorArm;
 
     //public Vuforia Vuforia1;
     public Pose2d startPose = GameField.ORIGINPOSE;
@@ -45,9 +46,10 @@ public class TeleOpMode extends LinearOpMode {
         magazine = new Magazine(hardwareMap);
         spinner = new Spinner(hardwareMap);
         majorArm = new MajorArm(hardwareMap);
+        minorArm = new MinorArm(hardwareMap);
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, intake, elevator, magazine, spinner, majorArm);
+        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, intake, elevator, magazine, spinner, majorArm, minorArm);
 
         GameField.playingAlliance= GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
         /* Get last position after Autonomous mode ended from static class set in Autonomous */

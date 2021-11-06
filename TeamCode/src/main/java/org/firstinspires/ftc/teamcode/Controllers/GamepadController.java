@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Elevator;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
+import org.firstinspires.ftc.teamcode.SubSystems.MinorArm;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
@@ -73,7 +74,7 @@ public class GamepadController {
                              Elevator elevator,
                              Magazine magazine,
                              Spinner spinner,
-                             MajorArm majorArm) {
+                             MajorArm majorArm, MinorArm minorArm) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
         this.driveTrain = driveTrain;
