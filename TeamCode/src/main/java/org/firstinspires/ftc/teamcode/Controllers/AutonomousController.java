@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
-import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
 
 /**
  * Defenition of the AutoControl Class <BR>
@@ -29,7 +28,7 @@ public class AutonomousController {
     public Spinner spinner;
     public MajorArm majorArm;
 
-    public Pose2d startPose = GameField.BLUE_STARTPOS_1;
+    public Pose2d startPose = GameField.BLUE_WAREHOUSE_STARTPOS;
 
     // TODO: Declare autonomous option logic based on key pad selection
     /* Example
@@ -75,51 +74,6 @@ public class AutonomousController {
         }
     }
 
-
-
-    // Define and delcare autonomous states
-    // Example
-    enum AUTO_SUBSYSTEM1_STATE{
-        START,
-        STOP,
-        //TODO:Update Subsystem states as appropriate
-    }
-    AUTO_SUBSYSTEM1_STATE autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.STOP;
-
-    /**
-     * set Launch Target PowerShot2 state
-     */
-    public void setSubsystem1ToState(){
-        autoSubsystem1State = AUTO_SUBSYSTEM1_STATE.START;
-        runAutoControl();
-    }
-
-    /**
-     * run Intake Control State machine response
-     * Also deactivate Launch readiness when Intake is started
-     */
-    public void runSubsystem1Control(){
-
-        if (autoSubsystem1State == AUTO_SUBSYSTEM1_STATE.START){
-            //TODO: Add state setting code for Subsystem1
-            /* Set state for subsystem - Example
-            acHzLaunchSubControllerUltimateGoal.activateLaunchReadinessState = false;
-            acHzLaunchSubControllerUltimateGoal.deactivateLaunchReadinessState = true;
-            acHzMagazineUltimateGoal.moveMagazineTo = HzMagazineUltimateGoal.MOVE_MAGAZINE_TO.COLLECT;
-             */
-        }
-
-        if (autoSubsystem1State == AUTO_SUBSYSTEM1_STATE.STOP){
-            //TODO: Add state setting code for Subsystem1
-             /* Set state for subsystem - Example
-            acHzIntakeUltimateGoal.intakeButtonState = HzIntakeUltimateGoal.INTAKE_BUTTON_STATE.OFF;
-              */
-        }
-    }
-
-
-    //TODO: Add more run Subsystem Control functions
-
     /**
      * Intake Commands :
      *      startAutoIntake()
@@ -143,7 +97,8 @@ public class AutonomousController {
     }
 
     public void runAutoIntake() {
-        if (autoIntakeState == AUTO_INTAKE_STATE.RUNNING && elevator.getElevatorState() == Elevator.ELEVATOR_STATE.LEVEL_0) {
+        if (autoIntakeState == AUTO_INTAKE_STATE.RUNNING &&
+                elevator.getElevatorState() == Elevator.ELEVATOR_STATE.LEVEL_0) {
             if (magazine.getMagazineServoState() != Magazine.MAGAZINE_SERVO_STATE.COLLECT) {
                 magazine.moveMagazineToCollect();
             }
@@ -263,12 +218,12 @@ public class AutonomousController {
     }
     AUTO_MAJOR_ARM_STATE autoMajorArmState = AUTO_MAJOR_ARM_STATE.PARKED;
 
-    public void pickupAutoMajorArm(){
+    public void moveAutoMajorArmPickup(){
         autoMajorArmState = AUTO_MAJOR_ARM_STATE.PICKUP;
         runAutoControl();
     }
 
-    public void parkAutoMajorArm(){
+    public void moveAutoMajorArmPark(){
         autoMajorArmState = AUTO_MAJOR_ARM_STATE.PARKED;
         runAutoControl();
     }

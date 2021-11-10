@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.teamcode.Controllers.Examples.HzAutonomousControllerUltimateGoal;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
@@ -22,7 +21,7 @@ public class AutonomousControllerTemplate {
     public SubsystemTemplate subsystemTemplate;
     //TODO: Replace name of Subsystem1 and Declare more subsystems
 
-    public Pose2d startPose = GameField.BLUE_STARTPOS_1;
+    public Pose2d startPose = GameField.BLUE_WAREHOUSE_STARTPOS;
 
     // TODO: Declare autonomous option logic based on key pad selection
     /* Example

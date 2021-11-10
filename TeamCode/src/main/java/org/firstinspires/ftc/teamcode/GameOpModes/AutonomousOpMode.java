@@ -1,18 +1,23 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Controllers.AutonomousControllerTemplate;
-import org.firstinspires.ftc.teamcode.Controllers.GamepadControllerTemplate;
+import org.firstinspires.ftc.teamcode.Controllers.AutonomousController;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.SubsystemTemplate;
+import org.firstinspires.ftc.teamcode.SubSystems.Elevator;
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
+import org.firstinspires.ftc.teamcode.SubSystems.MajorArm;
+import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
-
-import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 
 /**
@@ -32,15 +37,20 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * Camera on either side is used using Vuforia to determine target for Wobble Goal<BR>
  */
 //TODO: Copy and Rename Autonomous Mode
-@Autonomous(name = "Autonomous Template", group = "00-Autonomous" , preselectTeleOp = "TeleOp Template")
-public class AutonomousOpModeTemplate extends LinearOpMode {
+@Autonomous(name = "Autonomous", group = "00-Autonomous" , preselectTeleOp = "TeleOp")
+public class AutonomousOpMode extends LinearOpMode {
 
     public boolean DEBUG_FLAG = true;
 
-    public GamepadControllerTemplate gamepadControllerTemplate;
-    public AutonomousControllerTemplate autonomousController;
+    public GamepadController gamepadController;
+    public AutonomousController autonomousController;
     public DriveTrain driveTrain;
-    public SubsystemTemplate subsystemTemplate;
+    public Intake intake;
+    public Elevator elevator;
+    public Magazine magazine;
+    public Spinner spinner;
+    public MajorArm majorArm;
+
     //TODO: Replace name of Subsystem1 and Declare more subsystems
 
     public Vision vision;
@@ -61,12 +71,21 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         /* Create Subsystem Objects*/
         driveTrain = new DriveTrain(hardwareMap);
-        subsystemTemplate = new SubsystemTemplate(hardwareMap);
+        intake = new Intake(hardwareMap);
+        elevator = new Elevator(hardwareMap);
+        magazine = new Magazine(hardwareMap);
+        spinner = new Spinner(hardwareMap);
+        majorArm = new MajorArm(hardwareMap);
         //TODO: Replace name of Subsystem1 and Declare more subsystems
 
         /* Create Controllers */
-        gamepadControllerTemplate = new GamepadControllerTemplate(gamepad1,gamepad2, driveTrain, subsystemTemplate);
-        autonomousController = new AutonomousControllerTemplate(driveTrain, subsystemTemplate);
+        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, intake, elevator, magazine, spinner, majorArm, minorArm);
+        autonomousController = new AutonomousController(driveTrain,
+                intake,
+                elevator,
+                magazine,
+                spinner,
+                majorArm);
 
         //Key Pay inputs to select Game Plan;
         selectGamePlan(); //TODO: Update function with more selections as needed
@@ -78,7 +97,7 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
 
         driveTrain.getLocalizer().setPoseEstimate(startPose);
 
-        // Add logic to set starting state of Robot and hold at that
+        //TODO Add logic to set starting state of Robot and hold at that
         /* example - Intake.setIntakeReleaseHold();
 
         while (MagazineUltimateGoal.magazineLaunchTouchSensor.isPressed() == false) {
@@ -113,14 +132,13 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
 
                 // Logic to determine and run defined Autonomous mode
                 if (GameField.startPosition == GameField.START_POSITION.STARTPOS_1) {
-                    runAutoOption1();
+                    runAutoWarehouse();
                     //TODO: Update Option1 with relevant name
                 } else { //GameField.startPosition == GameField.START_POSITION.OUTER
                     //TODO: Create new runAutoOptions for alternate options
-                    //runAutoOuter();
+                    runAutoCarousel();
                 }
 
-                subsystemTemplate.setIntakeReleaseOpen();
 
                 //Move to Launching Position
                 parked = true;
@@ -145,48 +163,64 @@ public class AutonomousOpModeTemplate extends LinearOpMode {
     /**
      * Path and actions for autonomous mode starting from Inner start position
      */
-    public void runAutoOption1(){
+    public void runAutoWarehouse(){
         //TODO: Update name for Autonomous mode.
         //Logic for waiting
         safeWait(100);
 
         //TODO: Add logic for autonmous mode actions.
 
-        /* Example
+        // Scan Barcode
+        //TODO: Scan Barcode Code
 
-        // Move to launch position and launch rings to High Goal or Powershots
-        if (!AutonomousController.launchHighGoalOrPowerShot) {
-            //runInnerOnlyLaunchPark(0);
-            return;
-        } else {
-            // Move to launch position and launch rings to High Goal or Powershots
-            if (AutonomousController.autoLaunchAim == AutonomousControllerUltimateGoal.AutoLaunchAim.HIGHGOAL) {
-                // Set magazine to Launch in case it slipped
-                AutonomousController.setMagazineToLaunch();
-                AutonomousController.setLaunchTargetHighGoal();
+        //Move arm to Pickup Capstone level and open Grip
+        autonomousController.moveAutoMajorArmPickup();
+        autonomousController.openAutoMajorClaw();
 
-                AutonomousController.setMagazineToLaunch();
-                //Move to position to launch rings
-                if (GameFieldUltimateGoal.playingAlliance == GameFieldUltimateGoal.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    traj = Drive.trajectoryBuilder(Drive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-6, 14, Math.toRadians(19)))//-10
-                            .build();
-                }
-                Drive.followTrajectory(traj);
+        //Move forward to Barcode Position
+        switch (targetZone) {
+            case LEVEL1:
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
+                        .splineToConstantHeading(new Game, Math.toRadians(0))
+                        .build();
+                break;
+            case LEVEL2:
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
+                        .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
+                        .build();
+                break;
+            case LEVEL3:
+                traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
+                        .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
+                        .build();
+                break;
+        }
+        driveTrain.followTrajectory(traj);
 
-                traj = Drive.trajectoryBuilder(Drive.getPoseEstimate())
+
+        traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
                 .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
                 .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
                 .build();
-                Drive.followTrajectory(traj);
+        driveTrain.followTrajectory(traj);
 
-                launch3RingsToHighGoal();
-            }
-            */
+
+
+
+    }
+    public void runAutoCarousel(){
+        //TODO: Code
     }
 
     //TODO: Add other runAutoOptions
 
+    public void moveArmtoPickupAndOpenClaw(){
+        autonomousController.moveAutoMajorArmPickup();
+        autonomousController.openAutoMajorClaw();
+
+    }
 
     /**
      * Safe method to wait so that stop button is also not missed

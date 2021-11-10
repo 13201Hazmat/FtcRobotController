@@ -18,13 +18,20 @@ public class GameField {
 
     // Declare and assign starting pose of robot
     //TODO: Update start position correctly.
-    public static final Pose2d BLUE_STARTPOS_1 =  new Pose2d(-57,26,Math.toRadians(90));
-    public static final Pose2d BLUE_STARTPOS_2 =  new Pose2d(-57,44,Math.toRadians(-90));
-    public static final Pose2d RED_STARTPOS_1 =  new Pose2d(-57,-26,Math.toRadians(-90)); //y=-26
-    public static final Pose2d RED_STARTPOS_2 =  new Pose2d(-57,-47,Math.toRadians(90));
+    public static final Pose2d BLUE_WAREHOUSE_STARTPOS =  new Pose2d(-63,12,Math.toRadians(180));
+    public static final Pose2d BLUE_CAROUSAL_STARTPOS =  new Pose2d(-63,-36,Math.toRadians(180));
+    public static final Pose2d RED_WAREHOUSE_STARTPOS =  new Pose2d(63,12,Math.toRadians(0)); //y=-26
+    public static final Pose2d RED_CAROUSAL_STARTPOS =  new Pose2d(63,-36,Math.toRadians(0));
 
     //Declare locations of key positions on field
     //Example - public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,42);
+    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL1POS = new Vector2d(51,10);
+    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL2POS = new Vector2d(51,20);
+    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL3POS = new Vector2d(51,30);
+
+    public static final Vector2d BLUE_CAPSTONE1POS = new Vector2d(-51,9);
+    public static final Vector2d BLUE_CAPSTONE2POS = new Vector2d(-51,18);
+    public static final Vector2d BLUE_CAPSTONE3POS = new Vector2d(-51,27);
 
     //Define and declare Playing Alliance
     public enum PLAYING_ALLIANCE{
