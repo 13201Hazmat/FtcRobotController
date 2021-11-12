@@ -297,5 +297,16 @@ public class AutonomousController {
             spinner.stopSpinnerMotor();
         }
     }
+    /**
+     * Hybrid Commands For Autonomous OpMode
+     */
+    public void runAutoPickUpCapstone() {
+        majorArm.moveArmPickupPosition();
+        majorArm.openClaw();
+        //add the spline function
+        majorArm.closeClaw();
+        majorArm.moveArmParkingPosition();
+    }
+
 
 }

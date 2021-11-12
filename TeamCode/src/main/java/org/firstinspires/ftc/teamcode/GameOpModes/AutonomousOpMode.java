@@ -181,12 +181,12 @@ public class AutonomousOpMode extends LinearOpMode {
         switch (targetZone) {
             case LEVEL1:
                 traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
-                        .splineToConstantHeading(new Game, Math.toRadians(0))
+                        .splineToConstantHeading(, Math.toRadians(0))
                         .build();
                 break;
             case LEVEL2:
                 traj = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(-20, af * 48), Math.toRadians(af * 0))
+                        .splineToConstantHeading(new Pose2d(-, af * ), Math.toRadians(af * 0))
                         .splineToConstantHeading(new Vector2d(-33, af * 48), Math.toRadians(af * 0))
                         .build();
                 break;
