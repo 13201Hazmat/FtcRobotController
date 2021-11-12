@@ -74,7 +74,7 @@ public class GamepadController {
                              Elevator elevator,
                              Magazine magazine,
                              Spinner spinner,
-                             MajorArm majorArm, MinorArm minorArm) {
+                             MajorArm majorArm) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
         this.driveTrain = driveTrain;

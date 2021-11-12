@@ -51,7 +51,7 @@ public class AutonomousOpMode extends LinearOpMode {
     public Spinner spinner;
     public MajorArm majorArm;
 
-    //TODO: Replace name of Subsystem1 and Declare more subsystems
+
 
     public Vision vision;
     public Pose2d startPose = GameField.BLUE_WAREHOUSE_STARTPOS;
@@ -76,10 +76,9 @@ public class AutonomousOpMode extends LinearOpMode {
         magazine = new Magazine(hardwareMap);
         spinner = new Spinner(hardwareMap);
         majorArm = new MajorArm(hardwareMap);
-        //TODO: Replace name of Subsystem1 and Declare more subsystems
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, intake, elevator, magazine, spinner, majorArm, minorArm);
+        gamepadController = new GamepadController(gamepad1, gamepad2, driveTrain, intake, elevator, magazine, spinner, majorArm);
         autonomousController = new AutonomousController(driveTrain,
                 intake,
                 elevator,
@@ -210,8 +209,11 @@ public class AutonomousOpMode extends LinearOpMode {
 
 
     }
+
+
     public void runAutoCarousel(){
         //TODO: Code
+
     }
 
     //TODO: Add other runAutoOptions
@@ -244,13 +246,13 @@ public class AutonomousOpMode extends LinearOpMode {
 
         //Add logic to select autonomous mode based on keypad entry
         while (!isStopRequested()) {
-            if (gamepadControllerTemplate.gp1GetButtonBPress()) {
+            if (gamepadController.gp1GetButtonBPress()) {
                 GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 GameField.ALLIANCE_FACTOR = -1;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
-            if (gamepadControllerTemplate.gp1GetButtonXPress()) {
+            if (gamepadController.gp1GetButtonXPress()) {
                 GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 GameField.ALLIANCE_FACTOR = 1;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
@@ -266,14 +268,14 @@ public class AutonomousOpMode extends LinearOpMode {
         telemetry.addData("Enter Start Pose :", "(STARTPOS_1: (A) ,    STARTPOS_2: (Y))");
         while (!isStopRequested()) {
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (gamepadControllerTemplate.gp1GetButtonAPress()) {
+                if (gamepadController.gp1GetButtonAPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_1;
                     startPose = GameField.RED_WAREHOUSE_STARTPOS;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
                     telemetry.addData("Start Pose : ", "RED_STARTPOS_1");
                     break;
                 }
-                if (gamepadControllerTemplate.gp1GetButtonYPress()) {
+                if (gamepadController.gp1GetButtonYPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_2;
                     startPose = GameField.RED_CAROUSAL_STARTPOS;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
@@ -282,14 +284,14 @@ public class AutonomousOpMode extends LinearOpMode {
                 }
             }
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (gamepadControllerTemplate.gp1GetButtonAPress()) {
+                if (gamepadController.gp1GetButtonAPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_1;
                     startPose = GameField.BLUE_WAREHOUSE_STARTPOS;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;
                     telemetry.addData("Start Pose : ", "BLUE_STARTPOS_1");
                     break;
                 }
-                if (gamepadControllerTemplate.gp1GetButtonYPress()) {
+                if (gamepadController.gp1GetButtonYPress()) {
                     GameField.startPosition = GameField.START_POSITION.STARTPOS_2;
                     startPose = GameField.BLUE_CAROUSAL_STARTPOS;
                     activeWebcam = Vision.ACTIVE_WEBCAM.WEBCAM1;

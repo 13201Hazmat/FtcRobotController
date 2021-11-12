@@ -25,9 +25,10 @@ public class GameField {
 
     //Declare locations of key positions on field
     //Example - public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,42);
-    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL1POS = new Vector2d(49,-2);
-    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL2POS = new Vector2d(49,7);
-    public static final Vector2d RED_CAPSTONE_WAREHOUSE_LEVEL3POS = new Vector2d(49,16);
+    public static final Vector2d RED_WAREHOUSE_CAPSTONE_LEVEL1POS = new Vector2d(49,-2);
+    public static final Vector2d RED_WAREHOUSE_CAPSTONE_LEVEL2POS = new Vector2d(49,7);
+    public static final Vector2d RED_WAREHOUSE_CAPSTONE_LEVEL3POS = new Vector2d(49,16);
+
 
     public static final Vector2d BLUE_CAPSTONE1POS = new Vector2d(-51,9);
     public static final Vector2d BLUE_CAPSTONE2POS = new Vector2d(-51,18);
