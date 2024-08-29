@@ -9,13 +9,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.SubSystems.Climber;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
 
 
