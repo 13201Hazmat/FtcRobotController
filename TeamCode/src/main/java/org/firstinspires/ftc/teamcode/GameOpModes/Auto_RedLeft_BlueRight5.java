@@ -47,17 +47,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
-import org.firstinspires.ftc.teamcode.Controllers.IntakeController;
-import org.firstinspires.ftc.teamcode.Controllers.OuttakeController;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionOpenCV;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
@@ -70,18 +63,11 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public DriveTrain driveTrain;
-    public Intake intake;
-    public Magazine magazine;
-    public OuttakeSlides outtakeSlides;
-    public OuttakeArm outtakeArm;
-    public Climber climber;
     public Launcher launcher;
     public ParkingArm parkingArm;
     public VisionSensor visionSensor;
     public VisionOpenCV visionOpenCV;
     public Lights lights;
-    public OuttakeController outtakeController;
-    public IntakeController intakeController;
     public TelemetryPacket telemetryPacket = new TelemetryPacket();
 
     public MecanumDrive drive;
@@ -170,7 +156,6 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
             //Turn Lights Green
             lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEFAULT);
 
-            outtakeArm.openGrip();
             runActionForRedLeftBlueRight();
 
         }
@@ -606,13 +591,9 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
         if (autoOption == AUTO_OPTION.PURPLE_AND_STOP) {
             Actions.runBlocking(
                     new SequentialAction(
-                            intakeController.squishPurplePixelInStartOfAutoForDropAction(),
-                            intakeController.dropLiftIntake(),
                             new SleepAction(0.5),
                             trajInitToDropPurplePixel,
-                            intakeController.dropPurplePixelUsingIntakeAction(),
-                            new SleepAction(0.5),
-                            intakeController.intakeLiftUpAction()
+                            new SleepAction(0.5)
                     )
             );
         }
@@ -620,35 +601,21 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
         if (autoOption == AUTO_OPTION.PURPLE_STACK_YELLOW_PARK) {
             Actions.runBlocking(
                     new SequentialAction(
-                            intakeController.squishPurplePixelInStartOfAutoForDropAction(),
-                            intakeController.dropLiftIntake(),
                             trajInitToDropPurplePixel,
-                            intakeController.dropPurplePixelUsingIntakeAction(),
                             new SleepAction(0.3),
-                            intakeController.intakeLiftUpAction(),
                             new SleepAction(0.3),
                             new SleepAction(afterPurplePixelWait),
                             trajDropPurplePixelToAfterPurplePixel,
-                            intakeController.dropLiftIntake(),
                             trajAfterPurplePixelToStack,
                             //intakeController.intakeAtStackOnePixelAction(), //TODO : Determine which to use
-                            intakeController.intakeAtStackUsingMagazineSensorAction(0.8),//1
                             //TODO: CHANGE ACTION TO Rotate once each of Horizontal intake, rather than continuous rotation.
                             // Intake should be running more, less revolutions of horizontal intake.
 
                             new SleepAction(0.5),
-                            intakeController.intakeReverseAction(0.7),
-                            intakeController.intakeLiftUpAction(),
                             trajStackToAfterStack,
                             trajAfterStackToDropYellowPixel,
-                            outtakeController.moveReadyForTransferToTransferAction(),
-                            outtakeController.moveTransferToPickupAction(),
-                            outtakeController.movePickupToReadyForTransferAction(),
-                            outtakeController.moveReadyForTransferToDropAction(OuttakeSlides.OUTTAKE_SLIDE_STATE.DROP_LOWEST),
                             new SleepAction(0.7),
-                            outtakeController.dropTwoPixelAction(),
                             new SleepAction(0.1),
-                            outtakeController.moveOuttakeToEndStateAction(),
                             trajDropYellowPixelToPark,
                             parkingArm.extendParkingArmAction()
                     )
@@ -836,23 +803,18 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        intake = new Intake(hardwareMap, telemetry);
         telemetry.addLine("Intake Initialized");
         telemetry.update();
 
-        magazine = new Magazine(hardwareMap, telemetry);
         telemetry.addLine("Magazine Initialized");
         telemetry.update();
 
-        outtakeArm = new OuttakeArm(hardwareMap, telemetry);
         telemetry.addLine("OuttakeArm Initialized");
         telemetry.update();
 
-        outtakeSlides = new OuttakeSlides(hardwareMap, telemetry);
         telemetry.addLine("OuttakeSlides Initialized");
         telemetry.update();
 
-        climber = new Climber(hardwareMap, telemetry);
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
@@ -882,17 +844,14 @@ public class Auto_RedLeft_BlueRight5 extends LinearOpMode {
         lights.setPattern(Lights.REV_BLINKIN_PATTERN.NONE);
         telemetry.update();
 
-        outtakeController = new OuttakeController(this.outtakeSlides, this.outtakeArm, this);
         telemetry.addLine("Outtake Controller Initialized");
         telemetry.update();
 
-        intakeController = new IntakeController(this.intake, this.magazine,this);
         telemetry.addLine("Intake Controller Initialized");
         telemetry.update();
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, intake, magazine,
-                outtakeSlides, outtakeArm, climber, launcher, visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, launcher, visionSensor, lights, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 

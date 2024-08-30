@@ -11,14 +11,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
-import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
 import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
@@ -37,11 +32,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
-    public Intake intake;
-    public Magazine magazine;
-    public OuttakeSlides outtakeSlides;
-    public OuttakeArm outtakeArm;
-    public Climber climber;
     public Launcher launcher;
     public ParkingArm parkingArm;
     public VisionSensor visionSensor;
@@ -125,23 +115,18 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        intake = new Intake(hardwareMap, telemetry);
         telemetry.addLine("Intake Initialized");
         telemetry.update();
 
-        magazine = new Magazine(hardwareMap, telemetry);
         telemetry.addLine("Magazine Initialized");
         telemetry.update();
 
-        outtakeArm = new OuttakeArm(hardwareMap, telemetry);
         telemetry.addLine("OuttakeArm Initialized");
         telemetry.update();
 
-        outtakeSlides = new OuttakeSlides(hardwareMap, telemetry);
         telemetry.addLine("OuttakeSlides Initialized");
         telemetry.update();
 
-        climber = new Climber(hardwareMap, telemetry);
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
@@ -174,8 +159,7 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.update();
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, intake, magazine,
-                outtakeSlides, outtakeArm, climber, launcher, visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, launcher, visionSensor, lights, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -217,10 +201,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
             //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            intake.printDebugMessages();
-            outtakeSlides.printDebugMessages();
-            outtakeArm.printDebugMessages();
-            climber.printDebugMessages();
             launcher.printDebugMessages();
             visionSensor.printDebugMessages();
             visionAprilTagBack.printdebugMessages();
