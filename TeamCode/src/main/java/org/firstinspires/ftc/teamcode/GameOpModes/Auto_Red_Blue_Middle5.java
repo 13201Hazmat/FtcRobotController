@@ -105,6 +105,8 @@ public class Auto_Red_Blue_Middle5 extends LinearOpMode {
         initSubsystems();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+        //initLimelight();
+
         //Key Pay inputs to selecting Starting Position of robot
         selectStartingPosition();
         telemetry.addData("Selected Starting Position", GameField.startPosition);
@@ -607,7 +609,10 @@ public class Auto_Red_Blue_Middle5 extends LinearOpMode {
         telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
         telemetry.update();
     }
+    //Bijal Shrestha 9/19/24
+    public void initLimelight(){
 
+    }
     public String toStringPose2d(Pose2d pose){
         return String.format("(%.3f, %.3f, %.3f)", pose.position.x, pose.position.y, Math.toDegrees(pose.heading.log()));
     }

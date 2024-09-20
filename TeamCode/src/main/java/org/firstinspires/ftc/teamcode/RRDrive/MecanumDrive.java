@@ -50,7 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public class MecanumDrive {
+public class  MecanumDrive {
     public static class Params {
         //CALIBERATION FOR FROZEN FRENZY
         //Step 2 : Update direction of IMU by updating orientation of Driver Hub below
