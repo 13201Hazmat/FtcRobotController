@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
@@ -32,7 +31,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
-    public Launcher launcher;
     public ParkingArm parkingArm;
     public VisionSensor visionSensor;
     public VisionAprilTag visionAprilTagBack;
@@ -130,10 +128,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
-        launcher = new Launcher(hardwareMap, telemetry);
-        telemetry.addLine("Launcher Initialized");
-        telemetry.update();
-
         parkingArm = new ParkingArm(hardwareMap, telemetry);
         telemetry.addLine("ParkingArm Initialized");
         telemetry.update();
@@ -159,7 +153,7 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.update();
 
         /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, launcher, visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, visionSensor, lights, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -201,7 +195,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
             //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            launcher.printDebugMessages();
             visionSensor.printDebugMessages();
             visionAprilTagBack.printdebugMessages();
             lights.printDebugMessages();

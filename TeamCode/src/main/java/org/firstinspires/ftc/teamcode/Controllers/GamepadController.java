@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
 
@@ -54,7 +53,6 @@ public class GamepadController {
 
     //Create object reference to objects to systems passed from TeleOp
     public Gamepad hzGamepad1, hzGamepad2;
-    public Launcher launcher;
     public VisionSensor visionSensor;
     public Lights lights;
     public Telemetry telemetry;
@@ -66,7 +64,6 @@ public class GamepadController {
      */
     public GamepadController(Gamepad hzGamepad1,
                              Gamepad hzGamepad2,
-                             Launcher launcher,
                              VisionSensor visionSensor,
                              Lights lights,
                              Telemetry telemetry,
@@ -75,7 +72,6 @@ public class GamepadController {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
         this.lights = lights;
-        this.launcher = launcher;
         this.visionSensor = visionSensor;
         this.telemetry = telemetry;
         this.currentOpMode = currentOpMode;
@@ -85,7 +81,7 @@ public class GamepadController {
      *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
     public void runByGamepadControl(){
-        runLauncher();
+        //runLauncher();
       }
 
     public ElapsedTime magazineSecondPixelTimer = new ElapsedTime(MILLISECONDS);
@@ -93,17 +89,6 @@ public class GamepadController {
     public boolean magazineTwoPixelReverserActivated = false;
     public boolean intakeOnLiftStartFlag = false;
     public boolean intakeReverserButtonHeld = false;
-
-
-
-    public void runLauncher(){
-        //Launcher code
-        if (gp1GetRightBumperPress()) {
-            launcher.launchDrone();
-            launcher.launcherButtonState = Launcher.LAUNCHER_BUTTON_STATE.LAUNCHED;
-        }
-
-    }
 
 
 

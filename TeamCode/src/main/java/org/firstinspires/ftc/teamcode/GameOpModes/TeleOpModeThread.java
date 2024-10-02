@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
@@ -30,7 +29,6 @@ public class TeleOpModeThread extends LinearOpMode {
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
-    public Launcher launcher;
     public ParkingArm parkingArm;
     public VisionSensor visionSensor;
     public VisionAprilTag visionAprilTagBack;
@@ -125,10 +123,6 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
-        launcher = new Launcher(hardwareMap, telemetry);
-        telemetry.addLine("Launcher Initialized");
-        telemetry.update();
-
         parkingArm = new ParkingArm(hardwareMap, telemetry);
         telemetry.addLine("ParkingArm Initialized");
         telemetry.update();
@@ -153,7 +147,7 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, launcher, visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2,  visionSensor, lights, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -189,7 +183,6 @@ public class TeleOpModeThread extends LinearOpMode {
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();
-            launcher.printDebugMessages();
             parkingArm.printDebugMessages();
             visionSensor.printDebugMessages();
             //visionAprilTagBack.printdebugMessages();
