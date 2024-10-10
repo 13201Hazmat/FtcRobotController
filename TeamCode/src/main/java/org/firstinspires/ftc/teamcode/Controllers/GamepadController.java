@@ -7,7 +7,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.SubSystems.Climber;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
+import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
 
 
@@ -55,6 +60,11 @@ public class GamepadController {
     public Gamepad hzGamepad1, hzGamepad2;
     public VisionSensor visionSensor;
     public Lights lights;
+    public IntakeArm intakeArm;
+    public IntakeSlides intakeSlides;
+    public OuttakeArm outtakeArm;
+    public OuttakeSlides outtakeSlides;
+    public Climber climber;
     public Telemetry telemetry;
     LinearOpMode currentOpMode;
 
@@ -66,11 +76,19 @@ public class GamepadController {
                              Gamepad hzGamepad2,
                              VisionSensor visionSensor,
                              Lights lights,
+                             IntakeArm intakeArm,
+                             IntakeSlides intakeSlides,
+                             OuttakeArm outtakeArm,
+                             OuttakeSlides outtakeSlides,
                              Telemetry telemetry,
                              LinearOpMode currentOpMode
                             ) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
+        this.intakeArm = intakeArm;
+        this.intakeSlides = intakeSlides;
+        this.outtakeArm = outtakeArm;
+        this.outtakeSlides = outtakeSlides;
         this.lights = lights;
         this.visionSensor = visionSensor;
         this.telemetry = telemetry;
@@ -81,17 +99,16 @@ public class GamepadController {
      *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
     public void runByGamepadControl(){
-        //runLauncher();
-      }
+        runIntakeArm();
+        runIntakeSlides();
+        runOuttakeArm();
+        runOuttakeSlides();
+        runClimber();
+    }
 
     public ElapsedTime magazineSecondPixelTimer = new ElapsedTime(MILLISECONDS);
-    public boolean magazineSecondPixelActivated = false;
-    public boolean magazineTwoPixelReverserActivated = false;
     public boolean intakeOnLiftStartFlag = false;
     public boolean intakeReverserButtonHeld = false;
-
-
-
 
     public void safeWaitMilliSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
@@ -130,6 +147,56 @@ public class GamepadController {
     boolean gp2Dpad_rightLast = false;
     boolean gp2LeftTriggerLast = false;
     boolean gp2RightTriggerLast = false;
+
+    public void runIntakeArm(){
+        //open && close grip
+        if(gp1GetRightBumperPress()){
+            if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED){
+                intakeArm.openGrip();
+            }
+            else if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.OPEN){
+                intakeArm.closeGrip();
+            }
+        }
+
+        //Move intakeArm to transfer or init position
+        if(gp1GetButtonAPress()){
+            if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.INIT){
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            }
+            else if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.TRANSFER){
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
+            }
+        }
+    }
+
+    public void runIntakeSlides(){
+        //move intakeSlides to transfer position
+        if(gp1GetDpad_downPress()){
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            }
+        }
+
+        //move intakeSlides to pickup position
+        if(gp1GetDpad_upPress()){
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENDED)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENDED);
+            }
+        }
+    }
+
+    public void runOuttakeArm(){
+
+    }
+
+    public void runOuttakeSlides(){
+
+    }
+
+    public void runClimber(){
+
+    }
 
     /**
      * Method to convert linear map from gamepad1 and gamepad2 stick input to a cubic map

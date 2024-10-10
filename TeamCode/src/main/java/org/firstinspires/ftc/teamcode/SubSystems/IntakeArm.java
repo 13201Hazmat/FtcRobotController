@@ -22,11 +22,7 @@ public class IntakeArm {
 
     public enum INTAKE_ARM_STATE{
         INIT(0),
-        TRANSFER(0.5),
-        RAISED(-0.25),
-        MAX(0.6),
-        PICKUP(0.25),
-        RANDOM(0.15);
+        TRANSFER(0.5);
 
         private double armPos;
         //public final int index;
@@ -67,25 +63,6 @@ public class IntakeArm {
         this.intakeArmState = intakeArmState;
     }
 
-    public void continousArmRotateUp(){
-        double deltaArmIntake = intakeArmServo.getPosition() - ARM_DELTA;
-        if(deltaArmIntake > INTAKE_ARM_STATE.MAX.armPos){
-            deltaArmIntake = INTAKE_ARM_STATE.MAX.armPos;
-        }
-
-        intakeArmServo.setPosition(deltaArmIntake);
-        intakeArmState = INTAKE_ARM_STATE.RANDOM;
-        moveWrist(INTAKE_ARM_STATE.RANDOM);
-    }
-
-    public void continousArmRotateDown(){
-        intakeArmState = INTAKE_ARM_STATE.RANDOM;
-        intakeArmState.armPos = intakeArmServo.getPosition() + ARM_DELTA;
-        intakeArmServo.setPosition(intakeArmState.armPos);
-        intakeArmState = INTAKE_ARM_STATE.RANDOM;
-        moveWrist(INTAKE_ARM_STATE.RANDOM);
-    }
-
     public static final double WRIST_UP_DELTA = 0.2;
     public void moveWrist(INTAKE_ARM_STATE intakeArmState){
         switch (intakeArmState){
@@ -95,21 +72,18 @@ public class IntakeArm {
             case TRANSFER:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.DROP.wristPosition);
                 break;
-            case PICKUP:
-                intakeWristServo.setPosition(INTAKE_WRIST_STATE.PICKUP.wristPosition);
-                break;
-            case RAISED:
-                break;
-            case MAX:
-                break;
-            case RANDOM:
-                break;
         }
     }
 
     public void moveWristUp(){
         if (intakeWristState != INTAKE_WRIST_STATE.DROP) {
             intakeWristServo.setPosition(intakeWristServo.getPosition() + WRIST_UP_DELTA);
+        }
+    }
+
+    public void moveWristDown(){
+        if (intakeWristState != INTAKE_WRIST_STATE.DROP) {
+            intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_UP_DELTA);
         }
     }
 
