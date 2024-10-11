@@ -381,7 +381,7 @@ public class Auto_Red_Blue_Middle5 extends LinearOpMode {
             );
         }
 
-
+        
     }
 
     //Method to select starting position using X, Y, A, B buttons on gamepad

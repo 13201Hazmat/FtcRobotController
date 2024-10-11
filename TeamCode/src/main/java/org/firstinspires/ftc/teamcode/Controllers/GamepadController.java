@@ -187,15 +187,30 @@ public class GamepadController {
     }
 
     public void runOuttakeArm(){
-
+        //move outtakeArm to dropping position
+        if(gp1GetDpad_downPress()){
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            }
+        }
     }
 
     public void runOuttakeSlides(){
-
+        //move outtake slides upwards toward dropping position
+        if(gp1GetDpad_downPress()){
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            }
+        }
     }
 
     public void runClimber(){
-
+        //move  to transfer position
+        if(gp1GetDpad_downPress()){
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            }
+        }
     }
 
     /**
