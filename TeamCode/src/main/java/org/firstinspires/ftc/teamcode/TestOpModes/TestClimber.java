@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Lights;
  *
  */
 @Disabled
-@TeleOp(name = "Climber", group = "02-Test OpModes")
+@TeleOp(name = "Climber", group = "Testing")
 public class TestClimber extends LinearOpMode {
 
     public TestGamepadController gamepadController;
@@ -73,21 +73,20 @@ public class TestClimber extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp1GetDpad_upPress()){
-                    climber.climber1Activated = true;
-                    climber.moveClimberStg1UpInSteps(1.0);
+                //Stage 1 climb
+                if(gamepadController.gp2GetLeftBumperPress()){
+                    climber.modifyClimberStg1LengthContinuous(0.8);
+                    climber.ascendClimberStg1Servo();
                 }
-                if(gamepadController.gp1GetDpad_downPress()){
-                    climber.climber2Activated = true;
-                    climber.moveClimberStg2UpInSteps(1.0);
+
+                //Stage 2 climb
+                if(gamepadController.gp2GetLeftTriggerPress()){
+                    climber.modifyClimberStg2LengthContinuous(0.8);
+                    climber.ascendClimberStg2Servo();
                 }
-                if(gamepadController.gp2GetDpad_leftPress()){
-                    climber.climber2Activated = true;
-                    climber.moveClimberStg1DownInSteps(1.0);
-                }
-                if(gamepadController.gp2GetDpad_rightPress()){
-                    climber.climber2Activated = true;
-                    climber.moveClimberStg2DownInSteps(1.0);
+
+                if(gamepadController.gp2GetRightTriggerPress()){
+                    climber.turnClimberStg2BrakeModeOff();
                 }
 
             }

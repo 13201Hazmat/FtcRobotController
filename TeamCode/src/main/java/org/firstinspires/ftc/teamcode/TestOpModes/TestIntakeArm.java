@@ -24,15 +24,14 @@ import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@Disabled
-@TeleOp(name = "IntakeArm", group = "02-Test OpModes")
+@TeleOp(name = "TestIntakeArm", group = "Testing")
 public class TestIntakeArm extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
     public VisionAprilTag visionAprilTagFront;
-    //public OuttakeSlides outtakeSlides;
-    //public OuttakeArm outtakeArm;
+    public OuttakeSlides outtakeSlides;
+    public OuttakeArm outtakeArm;
     public IntakeArm intakeArm;
     public Lights lights;
 
@@ -80,26 +79,31 @@ public class TestIntakeArm extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp1GetCrossPress()){
-                    intakeArm.closeGrip();
-                }
-                if(gamepadController.gp1GetCirclePress()){
-                    intakeArm.openGrip();
-
-                }
-                //move wrist and arm to max
-                if(gamepadController.gp1GetDpad_upPress()){
+                if(gamepadController.gp1GetButtonAPress()){
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
                 }
-                if(gamepadController.gp1GetDpad_downPress()){
+
+                if(gamepadController.gp1GetButtonYPress()){
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
                 }
-                if(gamepadController.gp1GetDpad_leftPress()){
-                    intakeArm.moveWristUp();
+
+                if(gamepadController.gp1GetRightBumperPress()){
+                    if(intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.OPEN){
+                        intakeArm.closeGrip();
+                    }
+                    else{
+                        intakeArm.openGrip();
+                    }
                 }
-                if(gamepadController.gp1GetDpad_rightPress()){
-                    intakeArm.moveWristDown();
+
+                if(gamepadController.gp1GetButtonXPress()){
+                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
                 }
+
+                if(gamepadController.gp1GetButtonBPress()){
+                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.DROP);
+                }
+
             }
         }
         GameField.poseSetInAutonomous = false;

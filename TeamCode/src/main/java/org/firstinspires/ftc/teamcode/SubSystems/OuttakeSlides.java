@@ -10,8 +10,8 @@ public class OuttakeSlides {
 
     public enum OUTTAKE_SLIDES_STATE{
         TRANSFER(0.05, -0.05),
-        LOW_CHAMBER(0.4, -0.4),
-        HIGH_CHAMBER(0.8, -0.8);
+        LOW_BASKET(0.4, -0.4),
+        HIGH_BASKET(0.8, -0.8);
 
         public double leftSlidePos;
         public double rightSlidePos;

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
  *
  */
 @Disabled
-@TeleOp(name = "OuttakeSlides", group = "02-Test OpModes")
+@TeleOp(name = "OuttakeSlides", group = "Testing")
 public class TestOuttakeSlides extends LinearOpMode {
 
     public TestGamepadController gamepadController;
@@ -78,17 +78,21 @@ public class TestOuttakeSlides extends LinearOpMode {
                     telemetry.update();
                 }
 
-                //TODO : Move to transfer before rotating arm if starting in DROP_BELOW_LOW
-                if(gamepadController.gp1GetDpad_upPress()){
-                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.HIGH_CHAMBER);
-                }
-                if(gamepadController.gp1GetDpad_downPress()){
-                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.LOW_CHAMBER);
-                }
-                if(gamepadController.gp1GetDpad_leftPress()){
-                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.TRANSFER);
+                if(gamepadController.gp2GetButtonYPress()){
+                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.HIGH_BASKET);
                 }
 
+                if(gamepadController.gp2GetButtonAPress()){
+                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.LOW_BASKET);
+                }
+
+                if(gamepadController.gp2GetButtonXPress()){
+                    //TODO Slides to specimen low chamber
+                }
+
+                if(gamepadController.gp2GetButtonBPress()){
+                    //TODO Slides to specimen high chamber
+                }
             }
         }
         GameField.poseSetInAutonomous = false;
@@ -119,11 +123,11 @@ public class TestOuttakeSlides extends LinearOpMode {
         telemetry.addLine("Lights Initialized");
         telemetry.update();
 
-        outtakeSlides = new OuttakeSlides(hardwareMap, telemetry);
+        outtakeSlides = new OuttakeSlides(hardwareMap);
         telemetry.addLine("OuttakeSlides Initialized");
         telemetry.update();
 
-        outtakeArm= new OuttakeArm(hardwareMap, telemetry);
+        outtakeArm= new OuttakeArm(hardwareMap);
         telemetry.addLine("OuttakeArm Initialized");
         telemetry.update();
 

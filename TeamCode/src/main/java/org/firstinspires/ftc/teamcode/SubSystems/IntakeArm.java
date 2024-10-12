@@ -8,9 +8,8 @@ public class IntakeArm {
     public Servo intakeWristServo;
     public Servo intakeGripServo;
 
-    public enum INTAKE_GRIP_STATE { //state of the Hand Grip
-        OPEN(0.69),//0.65
-        OPEN_AUTO(0.65),
+    public enum INTAKE_GRIP_STATE {
+        OPEN(0.69),
         CLOSED(1.0);
 
         private final double gripPosition;
@@ -22,13 +21,13 @@ public class IntakeArm {
 
     public enum INTAKE_ARM_STATE{
         INIT(0),
-        TRANSFER(0.5);
+        PICKUP(0.2),
+        TRANSFER(0.5),
+        DROP(0.7);
 
         private double armPos;
-        //public final int index;
         INTAKE_ARM_STATE(double armPos){
             this.armPos = armPos;
-            //this.index = index;
         }
     }
     public INTAKE_ARM_STATE intakeArmState = INTAKE_ARM_STATE.TRANSFER;
@@ -45,7 +44,6 @@ public class IntakeArm {
         }
     }
     public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
-    public double wristArmFactor = 1;
 
     public IntakeArm(HardwareMap hardwareMap) { //map hand servo's to each
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
@@ -69,9 +67,11 @@ public class IntakeArm {
             case INIT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.INIT.wristPosition);
                 break;
-            case TRANSFER:
+            case DROP:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.DROP.wristPosition);
                 break;
+            case PICKUP:
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.PICKUP.wristPosition);
         }
     }
 

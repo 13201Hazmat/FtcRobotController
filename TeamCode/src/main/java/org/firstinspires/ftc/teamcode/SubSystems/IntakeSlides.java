@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class IntakeSlides {
     public Servo intakeSlideServoLeft, intakeSlideServoRight;
 
-    //Intake servo states
+    //IntakeSlides servo states
     public enum INTAKE_SLIDES_STATE{
         MIN_RETRACTED (0,0),
         TRANSFER (0.1, 0.1),
-        MAX_EXTENDED (1.0, 1.0);
+        PICKUP(1.0, 1.0);
 
         public double leftSlidePos;
         public double rightSlidePos;

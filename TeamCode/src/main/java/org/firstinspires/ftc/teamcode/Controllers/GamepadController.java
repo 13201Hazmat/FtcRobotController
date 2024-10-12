@@ -180,8 +180,8 @@ public class GamepadController {
 
         //move intakeSlides to pickup position
         if(gp1GetDpad_upPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENDED)){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENDED);
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.PICKUP)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.PICKUP);
             }
         }
     }

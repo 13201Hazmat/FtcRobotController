@@ -24,18 +24,17 @@ import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
  *
  */
 @Disabled
-@TeleOp(name = "IntakeSlides", group = "02-Test OpModes")
+@TeleOp(name = "IntakeSlides", group = "Testing")
 public class TestIntakeSlides extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
     public VisionAprilTag visionAprilTagFront;
-    //public OuttakeSlides outtakeSlides;
-    //public OuttakeArm outtakeArm;
+    public OuttakeSlides outtakeSlides;
+    public OuttakeArm outtakeArm;
     public IntakeSlides intakeSlides;
     public Lights lights;
 
-    //Static Class for knowing system state
 
     public Pose2d startPose = GameField.ORIGINPOSE;
 
@@ -79,16 +78,15 @@ public class TestIntakeSlides extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp1GetDpad_downPress()){
-                    intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MIN_RETRACTED);
+                if(gamepadController.gp1GetLeftBumperPress()){
+                    if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.PICKUP)){
+                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.PICKUP);
+                    }
+                    else if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+                    }
                 }
-                if(gamepadController.gp1GetDpad_upPress()){
-                    intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENDED);
 
-                }
-                if(gamepadController.gp1GetDpad_leftPress()){
-                    intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-                }
             }
         }
         GameField.poseSetInAutonomous = false;

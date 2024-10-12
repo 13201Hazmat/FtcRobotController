@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
  *
  */
 @Disabled
-@TeleOp(name = "OuttakeArm", group = "02-Test OpModes")
+@TeleOp(name = "OuttakeArm", group = "Testing")
 public class TestOuttakeArm extends LinearOpMode {
 
     public TestGamepadController gamepadController;
@@ -77,18 +77,16 @@ public class TestOuttakeArm extends LinearOpMode {
                     telemetry.update();
                 }
 
-                //TODO : Move to transfer before rotating arm if starting in DROP_BELOW_LOW
-                if(gamepadController.gp1GetDpad_upPress()){
-                    outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.MAX);
+                if(gamepadController.gp2GetDpad_upPress()){
+                    outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.DROP);
                 }
-                if(gamepadController.gp1GetDpad_downPress()){
-                    outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.INIT);
-                }
-                if(gamepadController.gp1GetDpad_leftPress()){
+
+                if(gamepadController.gp2GetDpad_downPress()){
                     outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.TRANSFER);
                 }
-                if(gamepadController.gp1GetDpad_rightPress()){
-                    outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.DROP);
+
+                if(gamepadController.gp2GetDpad_leftPress()){
+                    outtakeArm.moveArm(OuttakeArm.OUTTAKE_ARM_STATE.INIT);
                 }
             }
         }

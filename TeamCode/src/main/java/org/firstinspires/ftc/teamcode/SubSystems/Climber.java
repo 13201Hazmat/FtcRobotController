@@ -91,27 +91,17 @@ public class Climber {
         climberStg1Servo = hardwareMap.get(Servo.class, "climber_stage1_servo");
         climberStg2Motor = hardwareMap.get(DcMotorEx.class, "climber_stage2_motor");
         climberStg2Servo = hardwareMap.get(Servo.class, "climber_stage2_servo");
-        initClimberStg1Servo();
-        initClimberStg2Servo();
+        ascendClimberStg1Servo();
+        ascendClimberStg2Servo();
         initClimber();
     }
 
-    public void moveClimberStg1ServoToReleased(){
-        climberStg1Servo.setPosition(CLIMBERSTAGE1_SERVO_STATE.RELEASED.getClimberStg1ServoPosition());
-        climberStg1ServoState = CLIMBERSTAGE1_SERVO_STATE.RELEASED;
-    }
-
-    public void moveClimberStg2ServoToReleased(){
-        climberStg2Servo.setPosition(CLIMBERSTAGE2_SERVO_STATE.RELEASED.getClimberStg2ServoPosition());
-        climberStg2ServoState = CLIMBERSTAGE2_SERVO_STATE.RELEASED;
-    }
-
-    public void initClimberStg1Servo(){
+    public void ascendClimberStg1Servo(){
         climberStg1Servo.setPosition(CLIMBERSTAGE1_SERVO_STATE.LOCKED.getClimberStg1ServoPosition());
         climberStg1ServoState = CLIMBERSTAGE1_SERVO_STATE.LOCKED;
     }
 
-    public void initClimberStg2Servo(){
+    public void ascendClimberStg2Servo(){
         climberStg2Servo.setPosition(CLIMBERSTAGE2_SERVO_STATE.LOCKED.getClimberStg2ServoPosition());
         climberStg2ServoState = CLIMBERSTAGE2_SERVO_STATE.LOCKED;
     }
@@ -122,21 +112,28 @@ public class Climber {
         climberStg2Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         climberStg2Motor.setPositionPIDFCoefficients(10.0); //5
         startCurrentPosition = climberStg1Motor.getCurrentPosition();
-        turnClimberBrakeModeOff();
+        turnClimberStg1BrakeModeOff();
+        turnClimberStg2BrakeModeOff();
     }
 
-    public void turnClimberBrakeModeOn(){
+    public void turnClimberStg1BrakeModeOn(){
         climberStg1Motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void turnClimberStg2BrakeModeOn(){
         climberStg2Motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
-    public void turnClimberBrakeModeOff(){
+    public void turnClimberStg1BrakeModeOff(){
         climberStg1Motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+    }
+
+    public void turnClimberStg2BrakeModeOff(){
         climberStg2Motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
     public void moveClimberStg1Motor(CLIMBERSTAGE1_MOTOR_STATE toClimberMotorState){
-        turnClimberBrakeModeOn();
+        turnClimberStg1BrakeModeOn();
         climberMotorStg1CurrentPosition = climberStg1Motor.getCurrentPosition();
         climberStg1Motor.setTargetPosition((int)(toClimberMotorState.motorPosition + startCurrentPosition));
         climberStg1MotorState = toClimberMotorState;
@@ -145,7 +142,7 @@ public class Climber {
     }
 
     public void moveClimberStg2Motor(CLIMBERSTAGE2_MOTOR_STATE toClimberMotorState){
-        turnClimberBrakeModeOn();
+        turnClimberStg2BrakeModeOn();
         climberMotorStg2CurrentPosition = climberStg2Motor.getCurrentPosition();
         climberStg2Motor.setTargetPosition((int)(toClimberMotorState.motorPosition + startCurrentPosition));
         climberStg2MotorState = toClimberMotorState;
@@ -158,9 +155,9 @@ public class Climber {
         double power = 1.0;
 
         if (climberStg1MotorState == CLIMBERSTAGE1_MOTOR_STATE.INITIAL) {
-            turnClimberBrakeModeOff();
+            turnClimberStg1BrakeModeOff();
         } else {
-            turnClimberBrakeModeOn();
+            turnClimberStg1BrakeModeOn();
         }
 
         climberStg1Motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -178,9 +175,9 @@ public class Climber {
         double power = 1.0;
 
         if (climberStg2MotorState == CLIMBERSTAGE2_MOTOR_STATE.INITIAL) {
-            turnClimberBrakeModeOff();
+            turnClimberStg1BrakeModeOff();
         } else {
-            turnClimberBrakeModeOn();
+            turnClimberStg2BrakeModeOn();
         }
 
         climberStg2Motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -195,7 +192,7 @@ public class Climber {
 
     public void moveClimberStg1UpInSteps(double power){
         climberStg1Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg1BrakeModeOn();
 
         int climberMotorCurrentPosition = climberStg1Motor.getCurrentPosition();
         if((power > 0.01 && climberMotorCurrentPosition < CLIMBERSTAGE1_MOTOR_STATE.MAX.motorPosition)){
@@ -210,7 +207,7 @@ public class Climber {
 
     public void moveClimberStg2UpInSteps(double power){
         climberStg2Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg2BrakeModeOn();
 
         int climberMotorCurrentPosition = climberStg2Motor.getCurrentPosition();
         if((power > 0.01 && climberMotorCurrentPosition < CLIMBERSTAGE2_MOTOR_STATE.MAX.motorPosition)){
@@ -225,7 +222,7 @@ public class Climber {
 
     public void moveClimberStg1DownInSteps(double power){
         climberStg1Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg1BrakeModeOn();
 
         int climberMotorCurrentPosition = climberStg1Motor.getCurrentPosition();
         if((power > 0.01 && climberMotorCurrentPosition > CLIMBERSTAGE1_MOTOR_STATE.INITIAL.motorPosition)){
@@ -240,7 +237,7 @@ public class Climber {
 
     public void moveClimberStg2DownInSteps(double power){
         climberStg2Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg2BrakeModeOn();
 
         int climberMotorCurrentPosition = climberStg2Motor.getCurrentPosition();
         if((power > 0.01 && climberMotorCurrentPosition > CLIMBERSTAGE2_MOTOR_STATE.INITIAL.motorPosition)){
@@ -255,13 +252,13 @@ public class Climber {
 
     public void modifyClimberStg1LengthContinuous(double power){
         climberStg1Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg1BrakeModeOn();
         climberStg1Motor.setPower(power);
     }
 
     public void modifyClimberStg2LengthContinuous(double power){
         climberStg2Motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        turnClimberBrakeModeOn();
+        turnClimberStg2BrakeModeOn();
         climberStg2Motor.setPower(power);
     }
 
