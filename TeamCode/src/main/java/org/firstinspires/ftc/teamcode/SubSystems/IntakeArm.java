@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IntakeArm {
     public Servo intakeArmServo;
@@ -45,7 +50,9 @@ public class IntakeArm {
     }
     public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
 
-    public IntakeArm(HardwareMap hardwareMap) { //map hand servo's to each
+    public Telemetry telemetry;
+    public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
+        this.telemetry = telemetry;
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
         intakeGripServo = hardwareMap.get(Servo.class, "intake_grip_servo");
@@ -103,4 +110,17 @@ public class IntakeArm {
         intakeGripState = INTAKE_GRIP_STATE.CLOSED;
     }
 
+    public void printDebugMessages() {
+        //******  debug ******
+        telemetry.addLine("Intake Arm");
+        telemetry.addData("   State", intakeArmState);
+        telemetry.addData("   Servo position", intakeArmServo.getPosition());
+        telemetry.addLine("Intake Wrist");
+        telemetry.addData("   State", intakeWristState);
+        telemetry.addData("   Wrist Servo position", intakeWristServo.getPosition());
+        telemetry.addLine("Intake Grip");
+        telemetry.addData("   State", intakeGripState);
+        telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
+        telemetry.addLine("=============");
+    }
 }

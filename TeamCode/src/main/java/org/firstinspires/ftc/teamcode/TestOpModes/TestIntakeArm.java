@@ -4,7 +4,6 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,10 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 
 
 /**
@@ -29,9 +25,6 @@ public class TestIntakeArm extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
-    public VisionAprilTag visionAprilTagFront;
-    public OuttakeSlides outtakeSlides;
-    public OuttakeArm outtakeArm;
     public IntakeArm intakeArm;
     public Lights lights;
 
@@ -124,24 +117,9 @@ public class TestIntakeArm extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        /* Create VisionAprilTag */
-        visionAprilTagFront = new VisionAprilTag(hardwareMap, telemetry, "Webcam 1");
-        telemetry.addLine("Vision April Tag Front Initialized");
+        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
-
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
-        //outtakeSlides = new OuttakeSlides(hardwareMap, telemetry);
-        telemetry.addLine("OuttakeSlides Initialized");
-        telemetry.update();
-
-        //outtakeArm= new OuttakeArm(hardwareMap, telemetry);
-        telemetry.addLine("OuttakeArm Initialized");
-        telemetry.update();
-
 
         /* Create Controllers */
         gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
@@ -181,14 +159,8 @@ public class TestIntakeArm extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
-
             driveTrain.printDebugMessages();
-            //visionAprilTagFront.printdebugMessages();
-            //outtakeSlides.printDebugMessages();
-            //outtakeArm.printDebugMessages();
+            intakeArm.printDebugMessages();
             lights.printDebugMessages();
         }
         telemetry.update();

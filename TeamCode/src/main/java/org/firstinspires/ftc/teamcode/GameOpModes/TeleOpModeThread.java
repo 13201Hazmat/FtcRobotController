@@ -10,11 +10,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
-import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
-import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 
 /**
@@ -29,9 +31,11 @@ public class TeleOpModeThread extends LinearOpMode {
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
-    public ParkingArm parkingArm;
-    public VisionSensor visionSensor;
-    public VisionAprilTag visionAprilTagBack;
+    public IntakeArm intakeArm;
+    public IntakeSlides intakeSlides;
+    public Outtake outtake;
+    public SpecimenHandler specimenHandler;
+    public Climber climber;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -108,33 +112,24 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        telemetry.addLine("Intake Initialized");
+        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
 
-        telemetry.addLine("Magazine Initialized");
+        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        telemetry.addLine("OuttakeArm Initialized");
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        telemetry.addLine("OuttakeSlides Initialized");
+        specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
+        telemetry.addLine("SpecimenHandler Initialized");
         telemetry.update();
 
+        climber = new Climber(hardwareMap, telemetry);
         telemetry.addLine("Climber Initialized");
-        telemetry.update();
-
-        parkingArm = new ParkingArm(hardwareMap, telemetry);
-        telemetry.addLine("ParkingArm Initialized");
-        telemetry.update();
-
-        /* Create VisionAprilTag */
-        //visionAprilTagBack = new VisionAprilTag(hardwareMap, telemetry, "Webcam 2");
-        //telemetry.addLine("Vision April Tag Front Initialized");
-        //telemetry.update();
-
-        /* Create VisionSensor */
-        visionSensor = new VisionSensor(hardwareMap, telemetry);
-        telemetry.addLine("Vision Sensor Initialized");
         telemetry.update();
 
         /* Create Lights */
@@ -147,7 +142,8 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2,  visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, lights, intakeArm, intakeSlides,
+                outtake, specimenHandler, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -183,9 +179,11 @@ public class TeleOpModeThread extends LinearOpMode {
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();
-            parkingArm.printDebugMessages();
-            visionSensor.printDebugMessages();
-            //visionAprilTagBack.printdebugMessages();
+            intakeArm.printDebugMessages();
+            intakeSlides.printDebugMessages();
+            outtake.printDebugMessages();
+            specimenHandler.printDebugMessages();
+            climber.printDebugMessages();
             lights.printDebugMessages();
         }
         telemetry.update();

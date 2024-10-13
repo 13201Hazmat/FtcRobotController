@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 //slide movement should be on bicubic dynamic acceleration control
 public class IntakeSlides {
     public Servo intakeSlideServoLeft, intakeSlideServoRight;
@@ -12,7 +14,8 @@ public class IntakeSlides {
     public enum INTAKE_SLIDES_STATE{
         MIN_RETRACTED (0,0),
         TRANSFER (0.1, 0.1),
-        PICKUP(1.0, 1.0);
+        IN_BETWEEN(0.5,0.5),
+        MAX_EXTENSION(1.0, 1.0);
 
         public double leftSlidePos;
         public double rightSlidePos;
@@ -23,6 +26,7 @@ public class IntakeSlides {
     }
     public INTAKE_SLIDES_STATE intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
 
+    //TODO @Vinayak : What is the objective of this function?
     public void setIntakeSlidesState(INTAKE_SLIDES_STATE intakeSlidesState, int slideExtension) {
         intakeSlidesState.leftSlidePos = slideExtension;
         intakeSlidesState.rightSlidePos = slideExtension;
@@ -31,7 +35,9 @@ public class IntakeSlides {
     public double leftIntakeSlideCurrPos, leftIntakeSlideNewPos = intakeSlidesState.leftSlidePos;
     public double rightIntakeSlideCurrPos, rightIntakeSlideNewPos = intakeSlidesState.rightSlidePos;
 
-    public IntakeSlides(HardwareMap hardwareMap){
+    Telemetry telemetry;
+    public IntakeSlides(HardwareMap hardwareMap, Telemetry telemetry){
+        this.telemetry = telemetry;
         intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
         intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
         initIntakeSlides();
@@ -49,6 +55,26 @@ public class IntakeSlides {
         setIntakeSlidesState(intakeSlidesState, (int) intakeSlidesState.leftSlidePos);
         this.intakeSlidesState = intakeSlidesState;
     }
+
+    public void moveIntakeSlidesForward() {
+        if (intakeSlideServoLeft.getPosition() < INTAKE_SLIDES_STATE.MAX_EXTENSION.leftSlidePos) {
+            intakeSlideServoLeft.setPosition(intakeSlideServoLeft.getPosition() - 0.01);
+            intakeSlideServoRight.setPosition(intakeSlideServoRight.getPosition() - 0.01);
+            intakeSlidesState = INTAKE_SLIDES_STATE.IN_BETWEEN;
+        } else {
+            intakeSlidesState = INTAKE_SLIDES_STATE.MAX_EXTENSION;
+        }
+    };
+
+    public void moveIntakeSlidesBackward() {
+        if (intakeSlideServoLeft.getPosition() > INTAKE_SLIDES_STATE.MIN_RETRACTED.leftSlidePos) {
+            intakeSlideServoLeft.setPosition(intakeSlideServoLeft.getPosition() - 0.01);
+            intakeSlideServoRight.setPosition(intakeSlideServoRight.getPosition() - 0.01);
+            intakeSlidesState = INTAKE_SLIDES_STATE.IN_BETWEEN;
+        } else {
+            intakeSlidesState = INTAKE_SLIDES_STATE.MIN_RETRACTED;
+        }
+    };
 
     public void printDebugMessages(){
         //******  debug ******

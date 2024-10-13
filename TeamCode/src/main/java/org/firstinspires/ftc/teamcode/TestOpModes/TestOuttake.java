@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
@@ -9,13 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
-import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
-import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
-import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 
 
 /**
@@ -25,15 +22,12 @@ import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
  *
  */
 @Disabled
-@TeleOp(name = "Hazmat TeleOp AprilTag", group = "00-Teleop")
-public class TeleOpModeVisionAprilTag extends LinearOpMode {
+@TeleOp(name = "OuttakeArm", group = "Testing")
+public class TestOuttake extends LinearOpMode {
 
-    public GamepadController gamepadController;
-    public GamepadDriveTrainController gamepadDriveTrainController;
+    public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
-    public ParkingArm parkingArm;
-    public VisionSensor visionSensor;
-    public VisionAprilTag visionAprilTagBack;
+    public Outtake outtake;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -54,16 +48,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         /* Set Initial State of any subsystem when OpMode is to be started*/
         initSubsystems();
 
-        // Initiate Camera on Init.
-        visionAprilTagBack.initAprilTag();
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-
-        lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEMO);
-
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
         gameTimer.reset();
@@ -74,8 +58,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         /* If Stop is pressed, exit OpMode */
         if (isStopRequested()) return;
 
-        gamepadDriveTrainController.start();
-
         /*If Start is pressed, enter loop and exit only when Stop is pressed */
         while (!isStopRequested()) {
 
@@ -85,13 +67,23 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
-                gamepadController.runByGamepadControl();
-                printDebugMessages();
-                telemetry.update();
+                //gamepadController.runByGamepadControl();
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();
                     telemetry.update();
+                }
+
+                if(gamepadController.gp2GetDpad_upPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                }
+
+                if(gamepadController.gp2GetDpad_downPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+                }
+
+                if(gamepadController.gp2GetDpad_leftPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.INIT);
                 }
             }
         }
@@ -113,47 +105,13 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        telemetry.addLine("Intake Initialized");
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        telemetry.addLine("Magazine Initialized");
-        telemetry.update();
-
-        telemetry.addLine("OuttakeArm Initialized");
-        telemetry.update();
-
-        telemetry.addLine("OuttakeSlides Initialized");
-        telemetry.update();
-
-        telemetry.addLine("Climber Initialized");
-        telemetry.update();
-
-        parkingArm = new ParkingArm(hardwareMap, telemetry);
-        telemetry.addLine("ParkingArm Initialized");
-        telemetry.update();
-
-        /* Create VisionAprilTag */
-        visionAprilTagBack = new VisionAprilTag(hardwareMap, telemetry, "Webcam 2");
-        telemetry.addLine("Vision April Tag Front Initialized");
-        telemetry.update();
-
-        /* Create VisionAprilTag */
-        visionSensor = new VisionSensor(hardwareMap, telemetry);
-        telemetry.addLine("Vision Sensor Initialized");
-        telemetry.update();
-
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
 
         /* Create Controllers */
-        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
-        telemetry.addLine("Gamepad DriveTrain Initialized");
-        telemetry.update();
-
-        /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, visionSensor, lights, telemetry, this);
+        gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -190,14 +148,9 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            visionSensor.printDebugMessages();
-            visionAprilTagBack.printdebugMessages();
-            lights.printDebugMessages();
+            outtake.printDebugMessages();
         }
         telemetry.update();
     }

@@ -12,8 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 
 /**
@@ -23,14 +22,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
  *
  */
 @Disabled
-@TeleOp(name = "OuttakeSlides", group = "Testing")
-public class TestOuttakeSlides extends LinearOpMode {
+@TeleOp(name = "TestSpecimenHandler", group = "Testing")
+public class TestSpecimenHandler extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
-    public VisionAprilTag visionAprilTagFront;
-    public OuttakeSlides outtakeSlides;
-    public OuttakeArm outtakeArm;
+    public SpecimenHandler specimenHandler;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -38,7 +35,6 @@ public class TestOuttakeSlides extends LinearOpMode {
     public Pose2d startPose = GameField.ORIGINPOSE;
 
     public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);
-
 
     @Override
     /*
@@ -78,21 +74,7 @@ public class TestOuttakeSlides extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp2GetButtonYPress()){
-                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.HIGH_BASKET);
-                }
 
-                if(gamepadController.gp2GetButtonAPress()){
-                    outtakeSlides.moveOuttakeSlides(OuttakeSlides.OUTTAKE_SLIDES_STATE.LOW_BASKET);
-                }
-
-                if(gamepadController.gp2GetButtonXPress()){
-                    //TODO Slides to specimen low chamber
-                }
-
-                if(gamepadController.gp2GetButtonBPress()){
-                    //TODO Slides to specimen high chamber
-                }
             }
         }
         GameField.poseSetInAutonomous = false;
@@ -113,22 +95,8 @@ public class TestOuttakeSlides extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        /* Create VisionAprilTag */
-        visionAprilTagFront = new VisionAprilTag(hardwareMap, telemetry, "Webcam 1");
-        telemetry.addLine("Vision April Tag Front Initialized");
-        telemetry.update();
-
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
-        outtakeSlides = new OuttakeSlides(hardwareMap);
-        telemetry.addLine("OuttakeSlides Initialized");
-        telemetry.update();
-
-        outtakeArm= new OuttakeArm(hardwareMap);
-        telemetry.addLine("OuttakeArm Initialized");
+        specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
 
@@ -170,15 +138,9 @@ public class TestOuttakeSlides extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            //visionAprilTagFront.printdebugMessages();
-            outtakeSlides.printDebugMessages();
-            //outtakeArm.printDebugMessages();
-            lights.printDebugMessages();
+            specimenHandler.printDebugMessages();
         }
         telemetry.update();
     }

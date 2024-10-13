@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
-import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
+import org.firstinspires.ftc.teamcode.TestOpModes.VisionSensor;
 
 
 /**
@@ -62,8 +62,8 @@ public class GamepadController {
     public Lights lights;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
-    public OuttakeArm outtakeArm;
-    public OuttakeSlides outtakeSlides;
+    public Outtake outtake;
+    public SpecimenHandler specimenHandler;
     public Climber climber;
     public Telemetry telemetry;
     LinearOpMode currentOpMode;
@@ -74,12 +74,12 @@ public class GamepadController {
      */
     public GamepadController(Gamepad hzGamepad1,
                              Gamepad hzGamepad2,
-                             VisionSensor visionSensor,
                              Lights lights,
                              IntakeArm intakeArm,
                              IntakeSlides intakeSlides,
-                             OuttakeArm outtakeArm,
-                             OuttakeSlides outtakeSlides,
+                             Outtake outtake,
+                             SpecimenHandler specimenHandler,
+                             Climber climber,
                              Telemetry telemetry,
                              LinearOpMode currentOpMode
                             ) {
@@ -87,10 +87,10 @@ public class GamepadController {
         this.hzGamepad2 = hzGamepad2;
         this.intakeArm = intakeArm;
         this.intakeSlides = intakeSlides;
-        this.outtakeArm = outtakeArm;
-        this.outtakeSlides = outtakeSlides;
+        this.outtake = outtake;
+        this.specimenHandler = specimenHandler;
+        this.climber = climber;
         this.lights = lights;
-        this.visionSensor = visionSensor;
         this.telemetry = telemetry;
         this.currentOpMode = currentOpMode;
     }
@@ -101,14 +101,10 @@ public class GamepadController {
     public void runByGamepadControl(){
         runIntakeArm();
         runIntakeSlides();
-        runOuttakeArm();
-        runOuttakeSlides();
+        runOuttake();
+        runSpecimenHandler();
         runClimber();
     }
-
-    public ElapsedTime magazineSecondPixelTimer = new ElapsedTime(MILLISECONDS);
-    public boolean intakeOnLiftStartFlag = false;
-    public boolean intakeReverserButtonHeld = false;
 
     public void safeWaitMilliSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
@@ -116,37 +112,6 @@ public class GamepadController {
         while (!currentOpMode.isStopRequested() && timer.time() < time) {
         }
     }
-
-    //*********** KEY PAD MODIFIERS BELOW ***********
-
-    //**** Gamepad buttons
-
-    //Records last button press to deal with single button presses doing a certain methods
-    boolean gp1ButtonALast = false;
-    boolean gp1ButtonBLast = false;
-    boolean gp1ButtonXLast = false;
-    boolean gp1ButtonYLast = false;
-    boolean gp1RightBumperLast = false;
-    boolean gp1LeftBumperLast = false;
-    boolean gp1Dpad_upLast = false;
-    boolean gp1Dpad_downLast = false;
-    boolean gp1Dpad_leftLast = false;
-    boolean gp1Dpad_rightLast = false;
-    boolean gp1LeftTriggerLast = false;
-    boolean gp1RightTriggerLast = false;
-
-    boolean gp2ButtonALast = false;
-    boolean gp2ButtonBLast = false;
-    boolean gp2ButtonXLast = false;
-    boolean gp2ButtonYLast = false;
-    boolean gp2RightBumperLast = false;
-    boolean gp2LeftBumperLast = false;
-    boolean gp2Dpad_upLast = false;
-    boolean gp2Dpad_downLast = false;
-    boolean gp2Dpad_leftLast = false;
-    boolean gp2Dpad_rightLast = false;
-    boolean gp2LeftTriggerLast = false;
-    boolean gp2RightTriggerLast = false;
 
     public void runIntakeArm(){
         //open && close grip
@@ -180,28 +145,18 @@ public class GamepadController {
 
         //move intakeSlides to pickup position
         if(gp1GetDpad_upPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.PICKUP)){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.PICKUP);
+            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION)){
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
             }
         }
     }
 
-    public void runOuttakeArm(){
-        //move outtakeArm to dropping position
-        if(gp1GetDpad_downPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            }
-        }
+    public void runOuttake(){
+
     }
 
-    public void runOuttakeSlides(){
-        //move outtake slides upwards toward dropping position
-        if(gp1GetDpad_downPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            }
-        }
+    public void runSpecimenHandler(){
+
     }
 
     public void runClimber(){
@@ -212,6 +167,37 @@ public class GamepadController {
             }
         }
     }
+
+    //*********** KEY PAD MODIFIERS BELOW ***********
+
+    //**** Gamepad buttons
+
+    //Records last button press to deal with single button presses doing a certain methods
+    boolean gp1ButtonALast = false;
+    boolean gp1ButtonBLast = false;
+    boolean gp1ButtonXLast = false;
+    boolean gp1ButtonYLast = false;
+    boolean gp1RightBumperLast = false;
+    boolean gp1LeftBumperLast = false;
+    boolean gp1Dpad_upLast = false;
+    boolean gp1Dpad_downLast = false;
+    boolean gp1Dpad_leftLast = false;
+    boolean gp1Dpad_rightLast = false;
+    boolean gp1LeftTriggerLast = false;
+    boolean gp1RightTriggerLast = false;
+
+    boolean gp2ButtonALast = false;
+    boolean gp2ButtonBLast = false;
+    boolean gp2ButtonXLast = false;
+    boolean gp2ButtonYLast = false;
+    boolean gp2RightBumperLast = false;
+    boolean gp2LeftBumperLast = false;
+    boolean gp2Dpad_upLast = false;
+    boolean gp2Dpad_downLast = false;
+    boolean gp2Dpad_leftLast = false;
+    boolean gp2Dpad_rightLast = false;
+    boolean gp2LeftTriggerLast = false;
+    boolean gp2RightTriggerLast = false;
 
     /**
      * Method to convert linear map from gamepad1 and gamepad2 stick input to a cubic map

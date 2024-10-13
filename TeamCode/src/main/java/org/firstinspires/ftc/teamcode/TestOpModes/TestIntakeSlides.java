@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.OuttakeSlides;
 
 
 /**
@@ -29,9 +27,6 @@ public class TestIntakeSlides extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
-    public VisionAprilTag visionAprilTagFront;
-    public OuttakeSlides outtakeSlides;
-    public OuttakeArm outtakeArm;
     public IntakeSlides intakeSlides;
     public Lights lights;
 
@@ -79,8 +74,8 @@ public class TestIntakeSlides extends LinearOpMode {
                 }
 
                 if(gamepadController.gp1GetLeftBumperPress()){
-                    if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.PICKUP)){
-                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.PICKUP);
+                    if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION)){
+                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
                     }
                     else if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
                         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
@@ -107,22 +102,8 @@ public class TestIntakeSlides extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        /* Create VisionAprilTag */
-        visionAprilTagFront = new VisionAprilTag(hardwareMap, telemetry, "Webcam 1");
-        telemetry.addLine("Vision April Tag Front Initialized");
-        telemetry.update();
-
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
-        //outtakeSlides = new OuttakeSlides(hardwareMap, telemetry);
-        telemetry.addLine("OuttakeSlides Initialized");
-        telemetry.update();
-
-        //outtakeArm= new OuttakeArm(hardwareMap, telemetry);
-        telemetry.addLine("OuttakeArm Initialized");
+        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
 
@@ -164,15 +145,9 @@ public class TestIntakeSlides extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            //visionAprilTagFront.printdebugMessages();
-            //outtakeSlides.printDebugMessages();
-            //outtakeArm.printDebugMessages();
-            lights.printDebugMessages();
+            intakeSlides.printDebugMessages();
         }
         telemetry.update();
     }
