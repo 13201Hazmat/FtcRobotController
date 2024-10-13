@@ -78,17 +78,6 @@ public class TestClimber extends LinearOpMode {
                     climber.modifyClimberStg1LengthContinuous(0.8);
                     climber.ascendClimberStg1Servo();
                 }
-
-                //Stage 2 climb
-                if(gamepadController.gp2GetLeftTriggerPress()){
-                    climber.modifyClimberStg2LengthContinuous(0.8);
-                    climber.ascendClimberStg2Servo();
-                }
-
-                if(gamepadController.gp2GetRightTriggerPress()){
-                    climber.turnClimberStg2BrakeModeOff();
-                }
-
             }
         }
         GameField.poseSetInAutonomous = false;
