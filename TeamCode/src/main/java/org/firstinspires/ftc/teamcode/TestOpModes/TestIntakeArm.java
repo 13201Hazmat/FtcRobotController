@@ -161,7 +161,6 @@ public class TestIntakeArm extends LinearOpMode {
             telemetry.addData("Game Timer : ", gameTimer.time());
             driveTrain.printDebugMessages();
             intakeArm.printDebugMessages();
-            lights.printDebugMessages();
         }
         telemetry.update();
     }

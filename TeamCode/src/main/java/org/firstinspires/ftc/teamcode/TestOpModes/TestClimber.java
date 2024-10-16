@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.Lights;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@Disabled
 @TeleOp(name = "Climber", group = "Testing")
 public class TestClimber extends LinearOpMode {
 

@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@Disabled
 @TeleOp(name = "OuttakeArm", group = "Testing")
 public class TestOuttake extends LinearOpMode {
 
