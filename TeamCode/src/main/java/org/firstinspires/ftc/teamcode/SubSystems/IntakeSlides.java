@@ -47,7 +47,6 @@ public class IntakeSlides {
     public void moveIntakeSlides(INTAKE_SLIDES_STATE intakeSlidesState) {
         intakeSlideServoLeft.setPosition(intakeSlidesState.leftSlidePos);
         intakeSlideServoRight.setPosition(intakeSlidesState.rightSlidePos);
-        setIntakeSlidesState(intakeSlidesState, (int) intakeSlidesState.leftSlidePos);
         this.intakeSlidesState = intakeSlidesState;
     }
 
