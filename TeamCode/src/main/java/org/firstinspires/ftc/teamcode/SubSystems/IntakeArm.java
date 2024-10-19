@@ -1,28 +1,30 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IntakeArm {
     public Servo intakeArmServo;
     public Servo intakeWristServo;
-    public Servo intakeGripServo;
+    public CRServo intakeRollerServo;
 
-    public enum INTAKE_GRIP_STATE {
-        OPEN(0.69),
-        CLOSED(1.0);
+    public boolean intakeActivated = false;
+    public boolean reverseIntakeActivated = false;
 
-        private final double gripPosition;
-        INTAKE_GRIP_STATE(double gripPosition) {
-            this.gripPosition = gripPosition;
-        }
+    public ElapsedTime stackIntakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    public ElapsedTime reverseStackIntakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    public enum INTAKE_ROLLER_STATE {
+        RUNNING,
+        REVERSE,
+        STOPPED;
+
+        INTAKE_ROLLER_STATE() {}
     }
-    public INTAKE_GRIP_STATE intakeGripState = INTAKE_GRIP_STATE.CLOSED;
+    public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
     public enum INTAKE_ARM_STATE{
         INIT(0),
@@ -55,7 +57,7 @@ public class IntakeArm {
         this.telemetry = telemetry;
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
-        intakeGripServo = hardwareMap.get(Servo.class, "intake_grip_servo");
+        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
         initIntakeArm();
     }
 
@@ -94,20 +96,24 @@ public class IntakeArm {
         }
     }
 
-    /**
-     *If state of hand grip is set to open, set position of servo's to specified
-     */
-    public void openGrip(){
-        intakeGripServo.setPosition(INTAKE_GRIP_STATE.OPEN.gripPosition);
-        intakeGripState = INTAKE_GRIP_STATE.OPEN;
+    public void runRollerForward(){
+        stackIntakeTimer.reset();
+        intakeRollerServo.setPower(1);
+        intakeActivated = true;
+        intakeRollerState = INTAKE_ROLLER_STATE.RUNNING;
     }
 
-    /**
-     * If state of hand grip is set to close, set position of servo's to specified
-     */
-    public void closeGrip(){
-        intakeGripServo.setPosition(INTAKE_GRIP_STATE.CLOSED.gripPosition);
-        intakeGripState = INTAKE_GRIP_STATE.CLOSED;
+    public void runRollerReverse() {
+        stackIntakeTimer.reset();
+        intakeRollerServo.setPower(-0.8);
+        reverseIntakeActivated = true;
+        intakeRollerState = INTAKE_ROLLER_STATE.REVERSE;
+    }
+
+    public void stopRoller(){
+        intakeRollerServo.setPower(0);
+        intakeActivated = false;
+        intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
     }
 
     public void printDebugMessages() {
@@ -118,9 +124,8 @@ public class IntakeArm {
         telemetry.addLine("Intake Wrist");
         telemetry.addData("   State", intakeWristState);
         telemetry.addData("   Wrist Servo position", intakeWristServo.getPosition());
-        telemetry.addLine("Intake Grip");
-        telemetry.addData("   State", intakeGripState);
-        telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
+        telemetry.addLine("Intake Roller");
+        telemetry.addData("   State", intakeRollerState);
         telemetry.addLine("=============");
     }
 }

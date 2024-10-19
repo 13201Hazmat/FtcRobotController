@@ -114,45 +114,63 @@ public class GamepadController {
     }
 
     public void runIntakeArm(){
-        //open && close grip
-        if(gp1GetRightBumperPress()){
-            if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED){
-                intakeArm.openGrip();
+        //start && stop roller forward
+        if(gp1GetButtonAPress()){
+            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
+                intakeArm.runRollerForward();
             }
-            else if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.OPEN){
-                intakeArm.closeGrip();
+            else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
+                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){
+                intakeArm.stopRoller();
             }
         }
 
-        //Move intakeArm to transfer or init position
-        if(gp1GetButtonAPress()){
-            if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.INIT){
-                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+        //start && stop roller reverse
+        if(gp1GetButtonYPress()){
+            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
+                intakeArm.runRollerReverse();
             }
-            else if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.TRANSFER){
-                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
+            else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
+                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){
+                intakeArm.stopRoller();
             }
+        }
+
+        //Move IntakeArm and IntakeSlides to transfer pos
+        if(gp1GetRightBumperPress()){
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         }
     }
 
     public void runIntakeSlides(){
-        //move intakeSlides to transfer position
-        if(gp1GetDpad_downPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
+        //retract and extend IntakeSlides from Max to transfer
+        if(gp1GetLeftBumperPress()){
+            if(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION){
                 intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
             }
-        }
-
-        //move intakeSlides to pickup position
-        if(gp1GetDpad_upPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION)){
+            else{
                 intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
             }
         }
     }
 
     public void runOuttake(){
+        //Drop sample and bring bucket back to init pos
+        if(gp2GetRightBumperPress()){
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+        }
 
+        //Low Bucket preset
+        if(gp2GetDpad_downPress()){
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BASKET);
+        }
+
+        //High Bucket preset
+        if(gp2GetDpad_upPress()){
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BASKET);
+        }
     }
 
     public void runSpecimenHandler(){
@@ -160,12 +178,7 @@ public class GamepadController {
     }
 
     public void runClimber(){
-        //move  to transfer position
-        if(gp1GetDpad_downPress()){
-            if (!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            }
-        }
+
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********

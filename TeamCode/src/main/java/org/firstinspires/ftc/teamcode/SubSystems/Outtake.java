@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,7 @@ public class Outtake {
     public Servo outtakeArmServo;
     public DcMotorEx outtakeSlideLeft;
     public DcMotorEx outtakeSlideRight;
+
 
     public enum OUTTAKE_ARM_STATE{
         INIT(0),
@@ -30,24 +32,25 @@ public class Outtake {
 
     //Outtake Motor states
     public enum OUTTAKE_SLIDE_STATE {
-        MIN_RETRACTED(0),
-        TRANSFER(0),
-        LOW_BASKET(700),
-        HIGH_BASKET(2000),
-        CLIMBER2(2000),
-        MAX_EXTENDED(2280);
+        MIN_RETRACTED(0, 0),
+        TRANSFER(100, 100),
+        LOW_BASKET(700, 700),
+        HIGH_BASKET(2000, 2000),
+        CLIMBER2(2000, 2000),
+        MAX_EXTENDED(2280, 2280);
 
-        public final double motorPosition;
-        OUTTAKE_SLIDE_STATE(double motorPosition) {
-            this.motorPosition = motorPosition;
+        public final double leftMotorPosition;
+        public final double rightMotorPosition;
+        OUTTAKE_SLIDE_STATE(double leftMotorPosition, double rightMotorPosition) {
+            this.leftMotorPosition = leftMotorPosition;
+            this.rightMotorPosition = rightMotorPosition;
         }
     }
 
     public OUTTAKE_SLIDE_STATE outtakeSlidesState = OUTTAKE_SLIDE_STATE.TRANSFER;
 
-    public int outtakeMotorCurrentPosition = 0;
-    public int outtakeMototLeftCurrentPosition, outtakeMotorRightCurrentPosition;
-    public double outtakeMotorNewPosition = outtakeSlidesState.motorPosition;
+    public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
+    public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
 
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
@@ -72,12 +75,11 @@ public class Outtake {
 
     public void initOuttake(){
         moveArm(OUTTAKE_ARM_STATE.INIT);
-
         resetOuttakeMotorMode();
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         outtakeSlideLeft.setPositionPIDFCoefficients(10.0);
-        outtakeSlideRight.setPositionPIDFCoefficients(10.0); //5
+        outtakeSlideRight.setPositionPIDFCoefficients(10.0);
         outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
         turnOuttakeBrakeModeOff();
@@ -104,10 +106,10 @@ public class Outtake {
     //Sets outtake slides to Transfer position
     public void moveOuttakeSlides(OUTTAKE_SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
-        outtakeMototLeftCurrentPosition = outtakeSlideLeft.getCurrentPosition();
+        outtakeMotorLeftCurrentPosition = outtakeSlideLeft.getCurrentPosition();
         outtakeMotorRightCurrentPosition = outtakeSlideRight.getCurrentPosition();
-        outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.leftMotorPosition);
+        outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.leftMotorPosition);
         outtakeSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
@@ -168,7 +170,7 @@ public class Outtake {
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE toOuttakeSlideState) {
         //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        isOuttakeSlidesInStateError = Math.abs(outtakeSlideRight.getCurrentPosition() - toOuttakeSlideState.motorPosition);
+        isOuttakeSlidesInStateError = Math.abs(outtakeSlideRight.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
         return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 30);
     }
 

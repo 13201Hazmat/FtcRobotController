@@ -26,11 +26,6 @@ public class IntakeSlides {
     }
     public INTAKE_SLIDES_STATE intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
 
-    //TODO @Vinayak : What is the objective of this function?
-    public void setIntakeSlidesState(INTAKE_SLIDES_STATE intakeSlidesState, int slideExtension) {
-        intakeSlidesState.leftSlidePos = slideExtension;
-        intakeSlidesState.rightSlidePos = slideExtension;
-    }
 
     public double leftIntakeSlideCurrPos, leftIntakeSlideNewPos = intakeSlidesState.leftSlidePos;
     public double rightIntakeSlideCurrPos, rightIntakeSlideNewPos = intakeSlidesState.rightSlidePos;
@@ -56,25 +51,7 @@ public class IntakeSlides {
         this.intakeSlidesState = intakeSlidesState;
     }
 
-    public void moveIntakeSlidesForward() {
-        if (intakeSlideServoLeft.getPosition() < INTAKE_SLIDES_STATE.MAX_EXTENSION.leftSlidePos) {
-            intakeSlideServoLeft.setPosition(intakeSlideServoLeft.getPosition() - 0.01);
-            intakeSlideServoRight.setPosition(intakeSlideServoRight.getPosition() - 0.01);
-            intakeSlidesState = INTAKE_SLIDES_STATE.IN_BETWEEN;
-        } else {
-            intakeSlidesState = INTAKE_SLIDES_STATE.MAX_EXTENSION;
-        }
-    };
 
-    public void moveIntakeSlidesBackward() {
-        if (intakeSlideServoLeft.getPosition() > INTAKE_SLIDES_STATE.MIN_RETRACTED.leftSlidePos) {
-            intakeSlideServoLeft.setPosition(intakeSlideServoLeft.getPosition() - 0.01);
-            intakeSlideServoRight.setPosition(intakeSlideServoRight.getPosition() - 0.01);
-            intakeSlidesState = INTAKE_SLIDES_STATE.IN_BETWEEN;
-        } else {
-            intakeSlidesState = INTAKE_SLIDES_STATE.MIN_RETRACTED;
-        }
-    };
 
     public void printDebugMessages(){
         //******  debug ******
