@@ -73,13 +73,27 @@ public class TestClimber extends LinearOpMode {
                 }
 
                 //Stage 1 climb
-                if(gamepadController.gp2GetLeftBumperPress()){
-                    climber.modifyClimberStg1LengthContinuous(0.8);
+                if(gamepadController.gp1GetLeftBumperPress()){
                     climber.ascendClimberStg1Servo();
+                }
+
+                if(gamepadController.gp1GetRightBumperPress()){
+                    climber.descendClimberStg1Servo();
+                }
+
+                if(!gamepadController.gp1GetStart()) {
+                    if (gamepadController.gp1GetLeftTriggerPress()) {
+                        climber.descendClimberStg1ServoWhenClimbing();
+                        climber.moveClimberStg1Motor(Climber.CLIMBERSTAGE1_MOTOR_STATE.CLIMBED);
+                    } else {
+                        if (gamepadController.gp1GetLeftTriggerPress()) {
+                            climber.ascendClimberStg1Servo();
+                            climber.moveClimberStg1Motor(Climber.CLIMBERSTAGE1_MOTOR_STATE.INITIAL);
+                        }
+                    }
                 }
             }
         }
-        GameField.poseSetInAutonomous = false;
     }
 
 
@@ -118,15 +132,6 @@ public class TestClimber extends LinearOpMode {
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        /* Get last position after Autonomous mode ended from static class set in Autonomous */
-        if ( GameField.poseSetInAutonomous) {
-            //driveTrain.pose = GameField.currentPose;
-            //driveTrain.getLocalizer().setPoseEstimate(GameField.currentPose);
-        } else {
-            //driveTrain.pose = startPose;
-            //driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
 
         //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;

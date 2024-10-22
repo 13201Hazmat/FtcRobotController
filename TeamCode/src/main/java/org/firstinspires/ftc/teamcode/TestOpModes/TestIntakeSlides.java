@@ -72,15 +72,15 @@ public class TestIntakeSlides extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp1GetLeftBumperPress()){
-                    if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION)){
-                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
-                    }
-                    else if(!(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER)){
-                        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-                    }
+                //dpad_up(extend)
+                if (!gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_upPress()) {
+                    intakeSlides.moveIntakeSlidesForward();
                 }
 
+                //dpad_down (retract)
+                if (!gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_downPress()) {
+                    intakeSlides.moveIntakeSlidesBackward();
+                }
             }
         }
         GameField.poseSetInAutonomous = false;
@@ -113,15 +113,6 @@ public class TestIntakeSlides extends LinearOpMode {
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        /* Get last position after Autonomous mode ended from static class set in Autonomous */
-        if ( GameField.poseSetInAutonomous) {
-            driveTrain.pose = GameField.currentPose;
-            //driveTrain.getLocalizer().setPoseEstimate(GameField.currentPose);
-        } else {
-            driveTrain.pose = startPose;
-            //driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
 
         //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;

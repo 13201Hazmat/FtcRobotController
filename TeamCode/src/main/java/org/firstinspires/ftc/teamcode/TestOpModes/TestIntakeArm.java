@@ -72,34 +72,74 @@ public class TestIntakeArm extends LinearOpMode {
                     telemetry.update();
                 }
 
-                if(gamepadController.gp1GetButtonAPress()){
-                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+                /*
+                Triangle (move arm-wrist  and slide to pickup)
+                Cross (stop intake roller inward, move arm, wrist and slides to init, or transfer - if outtake bucket is in place, else on second click),
+                Circle (move arm and wrist to pickup & start intake roller inward, If started - stop intake roller inward)
+                Square (move arm and wrist to eject & start intake roller outward, if started - stop outtake roller outward)
+                **dpad_left (rotate left)
+                **dpad_right (rotate right)
+                Start + Dpad_up (rotate arm forward)
+                Start + Dpad_down (rotate arm backward)
+                Start + Dpad_right (rotate wrist forward)
+                Start + Dpad_left (rotate wrist backward)
+                */
+
+                //Triangle (move arm-wrist  and slide to pickup)
+                if(gamepadController.gp1GetTrianglePress()){
+                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    //Move slide to pickup
                 }
 
-                if(gamepadController.gp1GetButtonYPress()){
-                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
-                }
-
-                if(gamepadController.gp1GetRightBumperPress()){/*
-                    if(intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.){
-                        intakeArm.closeGrip();
+                //Cross (stop intake roller inward, move arm, wrist and slides to init, or transfer - if outtake bucket is in place, else on second click)
+                if(gamepadController.gp1GetCrossPress()){
+                    if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.PICKUP) {
+                        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
+                    } else {
+                        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
                     }
-                    else{
-                        intakeArm.openGrip();
-                    }*/
                 }
 
-                if(gamepadController.gp1GetButtonXPress()){
-                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                //Circle (move arm and wrist to pickup & start intake roller inward, If started - stop intake roller inward)
+                if(gamepadController.gp1GetCirclePress()){
+                    if (intakeArm.intakeRollerState != IntakeArm.INTAKE_ROLLER_STATE.STOPPED) {
+                        intakeArm.runRollerToIntake();
+                    } else {
+                        intakeArm.stopRoller();
+                    }
                 }
 
-                if(gamepadController.gp1GetButtonBPress()){
-                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.DROP);
+                //Square (move arm and wrist to eject & start intake roller outward, if started - stop outtake roller outward)
+                if(gamepadController.gp1GetSquarePress()){
+                    if (intakeArm.intakeRollerState != IntakeArm.INTAKE_ROLLER_STATE.STOPPED) {
+                        intakeArm.runRollerToEject();
+                    } else {
+                        intakeArm.stopRoller();
+                    }
+                }
+
+                //Start + Dpad_up (rotate arm forward)
+                if (gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_upPress()) {
+                    intakeArm.moveArmForward();
+                }
+
+                //Start + Dpad_down (rotate arm backward)
+                if (gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_downPress()) {
+                    intakeArm.moveArmBackward();
+                }
+
+                //Start + Dpad_right (rotate wrist forward)
+                if (gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_rightPress()) {
+                    intakeArm.moveWristForward();
+                }
+
+                //Start + Dpad_left (rotate wrist backward)
+                if (gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_leftPress()) {
+                    intakeArm.moveWristBackward();
                 }
 
             }
         }
-        GameField.poseSetInAutonomous = false;
     }
 
     public void initSubsystems(){
@@ -128,15 +168,6 @@ public class TestIntakeArm extends LinearOpMode {
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        /* Get last position after Autonomous mode ended from static class set in Autonomous */
-        if ( GameField.poseSetInAutonomous) {
-            driveTrain.pose = GameField.currentPose;
-            //driveTrain.getLocalizer().setPoseEstimate(GameField.currentPose);
-        } else {
-            driveTrain.pose = startPose;
-            //driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
 
         //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;

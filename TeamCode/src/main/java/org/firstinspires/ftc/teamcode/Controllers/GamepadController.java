@@ -117,7 +117,7 @@ public class GamepadController {
         //start && stop roller forward
         if(gp1GetButtonAPress()){
             if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
-                intakeArm.runRollerForward();
+                intakeArm.runRollerToIntake();
             }
             else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
                     || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){
@@ -128,7 +128,7 @@ public class GamepadController {
         //start && stop roller reverse
         if(gp1GetButtonYPress()){
             if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
-                intakeArm.runRollerReverse();
+                intakeArm.runRollerToEject();
             }
             else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
                     || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){

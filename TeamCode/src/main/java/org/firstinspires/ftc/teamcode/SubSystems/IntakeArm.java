@@ -15,14 +15,12 @@ public class IntakeArm {
     public boolean intakeActivated = false;
     public boolean reverseIntakeActivated = false;
 
-    public ElapsedTime stackIntakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    public ElapsedTime reverseStackIntakeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    public ElapsedTime intakeRollerTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    public ElapsedTime reverseIntakeRollerTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public enum INTAKE_ROLLER_STATE {
         RUNNING,
         REVERSE,
         STOPPED;
-
-        INTAKE_ROLLER_STATE() {}
     }
     public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
@@ -30,7 +28,7 @@ public class IntakeArm {
         INIT(0),
         PICKUP(0.2),
         TRANSFER(0.5),
-        DROP(0.7);
+        EJECT(0.7);
 
         private double armPos;
         INTAKE_ARM_STATE(double armPos){
@@ -67,6 +65,7 @@ public class IntakeArm {
 
     public void moveArm(INTAKE_ARM_STATE intakeArmState){
         intakeArmServo.setPosition(intakeArmState.armPos);
+        moveWrist(intakeArmState);
         this.intakeArmState = intakeArmState;
     }
 
@@ -76,7 +75,7 @@ public class IntakeArm {
             case INIT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.INIT.wristPosition);
                 break;
-            case DROP:
+            case EJECT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.DROP.wristPosition);
                 break;
             case PICKUP:
@@ -84,28 +83,32 @@ public class IntakeArm {
         }
     }
 
-    public void moveWristUp(){
-        if (intakeWristState != INTAKE_WRIST_STATE.DROP) {
+    public void moveArmForward(){
+            intakeArmServo.setPosition(intakeArmServo.getPosition() + WRIST_UP_DELTA);
+    }
+
+    public void moveArmBackward(){
+        intakeArmServo.setPosition(intakeArmServo.getPosition() - WRIST_UP_DELTA);
+    }
+
+    public void moveWristForward(){
             intakeWristServo.setPosition(intakeWristServo.getPosition() + WRIST_UP_DELTA);
-        }
     }
 
-    public void moveWristDown(){
-        if (intakeWristState != INTAKE_WRIST_STATE.DROP) {
+    public void moveWristBackward(){
             intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_UP_DELTA);
-        }
     }
 
-    public void runRollerForward(){
-        stackIntakeTimer.reset();
+    public void runRollerToIntake(){
+        intakeRollerTimer.reset();
         intakeRollerServo.setPower(1);
         intakeActivated = true;
         intakeRollerState = INTAKE_ROLLER_STATE.RUNNING;
     }
 
-    public void runRollerReverse() {
-        stackIntakeTimer.reset();
-        intakeRollerServo.setPower(-0.8);
+    public void runRollerToEject() {
+        intakeRollerTimer.reset();
+        intakeRollerServo.setPower(-1);
         reverseIntakeActivated = true;
         intakeRollerState = INTAKE_ROLLER_STATE.REVERSE;
     }

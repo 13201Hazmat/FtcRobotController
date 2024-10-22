@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,31 +11,19 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Climber {
     public DcMotorEx climberStg1Motor = null;
-    public Servo climberStg1Servo;
+    public CRServo climberStg1ServoLeft, climberStg1ServoRight;
+
+    public double climberServoPower = 1.0;
+
+    public double climberServoPowerWhenClimbing = 0.8;
 
     public boolean climberActivated = false;
 
     public boolean climbingStg1Started = false;
 
-
-    public enum CLIMBER_STAGE1_SERVO_STATE {
-        LOCKED(0.62),
-        RELEASED(0.27);
-
-        private double climberStg1ServoPosition;
-
-        CLIMBER_STAGE1_SERVO_STATE(double climberServoPosition){
-            this.climberStg1ServoPosition = climberServoPosition;
-        }
-        public double getClimberStg1ServoPosition(){
-            return climberStg1ServoPosition;
-        }
-    }
-    public CLIMBER_STAGE1_SERVO_STATE climberStg1ServoState = CLIMBER_STAGE1_SERVO_STATE.LOCKED;
-
     public enum CLIMBERSTAGE1_MOTOR_STATE {
         INITIAL(0), //Position
-        CLIMBED(4000), //5000, 117 rpm motor TODO Set value, 6000
+        CLIMBED(4000), //5000, 60 rpm motor
         MAX(7500); //9000
 
         public final int motorPosition;
@@ -54,14 +44,32 @@ public class Climber {
     public Climber(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber1_motor");
-        climberStg1Servo = hardwareMap.get(Servo.class, "climber1_servo");
+        climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
+        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
+        climberStg1ServoRight.setDirection(DcMotorSimple.Direction.REVERSE);
         ascendClimberStg1Servo();
         initClimber();
     }
 
     public void ascendClimberStg1Servo(){
-        climberStg1Servo.setPosition(CLIMBER_STAGE1_SERVO_STATE.LOCKED.getClimberStg1ServoPosition());
-        climberStg1ServoState = CLIMBER_STAGE1_SERVO_STATE.LOCKED;
+        climberStg1ServoLeft.setPower(climberServoPower);
+        climberStg1ServoRight.setPower(climberServoPower);
+    }
+
+    public void ascendClimberStg1ServoTimed(){
+        //TODO : Add code for a timed ascend
+        climberStg1ServoLeft.setPower(climberServoPower);
+        climberStg1ServoRight.setPower(climberServoPower);
+    }
+
+    public void descendClimberStg1Servo(){
+        climberStg1ServoLeft.setPower(-climberServoPower);
+        climberStg1ServoRight.setPower(-climberServoPower);
+    }
+
+    public void descendClimberStg1ServoWhenClimbing(){
+        climberStg1ServoLeft.setPower(-climberServoPowerWhenClimbing);
+        climberStg1ServoRight.setPower(-climberServoPowerWhenClimbing);
     }
 
     public void initClimber(){
