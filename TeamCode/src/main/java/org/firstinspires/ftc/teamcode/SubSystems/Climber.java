@@ -53,8 +53,8 @@ public class Climber {
     public Telemetry telemetry;
     public Climber(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber_stage1_motor");
-        climberStg1Servo = hardwareMap.get(Servo.class, "climber_stage1_servo");
+        climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber1_motor");
+        climberStg1Servo = hardwareMap.get(Servo.class, "climber1_servo");
         ascendClimberStg1Servo();
         initClimber();
     }

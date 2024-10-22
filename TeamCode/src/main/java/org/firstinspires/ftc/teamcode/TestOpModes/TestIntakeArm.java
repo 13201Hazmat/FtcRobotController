@@ -80,13 +80,13 @@ public class TestIntakeArm extends LinearOpMode {
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
                 }
 
-                if(gamepadController.gp1GetRightBumperPress()){
-                    if(intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.OPEN){
+                if(gamepadController.gp1GetRightBumperPress()){/*
+                    if(intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.){
                         intakeArm.closeGrip();
                     }
                     else{
                         intakeArm.openGrip();
-                    }
+                    }*/
                 }
 
                 if(gamepadController.gp1GetButtonXPress()){
