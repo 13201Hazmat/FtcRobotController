@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -89,6 +90,10 @@ public class IntakeArm {
 
     public void moveArmBackward(){
         intakeArmServo.setPosition(intakeArmServo.getPosition() - WRIST_UP_DELTA);
+    }
+
+    public void moveArmOffVision(){
+
     }
 
     public void moveWristForward(){
