@@ -8,23 +8,28 @@ RC Motor 1:        specimenSlide = hardwareMap.get(DcMotorEx.class, "specimen_sl
 RC Servo 3:        gripServo = hardwareMap.get(Servo.class, "specimen_grip");
 
 RC Servo 4:        outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
+RC Servo 1:        outtakeArmWrist = hardwareMap.get(Servo.class, "outtake_wrist");
 RC Motor 2:        outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
 EH Motor 2:        outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
 
 EH Servo 2:        intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
 RC Servo 2:        intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
 EH Servo 4:        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+EH I2C Bus 1:      intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
 RC Servo 0:        intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
 EH Servo 0:        intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
 
 EH Motor 1:        climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber1_motor");
-EH Servo 5:        climberStg1Servo = hardwareMap.get(Servo.class, "climber1_servo");
+RC Servo 5:        climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
+EH Servo 5:        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
+
+
 
 EH Servo 1:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
 RC Servo 1:
-RC Servo 5:
+
 EH Servo 3:
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

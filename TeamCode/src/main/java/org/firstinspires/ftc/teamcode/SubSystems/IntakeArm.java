@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,6 +12,7 @@ public class IntakeArm {
     public Servo intakeArmServo;
     public Servo intakeWristServo;
     public CRServo intakeRollerServo;
+    public NormalizedColorSensor intakeSensor;
 
     public boolean intakeActivated = false;
     public boolean reverseIntakeActivated = false;
@@ -56,6 +58,8 @@ public class IntakeArm {
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
         intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+        intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
+
         initIntakeArm();
     }
 
