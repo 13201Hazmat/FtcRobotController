@@ -19,10 +19,11 @@ public class IntakeSlides {
 
     //IntakeSlides servo states
     public enum INTAKE_SLIDES_STATE{
-        MIN_RETRACTED (0,0),
+        // Calib position - Max_Extended Left at 1.0, right at 0.0
+        MIN_RETRACTED (0.81,0.19),
         TRANSFER (0.1, 0.1),
         IN_BETWEEN(0.5,0.5),
-        MAX_EXTENSION(1.0, 1.0);
+        MAX_EXTENSION(1.0, 0.0);
 
         public double leftSlidePos;
         public double rightSlidePos;
@@ -59,6 +60,7 @@ public class IntakeSlides {
         this.intakeSlidesState = intakeSlidesState;
     }
 
+    /*
     public void locateAndMoveToBlock(ColorRange targetColor) {
         final double pixelToExtensionScale = 0.05;
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
@@ -98,6 +100,7 @@ public class IntakeSlides {
         }
         telemetry.update();
     }
+    */
 
     public void moveIntakeSlidesSpecific(double extension){
         intakeSlideServoLeft.setPosition(extension);

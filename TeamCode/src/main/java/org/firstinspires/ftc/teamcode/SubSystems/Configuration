@@ -8,7 +8,7 @@ RC Motor 1:        specimenSlide = hardwareMap.get(DcMotorEx.class, "specimen_sl
 RC Servo 3:        gripServo = hardwareMap.get(Servo.class, "specimen_grip");
 
 RC Servo 4:        outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
-RC Servo 1:        outtakeArmWrist = hardwareMap.get(Servo.class, "outtake_wrist");
+RC Servo 1:        outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist");
 RC Motor 2:        outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
 EH Motor 2:        outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
 

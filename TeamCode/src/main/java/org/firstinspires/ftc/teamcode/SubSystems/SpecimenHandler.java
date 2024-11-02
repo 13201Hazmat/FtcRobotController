@@ -15,8 +15,8 @@ public class SpecimenHandler {
     public DcMotorEx specimenSlide;
 
     public enum SPECIMEN_GRIP_STATE {
-        OPEN(0.69),
-        CLOSED(1.0);
+        OPEN(0.1),
+        CLOSED(0.26);
 
         private final double gripPosition;
         SPECIMEN_GRIP_STATE(double gripPosition) {

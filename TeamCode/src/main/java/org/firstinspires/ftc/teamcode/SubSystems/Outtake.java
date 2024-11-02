@@ -12,15 +12,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Outtake {
     public Servo outtakeArmServo;
+    public Servo outtakeWristServo;
     public DcMotorEx outtakeSlideLeft;
     public DcMotorEx outtakeSlideRight;
 
 
     public enum OUTTAKE_ARM_STATE{
+        //Calib Position : Fully in mechanical limit inwards is Zero
         INIT(0),
-        TRANSFER(0.1),
-        DROP(0.8),
-        MAX(1.0);
+        TRANSFER(0.0),
+        DROP(0.57),
+        MAX(0.57);
 
         private double armPos;
         OUTTAKE_ARM_STATE(double armPos){
@@ -29,6 +31,22 @@ public class Outtake {
     }
     public OUTTAKE_ARM_STATE outtakeArmState = OUTTAKE_ARM_STATE.TRANSFER;
     public double ARM_DELTA = 0.01;
+
+    public enum OUTTAKE_WRIST_STATE{
+        //Calib Position : Fully in mechanical limit inwards is One
+        INIT(0.5),
+        TRANSFER(0.0),
+        PRE_DROP(0.5),
+        DROP(0.57),
+        MAX(0.57);
+
+        private double wristPos;
+        OUTTAKE_WRIST_STATE(double wristPos){
+            this.wristPos = wristPos;
+        }
+    }
+    public OUTTAKE_WRIST_STATE outtakeWristState = OUTTAKE_WRIST_STATE.TRANSFER;
+    public double WRIST_DELTA = 0.01;
 
     //Outtake Motor states
     public enum OUTTAKE_SLIDE_STATE {
@@ -68,6 +86,7 @@ public class Outtake {
     public Outtake(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
         this.telemetry = telemetry;
         outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
+        outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist");
         outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
         outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
         initOuttake();
@@ -90,6 +109,38 @@ public class Outtake {
         outtakeArmServo.setPosition(outtakeArmState.armPos);
         this.outtakeArmState = outtakeArmState;
     }
+
+    public void moveWrist(OUTTAKE_WRIST_STATE outtakeArmState){
+        switch (outtakeArmState){
+            case INIT:
+                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.INIT.wristPos);
+                break;
+            case TRANSFER:
+                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.TRANSFER.wristPos);
+                break;
+            case DROP:
+                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.PRE_DROP.wristPos);
+                break;
+            case MAX:
+                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.MAX.wristPos);
+                break;
+        }
+    }
+
+    public void moveWristDrop(){
+        if (outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP) {
+            outtakeWristState = OUTTAKE_WRIST_STATE.DROP;
+            outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.DROP.wristPos);
+        }
+    }
+
+    public void moveWristPreDrop(){
+        if (outtakeWristState == OUTTAKE_WRIST_STATE.DROP) {
+            outtakeWristState = OUTTAKE_WRIST_STATE.PRE_DROP;
+            outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.PRE_DROP.wristPos);
+        }
+    }
+
 
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOn(){

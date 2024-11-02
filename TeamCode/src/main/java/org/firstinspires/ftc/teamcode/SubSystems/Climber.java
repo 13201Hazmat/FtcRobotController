@@ -46,8 +46,7 @@ public class Climber {
         climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber1_motor");
         climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
         climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
-        climberStg1ServoRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        ascendClimberStg1Servo();
+        climberStg1ServoLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         initClimber();
     }
 

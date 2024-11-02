@@ -28,10 +28,13 @@ public class IntakeArm {
     public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
     public enum INTAKE_ARM_STATE{
-        INIT(0),
-        PICKUP(0.2),
-        TRANSFER(0.5),
-        EJECT(0.7);
+        //Zero position - Intake arm vertically downward
+
+        LOWEST(0.0), // Perpendiculr to the ground downnwards
+        PICKUP(0.32),
+        EJECT(0.45),
+        INIT(0.68), //vertically up
+        TRANSFER(0.77);
 
         private double armPos;
         INTAKE_ARM_STATE(double armPos){
@@ -42,9 +45,11 @@ public class IntakeArm {
     public double ARM_DELTA = 0.01;
 
     public enum INTAKE_WRIST_STATE{
-        INIT(0),
-        PICKUP(0.25),
-        DROP(-0.25);
+        //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
+        PICKUP(0.092),
+        EJECT(0.67),
+        TRANSFER(0.16),
+        INIT(0.0);
 
         private final double wristPosition;
         INTAKE_WRIST_STATE(double wristPosition){
@@ -52,6 +57,7 @@ public class IntakeArm {
         }
     }
     public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
+    public double WRIST_UP_DELTA = 0.01;
 
     public Telemetry telemetry;
     public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
@@ -74,17 +80,22 @@ public class IntakeArm {
         this.intakeArmState = intakeArmState;
     }
 
-    public static final double WRIST_UP_DELTA = 0.2;
+
     public void moveWrist(INTAKE_ARM_STATE intakeArmState){
         switch (intakeArmState){
             case INIT:
+            case LOWEST:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.INIT.wristPosition);
                 break;
             case EJECT:
-                intakeWristServo.setPosition(INTAKE_WRIST_STATE.DROP.wristPosition);
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.EJECT.wristPosition);
                 break;
             case PICKUP:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.PICKUP.wristPosition);
+                break;
+            case TRANSFER:
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.TRANSFER.wristPosition);
+                break;
         }
     }
 
