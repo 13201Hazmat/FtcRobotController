@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -52,8 +51,8 @@ public class Outtake {
     public enum OUTTAKE_SLIDE_STATE {
         MIN_RETRACTED(0, 0),
         TRANSFER(100, 100),
-        LOW_BASKET(700, 700),
-        HIGH_BASKET(2000, 2000),
+        LOW_BUCKET(700, 700),
+        HIGH_BUCKET(2000, 2000),
         CLIMBER2(2000, 2000),
         MAX_EXTENDED(2280, 2280);
 

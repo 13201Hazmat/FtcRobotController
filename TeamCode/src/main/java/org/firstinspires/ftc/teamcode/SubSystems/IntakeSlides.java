@@ -19,11 +19,10 @@ public class IntakeSlides {
 
     //IntakeSlides servo states
     public enum INTAKE_SLIDES_STATE{
-        // Calib position - Max_Extended Left at 1.0, right at 0.0
-        MIN_RETRACTED (0.81,0.19),
+        MIN_RETRACTED (0,0),
         TRANSFER (0.1, 0.1),
         IN_BETWEEN(0.5,0.5),
-        MAX_EXTENSION(1.0, 0.0);
+        MAX_EXTENSION(1.0, 1.0);
 
         public double leftSlidePos;
         public double rightSlidePos;
@@ -100,8 +99,8 @@ public class IntakeSlides {
         }
         telemetry.update();
     }
-    */
 
+     */
     public void moveIntakeSlidesSpecific(double extension){
         intakeSlideServoLeft.setPosition(extension);
         intakeSlideServoRight.setPosition(extension);

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -104,13 +103,18 @@ public class SpecimenHandler {
     }
 
     //Sets outtake slides to Transfer position
-    public void moveOuttakeSlides(SPECIMEN_SLIDE_STATE toOuttakeMotorState){
+    public void moveSpecimenSlides(SPECIMEN_SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
         specimenMotorCurrentPosition = specimenSlide.getCurrentPosition();
         specimenSlide.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         specimenSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
+    }
+
+    public void lowerSlideToLatch(){
+         double lowerDelta = 0.05;
+         specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - lowerDelta));
     }
 
     //sets the Outtake motor power

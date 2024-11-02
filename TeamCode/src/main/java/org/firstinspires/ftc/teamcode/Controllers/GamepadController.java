@@ -67,6 +67,8 @@ public class GamepadController {
     public Climber climber;
     public Telemetry telemetry;
     LinearOpMode currentOpMode;
+    private int blockIntakeSequenceState = 0;
+    private int blockIntakeEjectstate = 0;
 
     /**
      * Constructor for HzGamepad1 and HzGamepad2 class that extends gamepad.
@@ -99,8 +101,7 @@ public class GamepadController {
      *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
     public void runByGamepadControl(){
-        runIntakeArm();
-        runIntakeSlides();
+        runIntake();
         runOuttake();
         runSpecimenHandler();
         runClimber();
@@ -113,71 +114,167 @@ public class GamepadController {
         }
     }
 
-    public void runIntakeArm(){
-        //start && stop roller forward
-        if(gp1GetButtonAPress()){
-            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
+    public void runIntake() {
+        // Start & stop roller forward
+        if (gp1GetButtonAPress()) {
+            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED) {
                 intakeArm.runRollerToIntake();
-            }
-            else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
-                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){
+            } else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
+                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING) {
                 intakeArm.stopRoller();
             }
         }
 
-        //start && stop roller reverse
-        if(gp1GetButtonYPress()){
-            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED){
+        // Start & stop roller reverse
+        if (gp1GetButtonYPress()) {
+            if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.STOPPED) {
                 intakeArm.runRollerToEject();
-            }
-            else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
-                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING){
+            } else if (intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.REVERSE
+                    || intakeArm.intakeRollerState == IntakeArm.INTAKE_ROLLER_STATE.RUNNING) {
                 intakeArm.stopRoller();
             }
         }
 
-        //Move IntakeArm and IntakeSlides to transfer pos
-        if(gp1GetRightBumperPress()){
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        // Retract and extend IntakeSlides from Max to transfer
+        if (gp1GetLeftBumperPress()) {
+            if (intakeSlides.intakeSlidesState != IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER) {
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            } else {
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MIN_RETRACTED);
+            }
+        }
+
+        if (gp1GetRightBumperPress()) {
+            switch (blockIntakeSequenceState) {
+                case 0:
+                    // Move arm, wrist, and slide to Pick up position
+                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
+                    blockIntakeSequenceState++;
+                    break;
+
+                case 1:
+                    // Start the intake roller to pull inward
+                    intakeArm.runRollerToIntake();
+                    blockIntakeSequenceState++;
+                    break;
+
+                case 2:
+                    // Stop the intake roller
+                    intakeArm.stopRoller();
+                    blockIntakeSequenceState = 0;
+                    break;
+
+                default:
+                    blockIntakeSequenceState = 0;
+                    break;
+            }
+        }
+
+        if(gp1GetButtonAPress()){
+            switch (blockIntakeEjectstate) {
+                case 0:
+                    //move intake arm and wrist to eject
+                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
+                    intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.EJECT);
+                    blockIntakeEjectstate++;
+                    break;
+
+                case 1:
+                    // Start the intake roller to eject
+                    intakeArm.runRollerToEject();
+                    blockIntakeEjectstate++;
+                    break;
+
+                case 2:
+                    // Stop the intake roller
+                    intakeArm.stopRoller();
+                    blockIntakeEjectstate = 0;
+                    break;
+
+                default:
+                    blockIntakeEjectstate = 0;
+                    break;
+            }
+        }
+
+        // Move IntakeSlides forward and backward with D-pad
+        if(gp1GetDpad_upPress()) {
+            while (gp1GetDpad_upPress()) {
+                intakeSlides.moveIntakeSlidesForward();
+            }
+        }
+        if(gp1GetDpad_downPress()) {
+            while (gp1GetDpad_downPress()) {
+                intakeSlides.moveIntakeSlidesBackward();
+            }
         }
     }
 
-    public void runIntakeSlides(){
-        //retract and extend IntakeSlides from Max to transfer
-        if(gp1GetLeftBumperPress()){
-            if(intakeSlides.intakeSlidesState == IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION){
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            }
-            else{
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
-            }
-        }
-    }
 
     public void runOuttake(){
-        //Drop sample and bring bucket back to init pos
-        if(gp2GetRightBumperPress()){
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+        //Drop sample from outtake
+        if(gp2GetLeftBumperPress()){
+            //TODO implement logic to check whether slide/arm/wrist is currently not moving
+            outtake.moveWristDrop();
         }
 
-        //Low Bucket preset
-        if(gp2GetDpad_downPress()){
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BASKET);
-        }
-
-        //High Bucket preset
         if(gp2GetDpad_upPress()){
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BASKET);
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveWristPreDrop();
         }
+
+        if(gp2GetDpad_leftPress()){
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveWristPreDrop();
+        }
+
+        if(gp2GetDpad_downPress()){
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+            outtake.moveWrist(Outtake.OUTTAKE_WRIST_STATE.TRANSFER);
+        }
+
+
     }
 
     public void runSpecimenHandler(){
+        if(gp2GetRightBumperPress()){
+            if(specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN){
+                specimenHandler.closeGrip();
+            }
+            else{
+                specimenHandler.openGrip();
+            }
+        }
 
+        if(gp2GetButtonYPress()){
+            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+        }
+
+        if(gp2GetButtonBPress()){
+            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.LOW_CHAMBER);
+        }
+
+        if(gp2GetButtonAPress()){
+            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
+        }
+
+        if(gp2GetButtonXPress()){
+            specimenHandler.lowerSlideToLatch();
+        }
     }
 
     public void runClimber(){
+        if(gp1GetButtonYPress()){
+            //ascend climber stage 1
+            climber.ascendClimberStg1Servo();
+            climber.modifyClimberStg1LengthContinuous(1.0);
+        }
 
     }
 
