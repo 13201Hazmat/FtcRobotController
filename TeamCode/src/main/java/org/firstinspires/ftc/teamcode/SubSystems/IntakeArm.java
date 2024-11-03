@@ -46,7 +46,8 @@ public class IntakeArm {
         PICKUP(0.27),
         EJECT(0.45),
         INIT(0.68), //vertically up
-        TRANSFER(0.77);
+        TRANSFER(0.77),
+        DYNAMIC(0.68);
 
         private double armPos;
         INTAKE_ARM_STATE(double armPos){
@@ -62,7 +63,8 @@ public class IntakeArm {
         EJECT(0.67),
         PRE_TRANSFER(0.30),
         TRANSFER(0.16),
-        INIT(0.0);
+        INIT(0.0),
+        DYNAMIC(0.16);
 
         private final double wristPosition;
         INTAKE_WRIST_STATE(double wristPosition){
@@ -86,6 +88,7 @@ public class IntakeArm {
 
     public void initIntakeArm(){
         moveArm(INTAKE_ARM_STATE.INIT);
+        intakeArmState = INTAKE_ARM_STATE.INIT;
     }
 
     public void moveArm(INTAKE_ARM_STATE intakeArmState){
@@ -122,10 +125,12 @@ public class IntakeArm {
 
     public void moveArmForward(){
             intakeArmServo.setPosition(intakeArmServo.getPosition() + WRIST_UP_DELTA);
+            intakeArmState = INTAKE_ARM_STATE.DYNAMIC;
     }
 
     public void moveArmBackward(){
         intakeArmServo.setPosition(intakeArmServo.getPosition() - WRIST_UP_DELTA);
+        intakeArmState = INTAKE_ARM_STATE.DYNAMIC;
     }
 
     public void moveArmOffVision(){
@@ -134,10 +139,12 @@ public class IntakeArm {
 
     public void moveWristForward(){
             intakeWristServo.setPosition(intakeWristServo.getPosition() + WRIST_UP_DELTA);
+            intakeWristState = INTAKE_WRIST_STATE.DYNAMIC;
     }
 
     public void moveWristBackward(){
             intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_UP_DELTA);
+            intakeWristState = INTAKE_WRIST_STATE.DYNAMIC;
     }
 
     /**
@@ -187,8 +194,11 @@ public class IntakeArm {
         telemetry.addLine("Intake Wrist");
         telemetry.addData("   State", intakeWristState);
         telemetry.addData("   Wrist Servo position", intakeWristServo.getPosition());
-        telemetry.addLine("Intake Roller");
+//        telemetry.addLine("Intake Roller");
+//        telemetry.addData("   State", intakeRollerState);
+        telemetry.addLine("Intake Grip");
         telemetry.addData("   State", intakeRollerState);
+        telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
         telemetry.addLine("=============");
     }
 }

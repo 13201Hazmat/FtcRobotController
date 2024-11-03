@@ -50,7 +50,8 @@ public class IntakeSlides {
     public void initIntakeSlides(){
         intakeSlideServoLeft.setDirection(Servo.Direction.FORWARD);
         intakeSlideServoRight.setDirection(Servo.Direction.REVERSE);
-        moveIntakeSlides(INTAKE_SLIDES_STATE.MIN_RETRACTED);
+        moveIntakeSlides(INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
     }
 
     public void moveIntakeSlides(INTAKE_SLIDES_STATE intakeSlidesState) {

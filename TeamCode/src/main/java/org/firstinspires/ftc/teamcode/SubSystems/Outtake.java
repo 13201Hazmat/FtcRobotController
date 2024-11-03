@@ -114,23 +114,27 @@ public class Outtake {
         switch (outtakeArmState){
             case INIT:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.INIT.wristPos);
+                outtakeWristState = OUTTAKE_WRIST_STATE.INIT;
                 break;
             case TRANSFER:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.TRANSFER.wristPos);
+                outtakeWristState = OUTTAKE_WRIST_STATE.TRANSFER;
                 break;
             case DROP:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.PRE_DROP.wristPos);
+                outtakeWristState = OUTTAKE_WRIST_STATE.PRE_DROP;
                 break;
             case MAX:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.MAX.wristPos);
+                outtakeWristState = OUTTAKE_WRIST_STATE.MAX;
                 break;
         }
     }
 
     public void moveWristDrop(){
         if (outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP) {
-            outtakeWristState = OUTTAKE_WRIST_STATE.DROP;
             outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.DROP.wristPos);
+            outtakeWristState = OUTTAKE_WRIST_STATE.DROP;
         }
     }
 
@@ -242,6 +246,11 @@ public class Outtake {
         telemetry.addData("   State", outtakeArmState);
         telemetry.addData("   Servo position", outtakeArmServo.getPosition());
         telemetry.addLine("=============");
+        telemetry.addLine("Outtake Wrist");
+        telemetry.addData("   State", outtakeWristState);
+        telemetry.addData("   Servo position", outtakeWristServo.getPosition());
+        telemetry.addLine("=============");
+
     }
 
 
