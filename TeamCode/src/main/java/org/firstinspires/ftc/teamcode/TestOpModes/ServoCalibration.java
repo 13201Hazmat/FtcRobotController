@@ -41,6 +41,7 @@ public class ServoCalibration extends LinearOpMode{
             telemetry.addData("    specimen_grip ", "(Dpad Up)");
             telemetry.addData("    outtake_arm   ", "(Dpad left)");
             telemetry.addData("    outtake_wrist ", "(Dpad right)");
+            telemetry.addData("    intake_roller_servo", "(Dpad down As Grip)");
 
             if(gamepad1.x){
                 masterServoName = "intake_arm";
@@ -73,10 +74,17 @@ public class ServoCalibration extends LinearOpMode{
                 break;
             }
             if(gamepad1.dpad_right){
-                masterServoCalibPosition = "Fully in mechanical limit inward is 1.0";
+                masterServoCalibPosition = "Bucket holder parallel to arm is 0.75";
                 masterServoName = "outtake_wrist";
                 break;
             }
+
+            if(gamepad1.dpad_down){
+                masterServoCalibPosition = "Grip Closed is 1.0";
+                masterServoName = "intake_roller_servo";
+                break;
+            }
+
             telemetry.update();
         }
         masterServo = hardwareMap.get(Servo.class, masterServoName);

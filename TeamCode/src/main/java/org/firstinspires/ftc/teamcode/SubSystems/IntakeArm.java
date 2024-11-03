@@ -12,7 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class IntakeArm {
     public Servo intakeArmServo;
     public Servo intakeWristServo;
-    public CRServo intakeRollerServo;
+    //public CRServo intakeRollerServo;
+    public Servo intakeGripServo;
     public NormalizedColorSensor intakeSensor;
 
     public boolean intakeActivated = false;
@@ -27,11 +28,22 @@ public class IntakeArm {
     }
     public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
+    public enum INTAKE_GRIP_STATE {
+        OPEN(0.22),
+        CLOSED(0.01);
+
+        private final double gripPosition;
+        INTAKE_GRIP_STATE(double gripPosition) {
+            this.gripPosition = gripPosition;
+        }
+    }
+    public INTAKE_GRIP_STATE intakeGripState = INTAKE_GRIP_STATE.CLOSED;
+
     public enum INTAKE_ARM_STATE{
         //Zero position - Intake arm vertically downward
 
         LOWEST(0.0), // Perpendiculr to the ground downnwards
-        PICKUP(0.32),
+        PICKUP(0.27),
         EJECT(0.45),
         INIT(0.68), //vertically up
         TRANSFER(0.77);
@@ -46,8 +58,9 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(0.092),
+        PICKUP(0.85),
         EJECT(0.67),
+        PRE_TRANSFER(0.30),
         TRANSFER(0.16),
         INIT(0.0);
 
@@ -64,7 +77,8 @@ public class IntakeArm {
         this.telemetry = telemetry;
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
-        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+        //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+        intakeGripServo = hardwareMap.get(Servo.class, "intake_roller_servo");
         intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
         initIntakeArm();
@@ -84,17 +98,24 @@ public class IntakeArm {
     public void moveWrist(INTAKE_ARM_STATE intakeArmState){
         switch (intakeArmState){
             case INIT:
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.PRE_TRANSFER.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.PRE_TRANSFER;
+                break;
             case LOWEST:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.INIT.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.INIT;
                 break;
             case EJECT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.EJECT.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.EJECT;
                 break;
             case PICKUP:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.PICKUP.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.PICKUP;
                 break;
             case TRANSFER:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.TRANSFER.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.TRANSFER;
                 break;
         }
     }
@@ -119,7 +140,24 @@ public class IntakeArm {
             intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_UP_DELTA);
     }
 
-    public void runRollerToIntake(){
+    /**
+     *If state of hand grip is set to open, set position of servo's to specified
+     */
+    public void openGrip(){
+        intakeGripServo.setPosition(INTAKE_GRIP_STATE.OPEN.gripPosition);
+        intakeGripState = INTAKE_GRIP_STATE.OPEN;
+    }
+
+    /**
+     * If state of hand grip is set to close, set position of servo's to specified
+     */
+    public void closeGrip(){
+        intakeGripServo.setPosition(INTAKE_GRIP_STATE.CLOSED.gripPosition);
+        intakeGripState = INTAKE_GRIP_STATE.CLOSED;
+    }
+
+
+    /*public void runRollerToIntake(){
         intakeRollerTimer.reset();
         intakeRollerServo.setPower(1);
         intakeActivated = true;
@@ -138,6 +176,8 @@ public class IntakeArm {
         intakeActivated = false;
         intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
     }
+
+     */
 
     public void printDebugMessages() {
         //******  debug ******

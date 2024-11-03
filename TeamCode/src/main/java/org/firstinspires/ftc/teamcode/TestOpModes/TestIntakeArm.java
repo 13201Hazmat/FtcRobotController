@@ -100,6 +100,7 @@ public class TestIntakeArm extends LinearOpMode {
                     }
                 }
 
+                /*
                 //Circle (move arm and wrist to pickup & start intake roller inward, If started - stop intake roller inward)
                 if(gamepadController.gp1GetCirclePress()){
                     if (intakeArm.intakeRollerState != IntakeArm.INTAKE_ROLLER_STATE.STOPPED) {
@@ -117,6 +118,8 @@ public class TestIntakeArm extends LinearOpMode {
                         intakeArm.stopRoller();
                     }
                 }
+                *
+                 */
 
                 //Start + Dpad_up (rotate arm forward)
                 if (gamepadController.gp1GetStart() && gamepadController.gp1GetDpad_upPress()) {

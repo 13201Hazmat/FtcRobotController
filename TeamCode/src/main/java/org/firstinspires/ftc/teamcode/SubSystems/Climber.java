@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -14,6 +17,8 @@ public class Climber {
     public CRServo climberStg1ServoLeft, climberStg1ServoRight;
 
     public double climberServoPower = 1.0;
+    public int CLIMBER_SERVO_ASCEND_TIME = 500;
+    public ElapsedTime climberServoTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     public double climberServoPowerWhenClimbing = 0.8;
 
@@ -23,7 +28,7 @@ public class Climber {
 
     public enum CLIMBERSTAGE1_MOTOR_STATE {
         INITIAL(0), //Position
-        CLIMBED(4000), //5000, 60 rpm motor
+        CLIMBED(1000), //5000, 60 rpm motor
         MAX(7500); //9000
 
         public final int motorPosition;
@@ -51,24 +56,26 @@ public class Climber {
     }
 
     public void ascendClimberStg1Servo(){
+        climberServoTimer.reset();
         climberStg1ServoLeft.setPower(climberServoPower);
         climberStg1ServoRight.setPower(climberServoPower);
-    }
+        while (climberServoTimer.time() < CLIMBER_SERVO_ASCEND_TIME) {
+            //TODO : PASS OPMODE TO ALL SUBSYSTEMS and ENSURE SAFE WHILE LOOPS
+        }
+        climberStg1ServoLeft.setPower(0);
+        climberStg1ServoRight.setPower(0);
 
-    public void ascendClimberStg1ServoTimed(){
-        //TODO : Add code for a timed ascend
-        climberStg1ServoLeft.setPower(climberServoPower);
-        climberStg1ServoRight.setPower(climberServoPower);
     }
 
     public void descendClimberStg1Servo(){
+        climberServoTimer.reset();
         climberStg1ServoLeft.setPower(-climberServoPower);
         climberStg1ServoRight.setPower(-climberServoPower);
-    }
-
-    public void descendClimberStg1ServoWhenClimbing(){
-        climberStg1ServoLeft.setPower(-climberServoPowerWhenClimbing);
-        climberStg1ServoRight.setPower(-climberServoPowerWhenClimbing);
+        while (climberServoTimer.time() < CLIMBER_SERVO_ASCEND_TIME) {
+            //TODO : PASS OPMODE TO ALL SUBSYSTEMS and ENSURE SAFE WHILE LOOPS
+        }
+        climberStg1ServoLeft.setPower(0);
+        climberStg1ServoRight.setPower(0);
     }
 
     public void initClimber(){

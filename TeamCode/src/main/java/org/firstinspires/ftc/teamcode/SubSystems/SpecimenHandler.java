@@ -28,8 +28,8 @@ public class SpecimenHandler {
     public enum SPECIMEN_SLIDE_STATE {
         MIN_RETRACTED(0),
         PICKUP(0),
-        LOW_CHAMBER(700),
-        HIGH_CHAMBER(2000),
+        LOW_CHAMBER(500),
+        HIGH_CHAMBER(1500),
         MAX_EXTENDED(2280);
 
         public final double motorPosition;
@@ -39,6 +39,8 @@ public class SpecimenHandler {
     }
 
     public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
+
+    public int SLIDE_LOWER_DELTA_TO_LATCH = 200;
 
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
@@ -70,7 +72,6 @@ public class SpecimenHandler {
         resetOuttakeMotorMode();
         specimenSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         specimenSlide.setPositionPIDFCoefficients(10.0);
-        specimenSlide.setDirection(DcMotorEx.Direction.REVERSE);
 
         turnOuttakeBrakeModeOff();
         specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
@@ -113,8 +114,9 @@ public class SpecimenHandler {
     }
 
     public void lowerSlideToLatch(){
-         double lowerDelta = 0.05;
-         specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - lowerDelta));
+         specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
+         runOuttakeMotorToLevelState = true;
+         runOuttakeMotorToLevel();
     }
 
     //sets the Outtake motor power
