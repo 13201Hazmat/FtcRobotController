@@ -15,7 +15,7 @@ public class SpecimenHandler {
 
     public enum SPECIMEN_GRIP_STATE {
         OPEN(0.1),
-        CLOSED(0.26);
+        CLOSED(0.28);
 
         private final double gripPosition;
         SPECIMEN_GRIP_STATE(double gripPosition) {
@@ -40,7 +40,7 @@ public class SpecimenHandler {
 
     public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
 
-    public int SLIDE_LOWER_DELTA_TO_LATCH = 200;
+    public int SLIDE_LOWER_DELTA_TO_LATCH = 350;
 
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
@@ -117,6 +117,11 @@ public class SpecimenHandler {
          specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
          runOuttakeMotorToLevelState = true;
          runOuttakeMotorToLevel();
+    }
+
+    public void backToInit(){
+        moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED);
+        closeGrip();
     }
 
     //sets the Outtake motor power

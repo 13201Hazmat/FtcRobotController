@@ -33,7 +33,7 @@ public class IntakeSlides {
     }
     public INTAKE_SLIDES_STATE intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
 
-    public double INTAKE_SLIDE_DELTA = 0.01;
+    public double INTAKE_SLIDE_DELTA = 0.03;
 
 
     public double leftIntakeSlideCurrPos, leftIntakeSlideNewPos = intakeSlidesState.leftSlidePos;
