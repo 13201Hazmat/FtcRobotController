@@ -61,12 +61,12 @@ public class MotorCalibTestTeleOp extends LinearOpMode{
         while (opModeIsActive()) {
            motorCurrentPosition = masterMotor.getCurrentPosition();
             while(gp1GetDpad_up() && !isStopRequested()){
-                masterMotor.setTargetPosition(motorCurrentPosition + 50);
+                masterMotor.setTargetPosition(motorCurrentPosition + 100);
                 masterMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 masterMotor.setPower(0.5);
             }
             while(gp1GetDpad_down() && !isStopRequested()){
-                masterMotor.setTargetPosition(motorCurrentPosition - 50);
+                masterMotor.setTargetPosition(motorCurrentPosition - 100);
                 masterMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                 masterMotor.setPower(0.5);
             }

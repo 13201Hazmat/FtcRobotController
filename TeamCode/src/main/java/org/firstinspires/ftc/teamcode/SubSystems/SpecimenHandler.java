@@ -28,8 +28,8 @@ public class SpecimenHandler {
     public enum SPECIMEN_SLIDE_STATE {
         MIN_RETRACTED(0),
         PICKUP(0),
-        LOW_CHAMBER(500),
-        HIGH_CHAMBER(1500),
+        LOW_CHAMBER(400),
+        HIGH_CHAMBER(1400),
         MAX_EXTENDED(2280);
 
         public final double motorPosition;
@@ -40,7 +40,7 @@ public class SpecimenHandler {
 
     public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
 
-    public int SLIDE_LOWER_DELTA_TO_LATCH = 350;
+    public int SLIDE_LOWER_DELTA_TO_LATCH = 400;
 
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
