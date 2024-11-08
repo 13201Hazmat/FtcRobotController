@@ -23,209 +23,52 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 
 public class SpecimenController {
-        public SpecimenHandler specimenHandler;
+    public SpecimenHandler specimenHandler;
 
-        LinearOpMode currentOpMode;
-    public static class SpecimenHandler {
-        public Servo gripServo;
-        public DcMotorEx specimenSlide;
+    LinearOpMode currentOpMode;
 
-        public enum SPECIMEN_GRIP_STATE {
-            OPEN(0.1),
-            CLOSED(0.28);
+    public SpecimenController(SpecimenHandler specimenHandler, LinearOpMode currentOpMode) {
+        this.specimenHandler = specimenHandler;
 
-            private final double gripPosition;
-            SPECIMEN_GRIP_STATE(double gripPosition) {
-                this.gripPosition = gripPosition;
+        this.currentOpMode = currentOpMode;
+    }
+
+    public void hangSpecimenAtStart() {
+        specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+        specimenHandler.lowerSlideToLatch();
+        specimenHandler.openGrip();
+    }
+
+    public Action hangSpecimenAtStartAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
             }
-        }
-        public org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE gripState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE.CLOSED;
 
-        //Outtake Motor states
-        public enum SPECIMEN_SLIDE_STATE {
-            MIN_RETRACTED(0),
-            PICKUP(0),
-            LOW_CHAMBER(400),
-            HIGH_CHAMBER(1400),
-            MAX_EXTENDED(2280);
-
-            public final double motorPosition;
-            SPECIMEN_SLIDE_STATE(double motorPosition) {
-                this.motorPosition = motorPosition;
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                hangSpecimenAtStartAction();
+                return false;
             }
-        }
+        };
+    }
 
-        public org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE specimenSlidesState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP;
+    public void lowerSpecimenbackInitAfterHang() {
+       specimenHandler.backToInit();
+    }
 
-        public int SLIDE_LOWER_DELTA_TO_LATCH = 400;
 
-        public int specimenMotorCurrentPosition = 0;
-        public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
-
-        public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
-        public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
-
-        //Different constants of arm speed
-        public static final double SPECIMEN_MOTOR_POWER= 1.0;//0.75
-        public enum SPECIMEN_MOVEMENT_DIRECTION {
-            EXTEND,
-            RETRACT
-        }
-
-        public boolean runOuttakeMotorToLevelState = false;
-
-        Telemetry telemetry;
-        public SpecimenHandler(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
-            this.telemetry = telemetry;
-            gripServo = hardwareMap.get(Servo.class, "specimen_grip");
-            specimenSlide = hardwareMap.get(DcMotorEx.class, "specimen_slide");
-            initSpecimenHandler();
-        }
-
-        public void initSpecimenHandler(){
-
-            closeGrip();
-
-            resetOuttakeMotorMode();
-            specimenSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            specimenSlide.setPositionPIDFCoefficients(10.0);
-
-            turnOuttakeBrakeModeOff();
-            specimenSlidesState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP;
-        }
-
-        /**
-         *If state of hand grip is set to open, set position of servo's to specified
-         */
-        public void openGrip(){
-            gripServo.setPosition(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN.gripPosition);
-            gripState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN;
-        }
-
-        /**
-         * If state of hand grip is set to close, set position of servo's to specified
-         */
-        public void closeGrip(){
-            gripServo.setPosition(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE.CLOSED.gripPosition);
-            gripState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_GRIP_STATE.CLOSED;
-        }
-
-        //Turns on the brake for Outtake motor
-        public void turnOuttakeBrakeModeOn(){
-            specimenSlide.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        }
-
-        //Turns on the brake for Outtake motor
-        public void turnOuttakeBrakeModeOff(){
-            specimenSlide.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        }
-
-        //Sets outtake slides to Transfer position
-        public void moveSpecimenSlides(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE toOuttakeMotorState){
-            turnOuttakeBrakeModeOn();
-            specimenMotorCurrentPosition = specimenSlide.getCurrentPosition();
-            specimenSlide.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-            specimenSlidesState = toOuttakeMotorState;
-            runOuttakeMotorToLevelState = true;
-            runOuttakeMotorToLevel();
-        }
-
-        public void lowerSlideToLatch(){
-            specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
-            runOuttakeMotorToLevelState = true;
-            runOuttakeMotorToLevel();
-        }
-
-        public void backToInit(){
-            moveSpecimenSlides(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.MIN_RETRACTED);
-            closeGrip();
-        }
-
-        //sets the Outtake motor power
-        public void runOuttakeMotorToLevel(){
-            double power = 0;
-            if (specimenSlidesState == org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP) {
-                turnOuttakeBrakeModeOff();
-            } else {
-                turnOuttakeBrakeModeOn();
+    public Action lowerSpecimenbackInitAfterHangAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
             }
-            power = SPECIMEN_MOTOR_POWER;
 
-            specimenSlide.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-            if (runOuttakeMotorToLevelState == true){
-                specimenSlide.setPower(power);
-                runOuttakeMotorToLevelState = false;
-            } else{
-                specimenSlide.setPower(0.0);
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                lowerSpecimenbackInitAfterHangAction();
+                return false;
             }
-        }
-
-        //Resets the arm
-        public void resetOuttakeMotorMode(){
-            DcMotorEx.RunMode runMode1 = specimenSlide.getMode();
-            specimenSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            specimenSlide.setMode(runMode1);
-            specimenSlide.setPositionPIDFCoefficients(5.0);
-            specimenSlide.setDirection(DcMotorEx.Direction.FORWARD);
-        }
-
-        //TODO : Add logic to use Voltage Sensor to measure motor stalling and reset.
-        public void manualResetOuttakeMotor(){
-            ElapsedTime timer = new ElapsedTime(MILLISECONDS);
-            timer.reset();
-            specimenSlide.setTargetPosition((int) (specimenSlide.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
-            runOuttakeMotorToLevelState = true;
-            runOuttakeMotorToLevel();
-            resetOuttakeMotorMode();
-            turnOuttakeBrakeModeOff();
-            specimenSlidesState = org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.MIN_RETRACTED;
-        }
-
-        public double isOuttakeSlidesInStateError = 0;
-        public boolean isOuttakeSlidesInState(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE toOuttakeSlideState) {
-            isOuttakeSlidesInStateError = Math.abs(specimenSlide.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-            return (specimenSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 30);
-        }
-
-        public void printDebugMessages() {
-            //******  debug ******
-            telemetry.addLine("Specimen Handler");
-            telemetry.addData("    State", specimenSlidesState);
-            telemetry.addData("    Specimen Slide Position", specimenSlide.getCurrentPosition());
-            telemetry.addLine("=============");
-            telemetry.addLine("Specimen Grip");
-            telemetry.addData("    State", gripServo);
-            telemetry.addData("    Grip Servo position", gripServo.getPosition());
-            telemetry.addLine("=============");
-        }
-        public void hangSpecimenAtStart(){
-            moveSpecimenSlides(org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
-            lowerSlideToLatch();
-            openGrip();
-        }
-        public Action hangSpecimenAtStartAction(){
-            return new Action(){
-                @Override
-                public void preview(Canvas canvas){}
-                @Override
-                public boolean run(TelemetryPacket packet){
-                    hangSpecimenAtStartAction ();
-                    return false;
-                }
-            };
-        }
-        public void lowerSpecimenbackInitAfterHang(){
-            backToInit();
-        }
-        public Action lowerSpecimenbackInitAfterHangAction(){
-            return new Action(){
-                @Override
-                public void preview(Canvas canvas){}
-                @Override
-                public boolean run(TelemetryPacket packet){
-                    lowerSpecimenbackInitAfterHangAction ();
-                    return false;
-                }
-            };
-        }
+        };
+    }
+}
