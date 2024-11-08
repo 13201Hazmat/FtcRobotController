@@ -180,7 +180,7 @@ public class AutonomousMode1 extends LinearOpMode {
             //hang specimen
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
             specimenHandler.lowerSlideToLatch();
-            specimenHandler.openGrip();
+          specimenHandler.openGrip();
             //bring back specimenHandler
             specimenHandler.backToInit();
 

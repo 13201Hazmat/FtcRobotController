@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 
 public class SpecimenHandler {
     public Servo gripServo;
@@ -59,7 +62,7 @@ public class SpecimenHandler {
     public boolean runOuttakeMotorToLevelState = false;
 
     Telemetry telemetry;
-    public SpecimenHandler(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
+    public SpecimenHandlerRo(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
         this.telemetry = telemetry;
         gripServo = hardwareMap.get(Servo.class, "specimen_grip");
         specimenSlide = hardwareMap.get(DcMotorEx.class, "specimen_slide");
@@ -115,9 +118,9 @@ public class SpecimenHandler {
     }
 
     public void lowerSlideToLatch(){
-        specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
-        runOuttakeMotorToLevelState = true;
-        runOuttakeMotorToLevel();
+         specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
+         runOuttakeMotorToLevelState = true;
+         runOuttakeMotorToLevel();
     }
 
     public void backToInit(){
@@ -183,6 +186,34 @@ public class SpecimenHandler {
         telemetry.addData("    Grip Servo position", gripServo.getPosition());
         telemetry.addLine("=============");
     }
+    public void hangSpecimenAtStart(){
+        moveSpecimenSlides(SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+        lowerSlideToLatch();
+        openGrip();
+    }
+    public Action hangSpecimenAtStartAction(){
+        return new Action(){
+            @Override
+            public void preview(Canvas canvas){}
+            @Override
+            public boolean run(TelemetryPacket packet){
+                hangSpecimenAtStartAction ();
+                return false;
+            }
+        };
+    }
+    public void lowerSpecimenbackInitAfterHang(){
+        backToInit();
+    }
+    public Action lowerSpecimenbackInitAfterHangAction(){
+        return new Action(){
+            @Override
+            public void preview(Canvas canvas){}
+            @Override
+            public boolean run(TelemetryPacket packet){
+                lowerSpecimenbackInitAfterHangAction ();
+                return false;
+            }
+        };
+    }
 
-
-}
