@@ -38,6 +38,7 @@ public class ServoCalibration extends LinearOpMode{
             telemetry.addData("    intake_wrist ", "(Y/Triangle)");
             telemetry.addData("    intake_slide_left   ", "(A/Circle)");
             telemetry.addData("    intake_slide_right ", "(B/Cross)");
+            telemetry.addData("    intake_swivel ", "(Right Bumper)");
             telemetry.addData("    specimen_grip ", "(Dpad Up)");
             telemetry.addData("    outtake_arm   ", "(Dpad left)");
             telemetry.addData("    outtake_wrist ", "(Dpad right)");
@@ -63,6 +64,11 @@ public class ServoCalibration extends LinearOpMode{
                 masterServoCalibPosition = "Max_Extended Left at 1.0";
                 break;
             }
+            if(gamepad1.right_bumper){
+                masterServoName = "intake_swivel";
+                masterServoCalibPosition = "Facing Center is 0.5";
+                break;
+            }
             if(gamepad1.dpad_up){
                 masterServoName = "specimen_grip";
                 masterServoCalibPosition = "Full closed is 0.26";
@@ -80,7 +86,7 @@ public class ServoCalibration extends LinearOpMode{
             }
 
             if(gamepad1.dpad_down){
-                masterServoCalibPosition = "Grip Closed is 1.0";
+                masterServoCalibPosition = "Grip Closed is 0.66";
                 masterServoName = "intake_roller_servo";
                 break;
             }

@@ -180,6 +180,14 @@ public class GamepadController {
             intakeSlides.moveIntakeSlidesBackward();
         }
 
+        if(gp1GetDpad_leftPress()) {
+            intakeArm.moveSwivelLeft();
+        }
+
+        if(gp1GetDpad_rightPress()) {
+            intakeArm.moveSwivelRight();
+        }
+
         if (gp1GetLeftTriggerPress()) {
             if (!outtake.isOuttakeInTransfer()) {
                 outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
@@ -253,8 +261,12 @@ public class GamepadController {
             climber.ascendClimberStg1Servo();
         }
 
-        if(gp1GetTrianglePress()){
-            climber.moveClimberStg1Motor(Climber.CLIMBERSTAGE1_MOTOR_STATE.CLIMBED);
+        if (gp1GetSquarePress()){
+            climber.descendClimberStg1Servo();
+        }
+
+        if(gp1GetTrianglePress() && climber.climberServoState == Climber.CLIMBER_SERVO_STATE.ASCENDED){
+            climber.moveClimberStg1Motor(Climber.CLIMBER_STAGE1_MOTOR_STATE.CLIMBED);
             climber.descendClimberStg1Servo();
         }
 
