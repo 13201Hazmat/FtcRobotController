@@ -50,6 +50,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeController;
+import org.firstinspires.ftc.teamcode.Controllers.OuttakeController;
+import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
@@ -67,6 +70,9 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 public class AutonomousMode1 extends LinearOpMode {
 
     public GamepadController gamepadController;
+    public SpecimenController specimenController;
+    public OuttakeController outtakeController;
+    public IntakeController intakeController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
@@ -178,24 +184,12 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
 
             //hang specimen
-            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
-            specimenHandler.lowerSlideToLatch();
-            specimenHandler.openGrip();
+            specimenController.hangSpecimenAtStartAction();
             //bring back specimenHandler
-            specimenHandler.backToInit();
+            specimenController.lowerSpecimenbackInitAfterHangAction();
 
             //pick up sample
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
-            safeWaitSeconds(1);
-            //TODO add code to actually pick up block
-            safeWaitSeconds(1);
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            safeWaitSeconds(1);
-            //TODO add code for transfer
+           intakeController.IntakeSampleAtStartAction();
 
             trajMoveToBucketFromSub = drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
@@ -203,14 +197,10 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
 
             //drop sample at high bucket
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-            safeWaitMilliSeconds(500);
-            outtake.moveWristDrop();
+           outtakeController.placeSampleInHighBucketAction();
 
             //lower to transfer
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+            outtakeController.lowerToTransferAction();
 
             //move to yellow sample one
             trajMoveToSampleOne = drive.actionBuilder(netZone)
@@ -219,16 +209,7 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
 
             //intake sample
-            intakeSlides.moveIntakeSlidesSpecific(0.2);
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            //TODO add code to actually pick up block
-            safeWaitSeconds(1);
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            safeWaitSeconds(1);
-            //TODO add code for transfer
+           intakeController.IntakeSampleAtYS1Action();
 
             trajMoveToBucketFromFirst = drive.actionBuilder(yellowSampleOne)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
@@ -236,14 +217,10 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
 
             //drop sample at high bucket
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-            safeWaitMilliSeconds(500);
-            outtake.moveWristDrop();
+            outtakeController.placeSampleInHighBucketAction();
 
             //lower to transfer
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+            outtakeController.lowerToTransferAction();
 
         } else { //autoOption == RIGHT
             //move to submersible
@@ -253,36 +230,21 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
 
             //hang specimen
-            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
-            specimenHandler.lowerSlideToLatch();
-            specimenHandler.openGrip();
+            specimenController.hangSpecimenAtStartAction();
             //bring back specimenHandler
-            specimenHandler.backToInit();
+            specimenController.lowerSpecimenbackInitAfterHangAction();
 
             //pick up sample
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
-            safeWaitSeconds(1);
-            //TODO add code to actually pick up block
-            safeWaitSeconds(1);
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-            safeWaitSeconds(1);
-            //TODO add code for transfer
+            intakeController.IntakeSampleAtStartAction();
 
             trajMoveToObsZone= drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
                     .build();
             safeWaitSeconds(1);
-
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-            safeWaitMilliSeconds(500);
-            outtake.moveWristDrop();
-
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+            //drop in high bucket
+            outtakeController.placeSampleInHighBucketAction();
+            //lower to transfer
+            outtakeController.lowerToTransferAction();
 
             trajMoveToSampleOne = drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
