@@ -139,8 +139,9 @@ public class AutonomousMode1 extends LinearOpMode {
     MecanumDrive drive = new MecanumDrive(hardwareMap, initPose);
 
     //List all Trajectories
-    Action trajMoveToSubAtStart, trajMoveToBucketFromSub, trajMoveToSampleOne, trajMoveToBucketFromFirst;
-    Action trajMoveToObsZone;
+    Action trajMoveToSubAtStart, trajMoveToBucketFromSub, trajMoveToSampleOne, trajMoveToBucketFromFirst,
+           trajParkAtSub, trajMoveToSampleTwo, trajMoveToBucketFromSecond;
+    Action trajMoveToObsZone, trajMoveToObsZoneWSample, trajBacktoSubWSpecimen, trajParkAtObsZone;
 
 
     public void buildAutonoumousMode() {
@@ -173,7 +174,7 @@ public class AutonomousMode1 extends LinearOpMode {
         if (GameField.startPosition == GameField.START_POSITION.LEFT) {
             //move to submersible
             trajMoveToSubAtStart = drive.actionBuilder(initPose)
-                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .strafeToLinearHeading(submersibleSpecimen.position, submersiblePark.heading)
                     .build();
             safeWaitSeconds(1);
 
@@ -245,6 +246,45 @@ public class AutonomousMode1 extends LinearOpMode {
             outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
             outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
 
+            trajMoveToSampleTwo = drive.actionBuilder(netZone)
+                    .strafeToLinearHeading(yellowSampleTwo.position, yellowSampleTwo.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            //intake sample
+            intakeSlides.moveIntakeSlidesSpecific(0.2);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            //TODO add code to actually pick up block
+            safeWaitSeconds(1);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            safeWaitSeconds(1);
+            //TODO add code for transfer
+
+            trajMoveToBucketFromSecond = drive.actionBuilder(yellowSampleTwo)
+                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            //drop sample at high bucket
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            safeWaitMilliSeconds(500);
+            outtake.moveWristDrop();
+
+            //lower to transfer
+            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+
+            //TODO once tested and adjusted, add sample 3 code
+
+            trajParkAtSub = drive.actionBuilder(netZone)
+                    .strafeToLinearHeading(submersiblePark.position, submersiblePark.heading)
+                    .build();
+            safeWaitSeconds(1);
+
         } else { //autoOption == RIGHT
             //move to submersible
             trajMoveToSubAtStart = drive.actionBuilder(initPose)
@@ -261,9 +301,34 @@ public class AutonomousMode1 extends LinearOpMode {
 
             //pick up sample
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
             safeWaitSeconds(1);
+            //TODO add code to actually pick up block
+            safeWaitSeconds(1);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            safeWaitSeconds(1);
+            //TODO add code for transfer
+
+            trajMoveToObsZone= drive.actionBuilder(submersibleSpecimen)
+                    .strafeToLinearHeading(observationZone.position, observationZone.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveWristDrop();
+            safeWaitMilliSeconds(500);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+
+            trajMoveToSampleOne = drive.actionBuilder(observationZone)
+                    .strafeToLinearHeading(colorSampleOne.position, colorSampleOne.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            //intake sample
+            intakeSlides.moveIntakeSlidesSpecific(0.2);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             //TODO add code to actually pick up block
             safeWaitSeconds(1);
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
@@ -272,22 +337,101 @@ public class AutonomousMode1 extends LinearOpMode {
             safeWaitSeconds(1);
             //TODO add code for transfer
 
+            trajMoveToObsZoneWSample = drive.actionBuilder(colorSampleOne)
+                    .strafeToLinearHeading(observationZone.position, observationZone.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            //drop sample in observation zone
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveWristDrop();
+            safeWaitMilliSeconds(500);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+
+            //TODO add code to turn 180 and align specimenHandler with specimen
+            safeWaitMilliSeconds(500);
+            specimenHandler.closeGrip();
+            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+
+            trajBacktoSubWSpecimen = drive.actionBuilder(observationZone)
+                    .strafeToLinearHeading(submersibleSpecimen.position, submersibleSpecimen.heading)
+                    .build();
+            safeWaitSeconds(2);
+
+            specimenHandler.lowerSlideToLatch();
+            safeWaitMilliSeconds(500);
+            specimenHandler.openGrip();
+            specimenHandler.backToInit();
+
+            //pick up sample
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
+            safeWaitSeconds(1);
+            //TODO add code to actually pick up block
+            safeWaitSeconds(1);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            safeWaitSeconds(1);
+            //TODO add code for transfer
+
             trajMoveToObsZone= drive.actionBuilder(submersibleSpecimen)
-                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .strafeToLinearHeading(observationZone.position, observationZone.heading)
                     .build();
             safeWaitSeconds(1);
 
             outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-            safeWaitMilliSeconds(500);
             outtake.moveWristDrop();
-
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+            safeWaitMilliSeconds(500);
             outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
 
-            trajMoveToSampleOne = drive.actionBuilder(submersibleSpecimen)
-                    .strafeToLinearHeading(netZone.position, netZone.heading)
+            trajMoveToSampleOne = drive.actionBuilder(observationZone)
+                    .strafeToLinearHeading(colorSampleOne.position, colorSampleOne.heading)
                     .build();
             safeWaitSeconds(1);
+
+            //intake sample
+            intakeSlides.moveIntakeSlidesSpecific(0.2);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            //TODO add code to actually pick up block
+            safeWaitSeconds(1);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            safeWaitSeconds(1);
+            //TODO add code for transfer
+
+            trajMoveToObsZoneWSample = drive.actionBuilder(colorSampleOne)
+                    .strafeToLinearHeading(observationZone.position, observationZone.heading)
+                    .build();
+            safeWaitSeconds(1);
+
+            //drop sample in observation zone
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            outtake.moveWristDrop();
+            safeWaitMilliSeconds(500);
+            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+
+            //TODO add code to turn 180 and align specimenHandler with specimen
+            safeWaitMilliSeconds(500);
+            specimenHandler.closeGrip();
+            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+
+            trajBacktoSubWSpecimen = drive.actionBuilder(observationZone)
+                    .strafeToLinearHeading(submersibleSpecimen.position, submersibleSpecimen.heading)
+                    .build();
+            safeWaitSeconds(2);
+
+            specimenHandler.lowerSlideToLatch();
+            safeWaitMilliSeconds(500);
+            specimenHandler.openGrip();
+            specimenHandler.backToInit();
+
+            trajParkAtObsZone = drive.actionBuilder(submersibleSpecimen)
+                    .strafeToLinearHeading(observationPark.position, observationPark.heading)
+                    .build();
+            safeWaitSeconds(1);
+
 
         }
 
