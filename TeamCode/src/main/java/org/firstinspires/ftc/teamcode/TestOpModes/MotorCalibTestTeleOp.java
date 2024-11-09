@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.FTCWiresAutoIntoTheDeep;
@@ -55,7 +56,7 @@ public class MotorCalibTestTeleOp extends LinearOpMode{
         telemetry.update();
         masterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         masterMotor.setPositionPIDFCoefficients(10.0); //5
-        masterMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        masterMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         while (opModeIsActive()) {

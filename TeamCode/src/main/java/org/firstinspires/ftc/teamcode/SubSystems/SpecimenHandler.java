@@ -27,9 +27,9 @@ public class SpecimenHandler {
     //Outtake Motor states
     public enum SPECIMEN_SLIDE_STATE {
         MIN_RETRACTED(0),
-        PICKUP(0),
+        PICKUP(100),
         LOW_CHAMBER(400),
-        HIGH_CHAMBER(1400),
+        HIGH_CHAMBER(1500),
         MAX_EXTENDED(2280);
 
         public final double motorPosition;

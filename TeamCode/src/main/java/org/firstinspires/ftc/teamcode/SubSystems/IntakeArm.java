@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -14,6 +12,7 @@ public class IntakeArm {
     public Servo intakeWristServo;
     //public CRServo intakeRollerServo;
     public Servo intakeGripServo;
+    public Servo intakeSwivelServo;
     public NormalizedColorSensor intakeSensor;
 
     public boolean intakeActivated = false;
@@ -29,8 +28,8 @@ public class IntakeArm {
     public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
     public enum INTAKE_GRIP_STATE {
-        OPEN(0.22),
-        CLOSED(0.01);
+        OPEN(0.50),
+        CLOSED(0.65);
 
         private final double gripPosition;
         INTAKE_GRIP_STATE(double gripPosition) {
@@ -74,6 +73,19 @@ public class IntakeArm {
     public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
     public double WRIST_UP_DELTA = 0.01;
 
+    public enum INTAKE_SWIVEL_STATE{
+        //Zero position - Grip Facing center, with specimen held vertical
+        CENTERED(0.5),
+        DYNAMIC(0.16);
+
+        private final double swivelPosition;
+        INTAKE_SWIVEL_STATE(double swivelPosition){
+            this.swivelPosition = swivelPosition;
+        }
+    }
+    public INTAKE_SWIVEL_STATE intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
+    public double SWIVEL_DELTA = 0.125;
+
     public Telemetry telemetry;
     public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
         this.telemetry = telemetry;
@@ -81,6 +93,7 @@ public class IntakeArm {
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
         //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
         intakeGripServo = hardwareMap.get(Servo.class, "intake_roller_servo");
+        intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
         intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
         initIntakeArm();
@@ -93,12 +106,12 @@ public class IntakeArm {
 
     public void moveArm(INTAKE_ARM_STATE intakeArmState){
         intakeArmServo.setPosition(intakeArmState.armPos);
-        moveWrist(intakeArmState);
+        moveWristAndSwivel(intakeArmState);
         this.intakeArmState = intakeArmState;
     }
 
 
-    public void moveWrist(INTAKE_ARM_STATE intakeArmState){
+    public void moveWristAndSwivel(INTAKE_ARM_STATE intakeArmState){
         switch (intakeArmState){
             case INIT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.PRE_TRANSFER.wristPosition);
@@ -121,6 +134,7 @@ public class IntakeArm {
                 intakeWristState = INTAKE_WRIST_STATE.TRANSFER;
                 break;
         }
+        moveSwivelCentered();
     }
 
     public void moveArmForward(){
@@ -135,6 +149,21 @@ public class IntakeArm {
 
     public void moveArmOffVision(){
 
+    }
+
+    public void moveSwivelCentered(){
+        intakeSwivelServo.setPosition(INTAKE_SWIVEL_STATE.CENTERED.swivelPosition);
+        intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
+    }
+
+    public void moveSwivelLeft(){
+        intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() - SWIVEL_DELTA);
+        intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
+    }
+
+    public void moveSwivelRight(){
+        intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() + SWIVEL_DELTA);
+        intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
     }
 
     public void moveWristForward(){
@@ -196,6 +225,9 @@ public class IntakeArm {
         telemetry.addData("   Wrist Servo position", intakeWristServo.getPosition());
 //        telemetry.addLine("Intake Roller");
 //        telemetry.addData("   State", intakeRollerState);
+        telemetry.addLine("Intake Swivel");
+        telemetry.addData("   State", intakeSwivelState);
+        telemetry.addData("   Swivel Servo position", intakeSwivelServo.getPosition());
         telemetry.addLine("Intake Grip");
         telemetry.addData("   State", intakeRollerState);
         telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
