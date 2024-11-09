@@ -13,7 +13,7 @@ public class IntakeArm {
     //public CRServo intakeRollerServo;
     public Servo intakeGripServo;
     public Servo intakeSwivelServo;
-    public NormalizedColorSensor intakeSensor;
+    //public NormalizedColorSensor intakeSensor;
 
     public boolean intakeActivated = false;
     public boolean reverseIntakeActivated = false;
@@ -41,11 +41,13 @@ public class IntakeArm {
     public enum INTAKE_ARM_STATE{
         //Zero position - Intake arm vertically downward
 
-        LOWEST(0.0), // Perpendiculr to the ground downnwards
-        PICKUP(0.27),
+        LOWEST(0.32), // Perpendiculr to the ground downnwards
+        PRE_PICKUP(0.40),
+        PICKUP(0.32),
         EJECT(0.45),
-        INIT(0.68), //vertically up
-        TRANSFER(0.77),
+        POST_TRANSFER (0.55),
+        INIT(0.62), //vertically up
+        TRANSFER(0.62),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -58,10 +60,11 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(0.85),
-        EJECT(0.67),
-        PRE_TRANSFER(0.30),
-        TRANSFER(0.16),
+        PICKUP(0.96),
+        EJECT(0.64),
+        POST_TRANSFER(0.45),
+        PRE_TRANSFER(0.34),
+        TRANSFER(0.18),
         INIT(0.0),
         DYNAMIC(0.16);
 
@@ -70,7 +73,7 @@ public class IntakeArm {
             this.wristPosition = wristPosition;
         }
     }
-    public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
+    public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.TRANSFER;
     public double WRIST_UP_DELTA = 0.01;
 
     public enum INTAKE_SWIVEL_STATE{
@@ -94,37 +97,37 @@ public class IntakeArm {
         //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
         intakeGripServo = hardwareMap.get(Servo.class, "intake_roller_servo");
         intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
-        intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
+        //intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
         initIntakeArm();
     }
 
     public void initIntakeArm(){
-        moveArm(INTAKE_ARM_STATE.INIT);
-        intakeArmState = INTAKE_ARM_STATE.INIT;
+        moveArm(INTAKE_ARM_STATE.TRANSFER);
+        intakeArmState = INTAKE_ARM_STATE.TRANSFER;
+        openGrip();
     }
 
-    public void moveArm(INTAKE_ARM_STATE intakeArmState){
-        intakeArmServo.setPosition(intakeArmState.armPos);
-        moveWristAndSwivel(intakeArmState);
-        this.intakeArmState = intakeArmState;
+    public void moveArm(INTAKE_ARM_STATE toIntakeArmState){
+        intakeArmServo.setPosition(toIntakeArmState.armPos);
+        moveWristAndSwivel(toIntakeArmState);
+        intakeArmState = toIntakeArmState;
     }
 
 
     public void moveWristAndSwivel(INTAKE_ARM_STATE intakeArmState){
         switch (intakeArmState){
             case INIT:
+            case LOWEST:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.PRE_TRANSFER.wristPosition);
                 intakeWristState = INTAKE_WRIST_STATE.PRE_TRANSFER;
-                break;
-            case LOWEST:
-                intakeWristServo.setPosition(INTAKE_WRIST_STATE.INIT.wristPosition);
-                intakeWristState = INTAKE_WRIST_STATE.INIT;
+                moveSwivelCentered();
                 break;
             case EJECT:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.EJECT.wristPosition);
                 intakeWristState = INTAKE_WRIST_STATE.EJECT;
                 break;
+            case PRE_PICKUP:
             case PICKUP:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.PICKUP.wristPosition);
                 intakeWristState = INTAKE_WRIST_STATE.PICKUP;
@@ -132,14 +135,19 @@ public class IntakeArm {
             case TRANSFER:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.TRANSFER.wristPosition);
                 intakeWristState = INTAKE_WRIST_STATE.TRANSFER;
+                moveSwivelCentered();
+                break;
+            case POST_TRANSFER:
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.POST_TRANSFER.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.POST_TRANSFER;
+                moveSwivelCentered();
                 break;
         }
-        moveSwivelCentered();
     }
 
     public void moveArmForward(){
-            intakeArmServo.setPosition(intakeArmServo.getPosition() + WRIST_UP_DELTA);
-            intakeArmState = INTAKE_ARM_STATE.DYNAMIC;
+        intakeArmServo.setPosition(intakeArmServo.getPosition() + WRIST_UP_DELTA);
+        intakeArmState = INTAKE_ARM_STATE.DYNAMIC;
     }
 
     public void moveArmBackward(){
@@ -229,7 +237,7 @@ public class IntakeArm {
         telemetry.addData("   State", intakeSwivelState);
         telemetry.addData("   Swivel Servo position", intakeSwivelServo.getPosition());
         telemetry.addLine("Intake Grip");
-        telemetry.addData("   State", intakeRollerState);
+        telemetry.addData("   State", intakeGripState);
         telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
         telemetry.addLine("=============");
     }

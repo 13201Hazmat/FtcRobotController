@@ -18,10 +18,10 @@ public class Outtake {
 
     public enum OUTTAKE_ARM_STATE{
         //Calib Position : Fully in mechanical limit inwards is Zero
-        INIT(0),
-        TRANSFER(0.0),
-        DROP(0.57),
-        MAX(0.57);
+        INIT(1.0),
+        TRANSFER(1.0),
+        DROP(0.43),
+        MAX(0.45);
 
         private double armPos;
         OUTTAKE_ARM_STATE(double armPos){
@@ -33,11 +33,11 @@ public class Outtake {
 
     public enum OUTTAKE_WRIST_STATE{
         //Calib Position : Fully in mechanical limit inwards is One
-        INIT(0.55),
-        TRANSFER(0.55),
-        PRE_DROP(0.42),
-        DROP(0.11),
-        MAX(0.75);
+        INIT(0.0),
+        TRANSFER(0.0),
+        PRE_DROP(0.14),
+        DROP(0.47),
+        MAX(0.60);
 
         private double wristPos;
         OUTTAKE_WRIST_STATE(double wristPos){
@@ -104,10 +104,10 @@ public class Outtake {
         outtakeSlidesState = OUTTAKE_SLIDE_STATE.TRANSFER;
     }
 
-    public void moveArm(OUTTAKE_ARM_STATE outtakeArmState){
-        outtakeArmServo.setPosition(outtakeArmState.armPos);
-        moveWrist(outtakeArmState);
-        this.outtakeArmState = outtakeArmState;
+    public void moveArm(OUTTAKE_ARM_STATE toOuttakeArmState){
+        outtakeArmServo.setPosition(toOuttakeArmState.armPos);
+        moveWrist(toOuttakeArmState);
+        outtakeArmState = toOuttakeArmState;
     }
 
     public void moveWrist(OUTTAKE_ARM_STATE outtakeArmState){
@@ -239,6 +239,7 @@ public class Outtake {
         //******  debug ******
         telemetry.addLine("Outtake Slides");
         telemetry.addData("    State", outtakeSlidesState);
+        telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE.TRANSFER));
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
         telemetry.addLine("=============");
