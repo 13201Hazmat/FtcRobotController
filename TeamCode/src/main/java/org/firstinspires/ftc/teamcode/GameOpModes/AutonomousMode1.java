@@ -34,15 +34,8 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -186,13 +179,13 @@ public class AutonomousMode1 extends LinearOpMode {
 
             //pick up sample
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
             safeWaitSeconds(1);
             //TODO add code to actually pick up block
             safeWaitSeconds(1);
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
             safeWaitSeconds(1);
             //TODO add code for transfer
@@ -221,11 +214,11 @@ public class AutonomousMode1 extends LinearOpMode {
             //intake sample
             intakeSlides.moveIntakeSlidesSpecific(0.2);
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             //TODO add code to actually pick up block
             safeWaitSeconds(1);
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
             safeWaitSeconds(1);
             //TODO add code for transfer
@@ -261,13 +254,13 @@ public class AutonomousMode1 extends LinearOpMode {
 
             //pick up sample
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
             safeWaitSeconds(1);
             //TODO add code to actually pick up block
             safeWaitSeconds(1);
             intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-            intakeArm.moveWrist(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+            intakeArm.moveWristAndSwivel(IntakeArm.INTAKE_ARM_STATE.PICKUP);
             intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
             safeWaitSeconds(1);
             //TODO add code for transfer
