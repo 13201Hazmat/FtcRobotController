@@ -52,7 +52,9 @@ public class MotorCalibTestTeleOp extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         selectMotor();
         telemetry.addData("Selected Motor", masterMotorName);
-        telemetry.addData("Selected Port ", masterMotor.getPortNumber());
+        telemetry.addData("   Port ", masterMotor.getPortNumber());
+        telemetry.addData("Direction ", masterMotor.getDirection());
+
         telemetry.update();
         masterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         masterMotor.setPositionPIDFCoefficients(10.0); //5

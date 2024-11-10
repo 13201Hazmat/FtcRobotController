@@ -165,7 +165,11 @@ public class GamepadController {
                 case EJECT:
                 case LOWEST:
                 case DYNAMIC:
+                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
+                    break;
+                case POST_TRANSFER:
                 case TRANSFER:
+                    intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
                     break;
                 case PRE_PICKUP:
@@ -181,10 +185,12 @@ public class GamepadController {
             }
         }
 
-        if (gp1GetCrossPress()) {
-            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
-            safeWaitMilliSeconds(200);
-            intakeArm.openGrip();
+        if (!gp1GetStart() && gp1GetCrossPress()) {
+            if (intakeArm.intakeArmState != IntakeArm.INTAKE_ARM_STATE.EJECT) {
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
+            } else {
+                intakeArm.toggleGrip();
+            }
         }
 
         // Move IntakeSlides forward and backward with D-pad
@@ -250,7 +256,6 @@ public class GamepadController {
                 outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
                 safeWaitMilliSeconds(200);
                 outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
-
             }
         } else {
             if (gp2GetDpad_downPress()) {
@@ -276,11 +281,11 @@ public class GamepadController {
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
         }
 
-        if(gp2GetCirclePress()){
+        if(!gp1GetStart() && gp2GetCirclePress()){
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.LOW_CHAMBER);
         }
 
-        if(gp2GetCrossPress()){
+        if(!gp2GetStart() &&  gp2GetCrossPress()){
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
         }
 
@@ -298,11 +303,14 @@ public class GamepadController {
     public int climberAscentClickCounter = 0;
     public int climberDescendClickCounter = 0;
     public void runClimber(){
-        if (gp1GetCirclePress()){
+        if (!gp1GetStart() && gp1GetCirclePress()){
             if (climberAscentClickCounter !=2) {
                 climberAscentClickCounter++;
             } else {
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
                 climber.ascendClimberStg1Servo();
+
             }
         }
 
@@ -317,6 +325,9 @@ public class GamepadController {
         if(gp1GetTrianglePress() && climber.climberServoState == Climber.CLIMBER_SERVO_STATE.ASCENDED){
             climber.moveClimberStg1Motor(Climber.CLIMBER_STAGE1_MOTOR_STATE.CLIMBED);
             climber.descendClimberStg1Servo();
+            safeWaitMilliSeconds(200);
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
         }
 
     }

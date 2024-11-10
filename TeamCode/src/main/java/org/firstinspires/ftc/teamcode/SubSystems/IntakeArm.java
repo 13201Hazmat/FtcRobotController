@@ -61,7 +61,7 @@ public class IntakeArm {
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
         PICKUP(0.94),
-        EJECT(0.64),
+        EJECT(0.72),
         POST_TRANSFER(0.45),
         PRE_TRANSFER(0.34),
         TRANSFER(0.18),
@@ -206,6 +206,14 @@ public class IntakeArm {
     public void closeGrip(){
         intakeGripServo.setPosition(INTAKE_GRIP_STATE.CLOSED.gripPosition);
         intakeGripState = INTAKE_GRIP_STATE.CLOSED;
+    }
+
+    public void toggleGrip(){
+        if (intakeGripState == INTAKE_GRIP_STATE.CLOSED) {
+            openGrip();
+        } else {
+            closeGrip();
+        }
     }
 
 
