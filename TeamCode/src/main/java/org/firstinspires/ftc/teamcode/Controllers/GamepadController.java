@@ -138,6 +138,12 @@ public class GamepadController {
 
         // Retract and extend IntakeSlides from Max to transfer
         if (gp1GetLeftBumperPress()) {
+            if (!outtake.isOuttakeInTransfer()) {
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+                safeWaitMilliSeconds(500);
+            }
+
             if (outtake.isOuttakeInTransfer()) {
                 if (intakeSlides.intakeSlidesState != IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER) {
                     intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
@@ -146,11 +152,9 @@ public class GamepadController {
                 intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
                 safeWaitMilliSeconds(1000);
                 intakeArm.openGrip();
-            } else {//TODO: BAD CODE NEED TO BE FIXED
+            } else {
                 intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
-                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-                safeWaitMilliSeconds(1000);
-                intakeArm.openGrip();
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
             }
             safeWaitMilliSeconds(300);
         }
@@ -241,9 +245,20 @@ public class GamepadController {
             }
         }
 
-        if(gp2GetDpad_downPress()){
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+        if (!gp2GetStart()) {
+            if (gp2GetDpad_downPress()) {
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+                safeWaitMilliSeconds(200);
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+
+            }
+        } else {
+            if (gp2GetDpad_downPress()) {
+                if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.TRANSFER) {
+                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
+                }
+                outtake.manualResetOuttakeMotor();
+            }
         }
     }
 
@@ -269,8 +284,14 @@ public class GamepadController {
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
         }
 
-        if(gp2GetSquarePress()){
-            specimenHandler.lowerSlideToLatch();
+        if (!gp2GetStart()) {
+            if(gp2GetSquarePress()){
+                specimenHandler.lowerSlideToLatch();
+            }
+        } else {
+            if(gp2GetSquarePress()){
+                specimenHandler.manualResetSpecimenHandlerMotor();
+            }
         }
     }
 

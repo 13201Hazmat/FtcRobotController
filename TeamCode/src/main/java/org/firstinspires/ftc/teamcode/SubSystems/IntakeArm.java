@@ -43,7 +43,7 @@ public class IntakeArm {
 
         LOWEST(0.32), // Perpendiculr to the ground downnwards
         PRE_PICKUP(0.40),
-        PICKUP(0.32),
+        PICKUP(0.31),
         EJECT(0.45),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
@@ -60,7 +60,7 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(0.96),
+        PICKUP(0.94),
         EJECT(0.64),
         POST_TRANSFER(0.45),
         PRE_TRANSFER(0.34),
@@ -78,8 +78,10 @@ public class IntakeArm {
 
     public enum INTAKE_SWIVEL_STATE{
         //Zero position - Grip Facing center, with specimen held vertical
-        CENTERED(0.5),
-        DYNAMIC(0.16);
+        LEFT180(0.24),
+        CENTERED(0.515),
+        RIGHT180(0.79),
+        DYNAMIC(0.515);
 
         private final double swivelPosition;
         INTAKE_SWIVEL_STATE(double swivelPosition){
@@ -87,7 +89,7 @@ public class IntakeArm {
         }
     }
     public INTAKE_SWIVEL_STATE intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
-    public double SWIVEL_DELTA = 0.125;
+    public double SWIVEL_DELTA = 0.135;
 
     public Telemetry telemetry;
     public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
@@ -165,13 +167,19 @@ public class IntakeArm {
     }
 
     public void moveSwivelLeft(){
-        intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() - SWIVEL_DELTA);
-        intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
+        double intakeSwivelServoPosition = intakeSwivelServo.getPosition();
+        if (intakeSwivelServoPosition - SWIVEL_DELTA > INTAKE_SWIVEL_STATE.LEFT180.swivelPosition - 0.02) {
+            intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() - SWIVEL_DELTA);
+            intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
+        }
     }
 
     public void moveSwivelRight(){
-        intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() + SWIVEL_DELTA);
-        intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
+        double intakeSwivelServoPosition = intakeSwivelServo.getPosition();
+        if (intakeSwivelServoPosition + SWIVEL_DELTA < INTAKE_SWIVEL_STATE.RIGHT180.swivelPosition + 0.02) {
+            intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() + SWIVEL_DELTA);
+            intakeSwivelState = INTAKE_SWIVEL_STATE.DYNAMIC;
+        }
     }
 
     public void moveWristForward(){

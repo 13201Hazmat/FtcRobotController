@@ -50,7 +50,7 @@ public class Outtake {
     //Outtake Motor states
     public enum OUTTAKE_SLIDE_STATE {
         MIN_RETRACTED(0, 0),
-        TRANSFER(100, 100),
+        TRANSFER(0, 0),
         LOW_BUCKET(600, 600),
         HIGH_BUCKET(2100, 2100),
         CLIMBER2(2000, 2000),
@@ -204,12 +204,10 @@ public class Outtake {
     public void manualResetOuttakeMotor(){
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
-        //while (outtakeTouch.getState() && timer.time() < 5000) { TODO : Do it without touch sensor
         outtakeSlideLeft.setTargetPosition((int) (outtakeSlideLeft.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         outtakeSlideRight.setTargetPosition((int) (outtakeSlideRight.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
-        //}
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
         outtakeSlidesState = OUTTAKE_SLIDE_STATE.MIN_RETRACTED;
@@ -218,8 +216,8 @@ public class Outtake {
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE toOuttakeSlideState) {
         //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        isOuttakeSlidesInStateError = Math.abs(outtakeSlideRight.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
-        return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 30);
+        isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
+        return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 100);
     }
 
     public boolean isOuttakeInTransfer(){

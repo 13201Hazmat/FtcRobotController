@@ -35,14 +35,10 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -66,9 +62,9 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Autonomous Mode 1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Autonomous Mode 2", group = " 00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 
-public class AutonomousMode1 extends LinearOpMode {
+public class AutonomousMode2 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public SpecimenController specimenController;
@@ -140,6 +136,8 @@ public class AutonomousMode1 extends LinearOpMode {
     Pose2d observationZone = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d specimenPickup = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d colorSampleOne = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d colorSampleTwo = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d colorSampleThree = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d observationPark = new Pose2d(0, 0, Math.toRadians(0));
 
     double waitSecondsBeforeDrop = 0;
@@ -169,173 +167,179 @@ public class AutonomousMode1 extends LinearOpMode {
                 observationZone = new Pose2d(-8.96, -10.53, Math.toRadians(-160));
                 specimenPickup = new Pose2d(-13.00, 14.96, Math.toRadians(-180));
                 colorSampleOne = new Pose2d(0, 9.97, Math.toRadians(-1.28));
+                colorSampleTwo = new Pose2d(2, 9.97, Math.toRadians(-1.28));
+                colorSampleThree = new Pose2d(4, 9.97, Math.toRadians(-1.28));
                 observationPark = new Pose2d(-25.71, 6.34, Math.toRadians(1.31));
                 break;
         }
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
-    }
 
-    public void runAutonomousMode() {
         if (GameField.startPosition == GameField.START_POSITION.LEFT) {
             //move to submersible
             trajMoveToSubAtStart = drive.actionBuilder(initPose)
-                    .strafeToLinearHeading(submersibleSpecimen.position, submersiblePark.heading)
-                    .build();
-            safeWaitSeconds(1);
-
-            //hang specimen
-            specimenController.hangSpecimenAtStartAction();
-            //bring back specimenHandler
-            specimenController.lowerSpecimenbackInitAfterHangAction();
-
-            //pick up sample
-            intakeController.IntakeSampleAtStartAction();
+                .strafeToLinearHeading(submersibleSpecimen.position, submersiblePark.heading)
+                .build();
 
             trajMoveToBucketFromSub = drive.actionBuilder(submersibleSpecimen)
-                    .strafeToLinearHeading(netZone.position, netZone.heading)
-                    .build();
-            safeWaitSeconds(1);
-
-            //drop sample at high bucket
-
-
-            //lower to transfer
-            outtakeController.lowerToTransferAction();
+                .strafeToLinearHeading(netZone.position, netZone.heading)
+                .build();
 
             //move to yellow sample one
             trajMoveToSampleOne = drive.actionBuilder(netZone)
                     .strafeToLinearHeading(yellowSampleOne.position, yellowSampleOne.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //intake sample
-            intakeController.IntakeSampleAtYS1Action();
 
             trajMoveToBucketFromFirst = drive.actionBuilder(yellowSampleOne)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //drop sample at high bucket
-            outtakeController.placeSampleInHighBucketAction();
-
-            //lower to transfer
-            outtakeController.lowerToTransferAction();
 
             trajMoveToSampleTwo = drive.actionBuilder(netZone)
                     .strafeToLinearHeading(yellowSampleTwo.position, yellowSampleTwo.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //intake sample
-            intakeController.IntakeSampleAtYS2Action();
 
             trajMoveToBucketFromSecond = drive.actionBuilder(yellowSampleTwo)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //drop sample at high bucket
-            outtakeController.placeSampleInHighBucketAction();
-
-            //lower to transfer
-            outtakeController.lowerToTransferAction();
-
-            //TODO once tested and adjusted, add sample 3 code
 
             trajParkAtSub = drive.actionBuilder(netZone)
                     .strafeToLinearHeading(submersiblePark.position, submersiblePark.heading)
                     .build();
-            safeWaitSeconds(1);
 
         } else { //autoOption == RIGHT
             //move to submersible
             trajMoveToSubAtStart = drive.actionBuilder(initPose)
-                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .strafeToLinearHeading(submersibleSpecimen.position, submersibleSpecimen.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //hang specimen
-            specimenController.hangSpecimenAtStartAction();
-            //bring back specimenHandler
-            specimenController.lowerSpecimenbackInitAfterHangAction();
-
-            //pick up sample
-            intakeController.IntakeSampleAtStartAction();
 
             trajMoveToObsZone= drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(observationZone.position, observationZone.heading)
                     .build();
-            safeWaitSeconds(1);
-            //outtake arm
-            outtakeController.dropSampleToObservationZoneAction();
 
             trajMoveToSampleOne = drive.actionBuilder(observationZone)
                     .strafeToLinearHeading(colorSampleOne.position, colorSampleOne.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //intake sample
-            intakeController.IntakeSampleAtStartAction();
 
             trajMoveToObsZoneWSample = drive.actionBuilder(colorSampleOne)
                     .strafeToLinearHeading(observationZone.position, observationZone.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //drop sample in observation zone
-            outtakeController.dropSampleToObservationZoneAction();
-            //pickup specimen
-            specimenController.pickupSpecimenFromObservationAction();
 
             trajBacktoSubWSpecimen = drive.actionBuilder(observationZone)
                     .strafeToLinearHeading(submersibleSpecimen.position, submersibleSpecimen.heading)
                     .build();
-            safeWaitSeconds(2);
-            //
-            specimenController.hangSpecimenTopChamberAction();
-
-            //pick up sample
-            intakeController.IntakeSampleAtColor1Action();
 
             trajMoveToObsZone= drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(observationZone.position, observationZone.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            outtakeController.dropSampleToObservationZone();
 
             trajMoveToSampleOne = drive.actionBuilder(observationZone)
                     .strafeToLinearHeading(colorSampleOne.position, colorSampleOne.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //intake sample
-            intakeController.IntakeSampleAtColor2Action();
 
             trajMoveToObsZoneWSample = drive.actionBuilder(colorSampleOne)
                     .strafeToLinearHeading(observationZone.position, observationZone.heading)
                     .build();
-            safeWaitSeconds(1);
-
-            //drop sample in observation zone
-            outtakeController.dropSampleToObservationZoneAction();
-
-            //pickup specimen
-            specimenController.pickupSpecimenFromObservationAction();
-
-            specimenController.hangSpecimenTopChamberAction();
 
             trajParkAtObsZone = drive.actionBuilder(submersibleSpecimen)
                     .strafeToLinearHeading(observationPark.position, observationPark.heading)
                     .build();
-            safeWaitSeconds(1);
-
-
         }
+    }
 
+    public void runAutonomousMode() {
+        if (GameField.startPosition == GameField.START_POSITION.LEFT) {
+            Actions.runBlocking(
+                    new SequentialAction(
+                            trajMoveToSubAtStart,
+                            new SleepAction(1),
+                            //hang specimen
+                            specimenController.hangSpecimenAtStartAction(),
+                            // bring back specimenHandler
+                            specimenController.lowerSpecimenbackInitAfterHangAction(),
+                            //pick up sample
+                            intakeController.IntakeSampleAtStartAction(),
+                            trajMoveToBucketFromSub,
+                            new SleepAction(1),
+                            //drop sample at high bucket
+
+                            //lower to transfer
+                            outtakeController.lowerToTransferAction(),
+                            trajMoveToSampleOne,
+                            //intake sample
+                            intakeController.IntakeSampleAtYS1Action(),
+                            trajMoveToBucketFromFirst,
+                            new SleepAction(1),
+                            //drop sample at high bucket
+                            outtakeController.placeSampleInHighBucketAction(),
+                            //lower to transfer
+                            outtakeController.lowerToTransferAction(),
+                            trajMoveToSampleTwo,
+                            new SleepAction(1),
+                            //intake sample
+                            intakeController.IntakeSampleAtYS2Action(),
+                            trajMoveToBucketFromSecond,
+                            new SleepAction(1),
+                            //drop sample at high bucket
+                            outtakeController.placeSampleInHighBucketAction(),
+                            //lower to transfer
+                            outtakeController.lowerToTransferAction(),
+                            //TODO once tested and adjusted, add sample 3 code
+                            trajParkAtSub,
+                            new SleepAction(1)
+
+                    )
+            );
+        } else { //autoOption == RIGHT
+            Actions.runBlocking(
+                    new SequentialAction(
+                            trajMoveToSubAtStart,
+                            new SleepAction(1),
+                            //hang specimen
+                            specimenController.hangSpecimenAtStartAction(),
+                            //bring back specimenHandler
+                            specimenController.lowerSpecimenbackInitAfterHangAction(),
+                            //pick up sample
+                            intakeController.IntakeSampleAtStartAction(),
+                            trajMoveToObsZone,
+                            new SleepAction(1),
+                            //outtake arm
+                            outtakeController.dropSampleToObservationZoneAction(),
+                            trajMoveToSampleOne,
+                            new SleepAction(1),
+                            //intake sample
+                            intakeController.IntakeSampleAtStartAction(),
+                            trajMoveToObsZoneWSample,
+                            new SleepAction(1),
+                            //drop sample in observation zone
+                            outtakeController.dropSampleToObservationZoneAction(),
+                            //pickup specimen
+                            specimenController.pickupSpecimenFromObservationAction(),
+                            trajBacktoSubWSpecimen,
+                            new SleepAction(2),
+                            //
+                            specimenController.hangSpecimenTopChamberAction(),
+                            //pick up sample
+                            intakeController.IntakeSampleAtColor1Action(),
+                            trajMoveToObsZone,
+                            new SleepAction(1),
+                            outtakeController.dropSampleToObservationZoneAction(),
+                            trajMoveToSampleOne,
+                            new SleepAction(1),
+                            //intake sample
+                            intakeController.IntakeSampleAtColor2Action(),
+                            trajMoveToObsZoneWSample,
+                            new SleepAction(1),
+                            //drop sample in observation zone
+                            outtakeController.dropSampleToObservationZoneAction(),
+                            //pickup specimen
+                            specimenController.pickupSpecimenFromObservationAction(),
+                            specimenController.hangSpecimenTopChamberAction(),
+                            trajParkAtObsZone,
+                            new SleepAction(1)
+                    )
+            );
+        }
     }
 
     //Method to select starting position using X, Y, A, B buttons on gamepad

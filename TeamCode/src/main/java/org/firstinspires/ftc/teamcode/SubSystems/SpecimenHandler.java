@@ -154,7 +154,7 @@ public class SpecimenHandler {
     }
 
     //TODO : Add logic to use Voltage Sensor to measure motor stalling and reset.
-    public void manualResetOuttakeMotor(){
+    public void manualResetSpecimenHandlerMotor(){
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
         specimenSlide.setTargetPosition((int) (specimenSlide.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));

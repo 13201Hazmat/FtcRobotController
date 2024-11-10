@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "Hazmat TeleOp Thread", group = " 00-Teleop")
-public class TeleOpModeThread extends LinearOpMode {
+@TeleOp(name = "Hazmat Inspection OpMode", group = " 01-Teleop")
+public class InspectionOpModeThread extends LinearOpMode {
 
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
@@ -77,6 +77,18 @@ public class TeleOpModeThread extends LinearOpMode {
             }
 
             //outtakeArm.backPlateAlignDown();
+
+            if (opModeIsActive()) {
+                //Move subsystems to maximum extended position
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
+                intakeArm.closeGrip();
+                gamepadController.safeWaitMilliSeconds(1000);
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                outtake.moveWristDrop();
+            }
+
 
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
@@ -175,7 +187,19 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addData("Robot ready to start","");
 
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
-            telemetry.addLine("Running Hazmat TeleOpMode");
+            telemetry.addLine("Running Hazmat Inspection OpMode");
+            telemetry.addLine("Intake State");
+            telemetry.addData("    Slides", intakeSlides.intakeSlidesState);
+            telemetry.addData("    Arm", intakeArm.intakeArmState);
+            telemetry.addData("    Wrist", intakeArm.intakeWristState);
+            telemetry.addData("    Grip", intakeArm.intakeGripState);
+            telemetry.addLine("Outtake State");
+            telemetry.addData("    Slides",outtake.outtakeSlidesState);
+            telemetry.addData("    Arm",outtake.outtakeArmState);
+            telemetry.addData("    Wrist",outtake.outtakeWristState);
+            telemetry.addLine("============================");
+
+
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();

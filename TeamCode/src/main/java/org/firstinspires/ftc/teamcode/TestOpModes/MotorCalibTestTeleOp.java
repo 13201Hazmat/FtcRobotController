@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.FTCWiresAutoIntoTheDeep;
 
-@TeleOp(name = "MotorCalibTestTeleOp", group = "Testing")
+@TeleOp(name = "MotorCalibTestTeleOp", group = " 01 Testing")
 public class MotorCalibTestTeleOp extends LinearOpMode{
     DcMotorEx masterMotor;
     String masterMotorName;

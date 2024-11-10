@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "ServoCalibTestTeleOp", group = "Testing")
+@TeleOp(name = "ServoCalibTestTeleOp", group = " 01-Testing")
 public class ServoCalibration extends LinearOpMode{
     Servo masterServo;
     String masterServoName;
