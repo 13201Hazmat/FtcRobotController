@@ -20,7 +20,7 @@ public class Outtake {
         //Calib Position : Fully in mechanical limit inwards is Zero
         INIT(1.0),
         TRANSFER(1.0),
-        DROP(0.43),
+        DROP(0.30),
         MAX(0.45);
 
         private double armPos;

@@ -21,7 +21,7 @@ public class IntakeSlides {
     public enum INTAKE_SLIDES_STATE{
         INIT (0.8,0.2),
         TRANSFER (0.8, 0.2),
-        IN_BETWEEN(0.5,0.5),
+        IN_BETWEEN(0.9,0.1),
         MAX_EXTENSION(1.0, 0.0);
 
         public double leftSlidePos;

@@ -20,7 +20,8 @@ public class Climber {
     public CLIMBER_SERVO_STATE climberServoState = CLIMBER_SERVO_STATE.INITIAL;
 
     public double climberServoPower = 1.0;
-    public int CLIMBER_SERVO_ASCEND_TIME = 1500;
+    public int CLIMBER_SERVO_ASCEND_TIME = 1250;
+    public int CLIMBER_SERVO_DESCEND_TIME = 200;
     public ElapsedTime climberServoTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     public double climberServoPowerWhenClimbing = 0.8;
@@ -31,7 +32,7 @@ public class Climber {
 
     public enum CLIMBER_STAGE1_MOTOR_STATE {
         INITIAL(0), //Position
-        CLIMBED(2500), //5000, 60 rpm motor
+        CLIMBED(2000), //5000, 60 rpm motor
         MAX(2500); //9000
 
         public final int motorPosition;
@@ -73,9 +74,9 @@ public class Climber {
 
     public void descendClimberStg1Servo(){
         climberServoTimer.reset();
-        climberStg1ServoLeft.setPower(-climberServoPower);
-        climberStg1ServoRight.setPower(-climberServoPower);
-        while (climberServoTimer.time() < CLIMBER_SERVO_ASCEND_TIME) {
+        climberStg1ServoLeft.setPower(-climberServoPower/8);
+        climberStg1ServoRight.setPower(-climberServoPower/8);
+        while (climberServoTimer.time() < CLIMBER_SERVO_DESCEND_TIME) {
             //TODO : PASS OPMODE TO ALL SUBSYSTEMS and ENSURE SAFE WHILE LOOPS
         }
         climberStg1ServoLeft.setPower(0);
@@ -85,6 +86,7 @@ public class Climber {
     public void initClimber(){
         climberStg1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         climberStg1Motor.setPositionPIDFCoefficients(10.0); //5
+        climberStg1Motor.setDirection(DcMotorSimple.Direction.FORWARD);
         startCurrentPosition = climberStg1Motor.getCurrentPosition();
         turnClimberStg1BrakeModeOff();
     }
@@ -147,7 +149,7 @@ public class Climber {
 
         int climberMotorCurrentPosition = climberStg1Motor.getCurrentPosition();
         if((power > 0.01 && climberMotorCurrentPosition > CLIMBER_STAGE1_MOTOR_STATE.INITIAL.motorPosition)){
-            climberStg1Motor.setTargetPosition(climberMotorCurrentPosition - CLIMBER_STAGE1_MOTOR_STATE.CLIMBED.motorPosition);
+            climberStg1Motor.setTargetPosition(climberMotorCurrentPosition + CLIMBER_STAGE1_MOTOR_STATE.CLIMBED.motorPosition);
             climberStg1Motor.setPositionPIDFCoefficients(10.0);
             climberStg1Motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             climberStg1Motor.setPower(power);

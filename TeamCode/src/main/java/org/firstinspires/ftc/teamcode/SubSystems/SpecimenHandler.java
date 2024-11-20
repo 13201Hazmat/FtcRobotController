@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -147,10 +148,11 @@ public class SpecimenHandler {
     //Resets the arm
     public void resetOuttakeMotorMode(){
         DcMotorEx.RunMode runMode1 = specimenSlide.getMode();
+        DcMotorSimple.Direction directiom = specimenSlide.getDirection();
         specimenSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         specimenSlide.setMode(runMode1);
         specimenSlide.setPositionPIDFCoefficients(5.0);
-        specimenSlide.setDirection(DcMotorEx.Direction.FORWARD);
+        specimenSlide.setDirection(directiom);
     }
 
     //TODO : Add logic to use Voltage Sensor to measure motor stalling and reset.
