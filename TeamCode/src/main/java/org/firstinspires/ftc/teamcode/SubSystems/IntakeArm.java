@@ -15,18 +15,6 @@ public class IntakeArm {
     public Servo intakeSwivelServo;
     //public NormalizedColorSensor intakeSensor;
 
-    public boolean intakeActivated = false;
-    public boolean reverseIntakeActivated = false;
-
-    public ElapsedTime intakeRollerTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    public ElapsedTime reverseIntakeRollerTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-    public enum INTAKE_ROLLER_STATE {
-        RUNNING,
-        REVERSE,
-        STOPPED;
-    }
-    public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
-
     public enum INTAKE_GRIP_STATE {
         OPEN(0.69),
         CLOSED(0.93);
@@ -43,7 +31,7 @@ public class IntakeArm {
 
         LOWEST(0.32), // Perpendiculr to the ground downnwards
         PRE_PICKUP(0.40),
-        PICKUP(0.38),
+        PICKUP(0.34),
         EJECT(0.45),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up

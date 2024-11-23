@@ -4,7 +4,6 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,8 +20,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "TestOuttakeArm", group = "Testing")
-public class TestOuttake extends LinearOpMode {
+@TeleOp(name = "TestOuttakeBucket", group = "Testing")
+public class TestOuttakeBucket extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
@@ -73,16 +72,19 @@ public class TestOuttake extends LinearOpMode {
                     telemetry.update();
                 }
 
+                //Move bucket to transfer pos
                 if(gamepadController.gp2GetDpad_upPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-                }
-
-                if(gamepadController.gp2GetDpad_downPress()){
                     outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
                 }
 
+                //move bucket to pre-drop pos, arm moves it to drop
+                if(gamepadController.gp2GetDpad_downPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                }
+
+                //move wrist to drop
                 if(gamepadController.gp2GetDpad_leftPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.INIT);
+                    outtake.moveWristDrop();
                 }
             }
         }
