@@ -16,7 +16,7 @@ public class IntakeArm {
     //public NormalizedColorSensor intakeSensor;
 
     public enum INTAKE_GRIP_STATE {
-        OPEN(0.69),
+        OPEN(0.68),
         CLOSED(0.93);
 
         private final double gripPosition;
