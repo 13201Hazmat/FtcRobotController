@@ -24,7 +24,7 @@ public class ServoCalibration extends LinearOpMode{
     RC Servo 1:        outtakeArmWrist = hardwareMap.get(Servo.class, "outtake_wrist");
 
     CR Servos:
-    EH Servo 4:        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+    EH Servo 4:        intakeGrip = hardwareMap.get(Servo.class, "intake_grip");
     RC Servo 5:        climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
     EH Servo 5:        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
      */
@@ -42,7 +42,7 @@ public class ServoCalibration extends LinearOpMode{
             telemetry.addData("    specimen_grip ", "(Dpad Up)");
             telemetry.addData("    outtake_arm   ", "(Dpad left)");
             telemetry.addData("    outtake_wrist ", "(Dpad right)");
-            telemetry.addData("    intake_roller_servo", "(Dpad down As Grip)");
+            telemetry.addData("    intake_grip", "(Dpad down As Grip)");
 
             if(gamepad1.x){
                 masterServoName = "intake_arm";
@@ -87,7 +87,7 @@ public class ServoCalibration extends LinearOpMode{
 
             if(gamepad1.dpad_down){
                 masterServoCalibPosition = "Grip Closed is 0.66";
-                masterServoName = "intake_roller_servo";
+                masterServoName = "intake_grip";
                 break;
             }
 

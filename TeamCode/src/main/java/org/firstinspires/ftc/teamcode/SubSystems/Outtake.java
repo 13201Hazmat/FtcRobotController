@@ -34,7 +34,7 @@ public class Outtake {
     public enum OUTTAKE_WRIST_STATE{
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.0),
-        TRANSFER(0.0),
+        TRANSFER(0.44),
         PRE_DROP(0.14),
         DROP(0.47),
         MAX(0.60);

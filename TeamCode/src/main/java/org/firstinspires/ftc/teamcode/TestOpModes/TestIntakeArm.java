@@ -91,12 +91,11 @@ public class TestIntakeArm extends LinearOpMode {
                     //Move slide to pickup
                 }
 
-                //Cross (stop intake roller inward, move arm, wrist and slides to init, or transfer - if outtake bucket is in place, else on second click)
                 if(gamepadController.gp1GetCrossPress()){
-                    if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.PICKUP) {
-                        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.INIT);
+                    if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED) {
+                        intakeArm.openGrip();
                     } else {
-                        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
+                        intakeArm.closeGrip();
                     }
                 }
 

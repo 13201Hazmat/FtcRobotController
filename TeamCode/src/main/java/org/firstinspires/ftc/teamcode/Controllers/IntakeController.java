@@ -39,7 +39,6 @@ public class IntakeController {
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
         //TODO add code for transfer
-
     }
 
     public Action IntakeSampleAtStartAction() {

@@ -28,8 +28,8 @@ public class IntakeArm {
     public INTAKE_ROLLER_STATE intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
 
     public enum INTAKE_GRIP_STATE {
-        OPEN(0.50),
-        CLOSED(0.65);
+        OPEN(0.69),
+        CLOSED(0.93);
 
         private final double gripPosition;
         INTAKE_GRIP_STATE(double gripPosition) {
@@ -73,7 +73,7 @@ public class IntakeArm {
             this.wristPosition = wristPosition;
         }
     }
-    public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.TRANSFER;
+    public INTAKE_WRIST_STATE intakeWristState = INTAKE_WRIST_STATE.INIT;
     public double WRIST_UP_DELTA = 0.01;
 
     public enum INTAKE_SWIVEL_STATE{
@@ -97,7 +97,7 @@ public class IntakeArm {
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
         //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
-        intakeGripServo = hardwareMap.get(Servo.class, "intake_roller_servo");
+        intakeGripServo = hardwareMap.get(Servo.class, "intake_grip");
         intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
         //intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 

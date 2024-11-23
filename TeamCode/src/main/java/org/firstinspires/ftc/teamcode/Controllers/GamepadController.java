@@ -171,9 +171,11 @@ public class GamepadController {
                 case TRANSFER:
                     intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
+                    telemetry.addData("Arm State", intakeArm.intakeArmState);
                     break;
                 case PRE_PICKUP:
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    telemetry.addData("Arm State", intakeArm.intakeArmState);
                     break;
                 case PICKUP:
                     if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED) {
@@ -181,9 +183,11 @@ public class GamepadController {
                     } else {
                         intakeArm.closeGrip();
                     }
+                    telemetry.addData("Arm State", intakeArm.intakeArmState);
                     break;
             }
         }
+
 
         if (!gp1GetStart() && gp1GetCrossPress()) {
             if (intakeArm.intakeArmState != IntakeArm.INTAKE_ARM_STATE.EJECT) {
