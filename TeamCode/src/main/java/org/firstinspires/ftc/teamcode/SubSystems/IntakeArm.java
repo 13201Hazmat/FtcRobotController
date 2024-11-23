@@ -43,7 +43,7 @@ public class IntakeArm {
 
         LOWEST(0.32), // Perpendiculr to the ground downnwards
         PRE_PICKUP(0.40),
-        PICKUP(0.31),
+        PICKUP(0.38),
         EJECT(0.45),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
@@ -60,7 +60,7 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(0.94),
+        PICKUP(0.96),
         EJECT(0.72),
         POST_TRANSFER(0.45),
         PRE_TRANSFER(0.34),
