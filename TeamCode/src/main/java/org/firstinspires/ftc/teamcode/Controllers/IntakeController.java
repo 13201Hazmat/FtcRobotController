@@ -30,15 +30,16 @@ public class IntakeController {
 
 
     public void IntakeSampleAtStart() {
-        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
         safeWaitSeconds(1);
-        //TODO add code to actually pick up block
-        safeWaitSeconds(1);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.openGrip();
+        safeWaitMilliSeconds(500);
+        intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
-        //TODO add code for transfer
     }
 
     public Action IntakeSampleAtStartAction() {
@@ -57,15 +58,15 @@ public class IntakeController {
     }
     public void IntakeSampleAtYS1() {
         intakeSlides.moveIntakeSlidesSpecific(0.2);
-        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-
-        //TODO add code to actually pick up block
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
         safeWaitSeconds(1);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.openGrip();
+        safeWaitMilliSeconds(500);
+        intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
-        //TODO add code for transfer
 
 
 
@@ -83,22 +84,18 @@ public class IntakeController {
                 return false;
             }
         };
-
     }
     public void IntakeSampleAtYS2() {
         intakeSlides.moveIntakeSlidesSpecific(0.2);
-        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-
-        //TODO add code to actually pick up block
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
         safeWaitSeconds(1);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.openGrip();
+        safeWaitMilliSeconds(500);
+        intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
-        //TODO add code for transfer
-
-
-
     }
 
     public Action IntakeSampleAtYS2Action() {
@@ -117,18 +114,15 @@ public class IntakeController {
     }
     public void IntakeSampleAtColor1() {
         intakeSlides.moveIntakeSlidesSpecific(0.2);
-        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-
-        //TODO add code to actually pick up block
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
         safeWaitSeconds(1);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.openGrip();
+        safeWaitMilliSeconds(500);
+        intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
-        //TODO add code for transfer
-
-
-
     }
 
     public Action IntakeSampleAtColor1Action() {
@@ -139,7 +133,7 @@ public class IntakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                IntakeSampleAtYS2();
+                IntakeSampleAtColor1();
                 return false;
             }
         };
@@ -147,18 +141,15 @@ public class IntakeController {
     }
     public void IntakeSampleAtColor2() {
         intakeSlides.moveIntakeSlidesSpecific(0.2);
-        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
-
-        //TODO add code to actually pick up block
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
         safeWaitSeconds(1);
+        intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+        intakeArm.openGrip();
+        safeWaitMilliSeconds(500);
+        intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-
         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
         safeWaitSeconds(1);
-        //TODO add code for transfer
-
-
-
     }
 
     public Action IntakeSampleAtColor2Action() {
@@ -169,17 +160,25 @@ public class IntakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                IntakeSampleAtYS2();
+                IntakeSampleAtColor2();
                 return false;
             }
         };
-
     }
+
+
     //for safe wait
     public void safeWaitSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(SECONDS);
         timer.reset();
         while (!isStopRequested() && timer.time() < time) {
+        }
+    }
+
+    public void safeWaitMilliSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!currentOpMode.isStopRequested() && timer.time() < time) {
         }
     }
     public final boolean isStopRequested() {
