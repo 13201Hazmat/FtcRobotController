@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
@@ -25,8 +26,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "Hazmat TeleOp Thread", group = " 00-Teleop")
-public class TeleOpModeThread extends LinearOpMode {
+@TeleOp(name = "Test Vision Vinayak", group = "00-Teleop")
+public class TestVisionVin extends LinearOpMode {
 
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
@@ -80,12 +81,7 @@ public class TeleOpModeThread extends LinearOpMode {
 
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
-                //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
-
-
-                /*if (gameTimer.time() > 85000 && gameTimer.time() < 90000) {
-                    //lights.setPattern(Lights.REV_BLINKIN_PATTERN.END_GAME);
-                }*/
+                //TODO integrate methods to move arm based on vision reading
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();

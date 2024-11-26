@@ -24,6 +24,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import android.graphics.Color;
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -55,8 +56,7 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Disabled
-@TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
+@Autonomous(name = "Concept: Vision Color-Sensor", group = "Concept")
 public class ConceptVisionColorSensor extends LinearOpMode
 {
     @Override

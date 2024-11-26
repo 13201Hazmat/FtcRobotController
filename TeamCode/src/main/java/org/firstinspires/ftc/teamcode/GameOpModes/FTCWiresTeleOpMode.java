@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.GameOpModes.OldAuto;
+package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,14 +10,12 @@ import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.RRDrive.TankDrive;
 import org.firstinspires.ftc.teamcode.RRDrive.tuning.TuningOpModes;
 
-
 /**
  * FTC WIRES TeleOp Example
  *
  */
 
 @TeleOp(name = "FTC Wires TeleOp", group = "00-Teleop")
-@Disabled
 public class FTCWiresTeleOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

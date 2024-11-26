@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,7 +11,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 
 
 /**
- * Defenition of the HzGamepad Class <BR>
+ * Definition of the HzGamepad Class <BR>
  *
  * HzGamepad consists of system provided gamepad(s) and adds functionality to the selection
  * made on gamepads <BR>

@@ -4,15 +4,14 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 
 
 /**
@@ -21,14 +20,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.Lights;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@Disabled
-@TeleOp(name = "Test Launcher", group = "02-Test OpModes")
-public class TestLauncher extends LinearOpMode {
+@TeleOp(name = "TestOuttakeBucket", group = "Testing")
+public class TestOuttakeBucket extends LinearOpMode {
 
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
-    public VisionAprilTag visionAprilTagFront;
-    public Launcher launcher;
+    public Outtake outtake;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -36,7 +33,6 @@ public class TestLauncher extends LinearOpMode {
     public Pose2d startPose = GameField.ORIGINPOSE;
 
     public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);
-
 
     @Override
     /*
@@ -69,35 +65,27 @@ public class TestLauncher extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
-                gamepadController.runByGamepadControl();
+                //gamepadController.runByGamepadControl();
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();
                     telemetry.update();
                 }
 
-                if (gamepadController.gp1GetRightBumperPress()) {
-                    switch (launcher.launcherButtonState) {
-                        case SAFE:
-                            launcher.launcherClickTimer.reset();
-                            launcher.launcherButtonState = Launcher.LAUNCHER_BUTTON_STATE.ARMED;
-                            break;
-                        case ARMED:
-                            if (launcher.launcherClickTimer.time() < launcher.LAUNCHER_BUTTON_ARMED_THRESHOLD) {
-                                launcher.launchDrone();
-                                launcher.launcherButtonState = Launcher.LAUNCHER_BUTTON_STATE.LAUNCHED;
-                            } else {
-                                launcher.launcherClickTimer.reset();
-                                launcher.launcherButtonState = Launcher.LAUNCHER_BUTTON_STATE.SAFE;
-                            }
-                    }
+                //Move bucket to transfer pos
+                if(gamepadController.gp2GetDpad_upPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
                 }
 
-                if(gamepadController.gp1GetLeftBumper()){
-                    launcher.initLauncher();
+                //move bucket to pre-drop pos, arm moves it to drop
+                if(gamepadController.gp2GetDpad_downPress()){
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
                 }
 
-
+                //move wrist to drop
+                if(gamepadController.gp2GetDpad_leftPress()){
+                    outtake.moveWristDrop();
+                }
             }
         }
         GameField.poseSetInAutonomous = false;
@@ -118,19 +106,10 @@ public class TestLauncher extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        /* Create VisionAprilTag */
-        visionAprilTagFront = new VisionAprilTag(hardwareMap, telemetry, "Webcam 1");
-        telemetry.addLine("Vision April Tag Front Initialized");
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
-        launcher = new Launcher(hardwareMap, telemetry);
-        telemetry.addLine("Launcher Initialized");
-        telemetry.update();
 
         /* Create Controllers */
         gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
@@ -170,14 +149,9 @@ public class TestLauncher extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            launcher.printDebugMessages();
-            //visionAprilTagFront.printdebugMessages();
-            lights.printDebugMessages();
+            outtake.printDebugMessages();
         }
         telemetry.update();
     }

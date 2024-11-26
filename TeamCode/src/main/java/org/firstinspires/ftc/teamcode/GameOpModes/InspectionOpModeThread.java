@@ -4,19 +4,19 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
-import org.firstinspires.ftc.teamcode.SubSystems.ParkingArm;
-import org.firstinspires.ftc.teamcode.SubSystems.VisionSensor;
-import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 
 /**
@@ -25,17 +25,17 @@ import org.firstinspires.ftc.teamcode.TestOpModes.VisionAprilTag;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@Disabled
-@TeleOp(name = "Hazmat TeleOp AprilTag", group = "00-Teleop")
-public class TeleOpModeVisionAprilTag extends LinearOpMode {
+@TeleOp(name = "Hazmat Inspection OpMode", group = " 01-Teleop")
+public class InspectionOpModeThread extends LinearOpMode {
 
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
-    public Launcher launcher;
-    public ParkingArm parkingArm;
-    public VisionSensor visionSensor;
-    public VisionAprilTag visionAprilTagBack;
+    public IntakeArm intakeArm;
+    public IntakeSlides intakeSlides;
+    public Outtake outtake;
+    public SpecimenHandler specimenHandler;
+    public Climber climber;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -55,16 +55,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
 
         /* Set Initial State of any subsystem when OpMode is to be started*/
         initSubsystems();
-
-        // Initiate Camera on Init.
-        visionAprilTagBack.initAprilTag();
-
-        // Wait for the DS start button to be touched.
-        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-
-        lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEMO);
 
         /* Wait for Start or Stop Button to be pressed */
         waitForStart();
@@ -86,10 +76,28 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
                 telemetry.update();
             }
 
+            //outtakeArm.backPlateAlignDown();
+
+            if (opModeIsActive()) {
+                //Move subsystems to maximum extended position
+                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
+                intakeArm.closeGrip();
+                gamepadController.safeWaitMilliSeconds(1000);
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                outtake.moveWristDrop();
+            }
+
+
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
-                printDebugMessages();
-                telemetry.update();
+                //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
+
+
+                /*if (gameTimer.time() > 85000 && gameTimer.time() < 90000) {
+                    //lights.setPattern(Lights.REV_BLINKIN_PATTERN.END_GAME);
+                }*/
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();
@@ -97,6 +105,7 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
                 }
             }
         }
+        gamepadDriveTrainController.exit();
         GameField.poseSetInAutonomous = false;
     }
 
@@ -115,37 +124,24 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        telemetry.addLine("Intake Initialized");
+        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
 
-        telemetry.addLine("Magazine Initialized");
+        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        telemetry.addLine("OuttakeArm Initialized");
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        telemetry.addLine("OuttakeSlides Initialized");
+        specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
+        telemetry.addLine("SpecimenHandler Initialized");
         telemetry.update();
 
+        climber = new Climber(hardwareMap, telemetry);
         telemetry.addLine("Climber Initialized");
-        telemetry.update();
-
-        launcher = new Launcher(hardwareMap, telemetry);
-        telemetry.addLine("Launcher Initialized");
-        telemetry.update();
-
-        parkingArm = new ParkingArm(hardwareMap, telemetry);
-        telemetry.addLine("ParkingArm Initialized");
-        telemetry.update();
-
-        /* Create VisionAprilTag */
-        visionAprilTagBack = new VisionAprilTag(hardwareMap, telemetry, "Webcam 2");
-        telemetry.addLine("Vision April Tag Front Initialized");
-        telemetry.update();
-
-        /* Create VisionAprilTag */
-        visionSensor = new VisionSensor(hardwareMap, telemetry);
-        telemetry.addLine("Vision Sensor Initialized");
         telemetry.update();
 
         /* Create Lights */
@@ -158,8 +154,8 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        /* Create Controllers */
-        gamepadController = new GamepadController(gamepad1, gamepad2, launcher, visionSensor, lights, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
+                outtake, specimenHandler, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -176,9 +172,6 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
             //driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
 
-        //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
-        GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
-
         telemetry.addLine("+++++++++++++++++++++++");
         telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
         telemetry.update();
@@ -194,16 +187,27 @@ public class TeleOpModeVisionAprilTag extends LinearOpMode {
         telemetry.addData("Robot ready to start","");
 
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
-            telemetry.addLine("Running Hazmat TeleOpMode");
+            telemetry.addLine("Running Hazmat Inspection OpMode");
+            telemetry.addLine("Intake State");
+            telemetry.addData("    Slides", intakeSlides.intakeSlidesState);
+            telemetry.addData("    Arm", intakeArm.intakeArmState);
+            telemetry.addData("    Wrist", intakeArm.intakeWristState);
+            telemetry.addData("    Grip", intakeArm.intakeGripState);
+            telemetry.addLine("Outtake State");
+            telemetry.addData("    Slides",outtake.outtakeSlidesState);
+            telemetry.addData("    Arm",outtake.outtakeArmState);
+            telemetry.addData("    Wrist",outtake.outtakeWristState);
+            telemetry.addLine("============================");
+
+
             telemetry.addData("Game Timer : ", gameTimer.time());
-            //telemetry.addData("GameField.poseSetInAutonomous : ", GameField.poseSetInAutonomous);
-            //telemetry.addData("GameField.currentPose : ", GameField.currentPose);
-            //telemetry.addData("startPose : ", startPose);
 
             driveTrain.printDebugMessages();
-            launcher.printDebugMessages();
-            visionSensor.printDebugMessages();
-            visionAprilTagBack.printdebugMessages();
+            intakeArm.printDebugMessages();
+            intakeSlides.printDebugMessages();
+            outtake.printDebugMessages();
+            specimenHandler.printDebugMessages();
+            climber.printDebugMessages();
             lights.printDebugMessages();
         }
         telemetry.update();

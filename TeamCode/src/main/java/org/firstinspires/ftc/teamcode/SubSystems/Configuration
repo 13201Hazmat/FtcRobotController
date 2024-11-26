@@ -1,36 +1,45 @@
 
-
 RC Motor 3:        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront_par0");
-RC Motor 0:        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack_par1");
-EH Motor 0:        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack");
-EH Motor 3:        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront_perp");
+RC Motor 0:        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+EH Motor 0:        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront_par1");
+EH Motor 3:        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack_perp");
 
-RC Motor 2:        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake_motor");
-RC Servo 0:        intakeLiftServo = hardwareMap.get(Servo.class, "intake_lift_servo");
-RC Servo 1:        horizServoLeft = hardwareMap.get(Servo.class, "horiz_servo_left");
-EH Servo 1:        horizServoRight = hardwareMap.get(Servo.class, "horiz_servo_right");
+RC Motor 1:        specimenSlide = hardwareMap.get(DcMotorEx.class, "specimen_slide");
+RC Servo 3:        gripServo = hardwareMap.get(Servo.class, "specimen_grip");
+
+RC Servo 4:        outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
+RC Servo 1:        outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist");
+RC Motor 2:        outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
+EH Motor 2:        outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
+
+EH Servo 2:        intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
+RC Servo 2:        intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
+EH Servo 4:        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+EH I2C Bus 1:      intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
+EH Servo 3:        intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
+
+RC Servo 0:        intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
+EH Servo 0:        intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
+
+EH Motor 1:        climberStg1Motor = hardwareMap.get(DcMotorEx.class, "climber1_motor");
+RC Servo 5:        climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
+EH Servo 5:        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
+
+
+
+EH Servo 1:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+
+RC Servo 1:
+
+EH Servo 3:
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//OLD ROBOT
 
 RC I2C Port 1      backdropDistanceSensorLeft = hardwareMap.get(DistanceSensor.class, "back_distance_left");
 RC I2C Port 2      huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 RC I2C Port 3      backdropDistanceSensorRight = hardwareMap.get(DistanceSensor.class, "back_distance_right");
 
 
-EH Servo 4:        outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist_servo");
-EH Servo 5:        outtakeGripServo = hardwareMap.get(Servo.class, "outtake_grip_servo");
-
-EH Servo 0:        outtakeArmLeft = hardwareMap.get(Servo.class, "outtake_arm_left");
-EH Servo 2:        outtakeArmRight = hardwareMap.get(Servo.class, "outtake_arm_right");
-RC Servo 3:        parkingArmServo = hardwareMap.get(Servo.class, "parking_arm_servo");
-
-RC Motor 1:        outtakeMotorLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
-EH Motor 1:        outtakeMotorRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
-
 EH I2C Bus 1:        magazineSensorBottom = hardwareMap.get(NormalizedColorSensor.class, "magazine_bottom");
 EH I2C Bus 3:        magazineSensorTop = hardwareMap.get(NormalizedColorSensor.class, "magazine_top");
-
-EH Motor 2:        climberMotor = hardwareMap.get(DcMotorEx.class, "climber_motor");
-RC Servo 4:        climber_servo = hardwareMap.get(Servo.class, "climber_servo");
-
-RC Servo 2:        launcherServo = hardwareMap.get(Servo.class, "launcher_servo");
-
-RC Servo 5:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");

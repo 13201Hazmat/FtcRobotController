@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.SubSystems;
+package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -53,8 +53,8 @@ public class VisionOpenCV implements VisionProcessor {
     }
 
     public void initOpenCV() {
-        if (GameField.startPosition == GameField.START_POSITION.RED_LEFT ||
-                GameField.startPosition == GameField.START_POSITION.BLUE_LEFT) {
+        if (GameField.startPosition == GameField.START_POSITION.LEFT ||
+                GameField.startPosition == GameField.START_POSITION.RIGHT) {
             rectLeftOfCameraMid = new Rect(10, 40, 170, 240); //width 150
             rectRightOfCameraMid = new Rect(180, 40, 450, 160);//width 470
         } else { //RED_RIGHT or BLUE_RIGHT
@@ -144,8 +144,8 @@ public class VisionOpenCV implements VisionProcessor {
     }
 
     public IDENTIFIED_SPIKE_MARK_LOCATION getSelection() {
-        if (GameField.startPosition == GameField.START_POSITION.RED_LEFT ||
-                GameField.startPosition == GameField.START_POSITION.BLUE_LEFT) {
+        if (GameField.startPosition == GameField.START_POSITION.LEFT ||
+                GameField.startPosition == GameField.START_POSITION.RIGHT) {
             switch (selectionAroundMid) {
                 case NONE:
                     identifiedSpikeMarkLocation = IDENTIFIED_SPIKE_MARK_LOCATION.RIGHT;
