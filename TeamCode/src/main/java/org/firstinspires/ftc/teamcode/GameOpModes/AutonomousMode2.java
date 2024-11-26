@@ -77,7 +77,7 @@ public class AutonomousMode2 extends LinearOpMode {
     public Outtake outtake;
     public SpecimenHandler specimenHandler;
     public Climber climber;
-    public Lights lights;
+    //public Lights lights;
 
     //Static Class for knowing system state
 
@@ -102,7 +102,7 @@ public class AutonomousMode2 extends LinearOpMode {
         //Build trajectories
         buildAutonoumousMode();
 
-        lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEMO);
+        //lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEMO);
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Selected Alliance         ", GameField.playingAlliance);
@@ -116,7 +116,7 @@ public class AutonomousMode2 extends LinearOpMode {
             gameTimer.reset();
             startTimer.reset();
             //Turn Lights Green
-            lights.setPattern(Lights.REV_BLINKIN_PATTERN.NONE);
+            //lights.setPattern(Lights.REV_BLINKIN_PATTERN.NONE);
 
             runAutonomousMode();
         }
@@ -430,17 +430,18 @@ public class AutonomousMode2 extends LinearOpMode {
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
-        /* Create Lights */
+        /*
         lights = new Lights(hardwareMap, telemetry);
         telemetry.addLine("Lights Initialized");
         telemetry.update();
+        */
 
         /* Create Controllers */
         gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, lights, intakeArm, intakeSlides,
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
                 outtake, specimenHandler, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
@@ -494,7 +495,7 @@ public class AutonomousMode2 extends LinearOpMode {
             outtake.printDebugMessages();
             specimenHandler.printDebugMessages();
             climber.printDebugMessages();
-            lights.printDebugMessages();
+            //lights.printDebugMessages();
         }
         telemetry.update();
     }

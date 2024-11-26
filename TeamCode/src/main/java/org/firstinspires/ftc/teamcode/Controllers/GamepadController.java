@@ -59,7 +59,7 @@ public class GamepadController {
     //Create object reference to objects to systems passed from TeleOp
     public Gamepad hzGamepad1, hzGamepad2;
     public VisionSensor visionSensor;
-    public Lights lights;
+    //public Lights lights;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
@@ -76,7 +76,7 @@ public class GamepadController {
      */
     public GamepadController(Gamepad hzGamepad1,
                              Gamepad hzGamepad2,
-                             Lights lights,
+                             //Lights lights,
                              IntakeArm intakeArm,
                              IntakeSlides intakeSlides,
                              Outtake outtake,
@@ -92,7 +92,7 @@ public class GamepadController {
         this.outtake = outtake;
         this.specimenHandler = specimenHandler;
         this.climber = climber;
-        this.lights = lights;
+        //this.lights = lights;
         this.telemetry = telemetry;
         this.currentOpMode = currentOpMode;
     }

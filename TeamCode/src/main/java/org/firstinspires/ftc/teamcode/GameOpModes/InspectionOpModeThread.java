@@ -154,7 +154,7 @@ public class InspectionOpModeThread extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, lights, intakeArm, intakeSlides,
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
                 outtake, specimenHandler, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
