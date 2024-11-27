@@ -35,18 +35,17 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
-import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeController;
 import org.firstinspires.ftc.teamcode.Controllers.OuttakeController;
 import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
@@ -55,29 +54,30 @@ import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
-import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Autonomous Mode 2", group = " 00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-
-public class AutonomousMode2 extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous Mode", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousMode extends LinearOpMode {
 
     public GamepadController gamepadController;
     public SpecimenController specimenController;
     public IntakeController intakeController;
     public OuttakeController outtakeController;
-    public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
     public SpecimenHandler specimenHandler;
     public Climber climber;
+
     //public Lights lights;
+
+    public MecanumDrive drive;
+    public TelemetryPacket telemetryPacket = new TelemetryPacket();
 
     //Static Class for knowing system state
 
@@ -141,26 +141,30 @@ public class AutonomousMode2 extends LinearOpMode {
     Pose2d observationPark = new Pose2d(0, 0, Math.toRadians(0));
 
     double waitSecondsBeforeDrop = 0;
-    MecanumDrive drive = new MecanumDrive(hardwareMap, initPose);
 
     //List all Trajectories
-    Action trajMoveToSubAtStart, trajMoveToBucketFromSub, trajMoveToSampleOne, trajMoveToBucketFromFirst,
-            trajParkAtSub, trajMoveToSampleTwo, trajMoveToBucketFromSecond;
+    Action trajMoveToSubAtStart, trajMoveToBucketFromSub,
+            trajMoveToSampleOne, trajMoveToBucketFromSampleOne,
+            trajMoveToSampleTwo, trajMoveToBucketFromSampleTwo,
+            trajMoveToSampleThree, trajMoveToBucketFromSampleThree,
+            trajParkAtSub;
+
     Action trajMoveToObsZone, trajMoveToObsZoneWSample, trajBacktoSubWSpecimen, trajParkAtObsZone;
 
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
         double waitSecondsBeforeDrop = 0;
+        drive = new MecanumDrive(hardwareMap, initPose);
 
         switch (GameField.startPosition) {
             case LEFT:
-                submersibleSpecimen = new Pose2d(18, -23, Math.toRadians(0));
-                netZone = new Pose2d(8, 15, Math.toRadians(120));
-                yellowSampleOne = new Pose2d(21, 12, Math.toRadians(0));
-                yellowSampleTwo = new Pose2d(21, 30, Math.toRadians(0));
-                yellowSampleThree = new Pose2d(21, 48, Math.toRadians(0)); //TODO set values
-                submersiblePark = new Pose2d(39, -33, Math.toRadians(0));
+                submersibleSpecimen = new Pose2d(28, -11, Math.toRadians(0));
+                netZone = new Pose2d(7, 41, Math.toRadians(-45));
+                yellowSampleOne = new Pose2d(7.5, 41, Math.toRadians(-15));
+                yellowSampleTwo = new Pose2d(7.5, 41, Math.toRadians(3));
+                yellowSampleThree = new Pose2d(7.5, 41, Math.toRadians(23)); //TODO set values
+                submersiblePark = new Pose2d(60, 6.5, Math.toRadians(-90));
                 break;
 
             case RIGHT:
@@ -179,19 +183,21 @@ public class AutonomousMode2 extends LinearOpMode {
         if (GameField.startPosition == GameField.START_POSITION.LEFT) {
             //move to submersible
             trajMoveToSubAtStart = drive.actionBuilder(initPose)
-                .strafeToLinearHeading(submersibleSpecimen.position, submersiblePark.heading)
-                .build();
+                    .strafeTo(submersibleSpecimen.position)
+                    //.strafeToLinearHeading(submersibleSpecimen.position, submersiblePark.heading)
+                    .build();
 
             trajMoveToBucketFromSub = drive.actionBuilder(submersibleSpecimen)
-                .strafeToLinearHeading(netZone.position, netZone.heading)
-                .build();
+                    .setReversed(true)
+                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .build();
 
             //move to yellow sample one
             trajMoveToSampleOne = drive.actionBuilder(netZone)
                     .strafeToLinearHeading(yellowSampleOne.position, yellowSampleOne.heading)
                     .build();
 
-            trajMoveToBucketFromFirst = drive.actionBuilder(yellowSampleOne)
+            trajMoveToBucketFromSampleOne = drive.actionBuilder(yellowSampleOne)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
                     .build();
 
@@ -199,12 +205,21 @@ public class AutonomousMode2 extends LinearOpMode {
                     .strafeToLinearHeading(yellowSampleTwo.position, yellowSampleTwo.heading)
                     .build();
 
-            trajMoveToBucketFromSecond = drive.actionBuilder(yellowSampleTwo)
+            trajMoveToBucketFromSampleTwo = drive.actionBuilder(yellowSampleTwo)
+                    .strafeToLinearHeading(netZone.position, netZone.heading)
+                    .build();
+
+            trajMoveToSampleThree = drive.actionBuilder(netZone)
+                    .strafeToLinearHeading(yellowSampleThree.position, yellowSampleThree.heading)
+                    .build();
+
+            trajMoveToBucketFromSampleThree = drive.actionBuilder(yellowSampleThree)
                     .strafeToLinearHeading(netZone.position, netZone.heading)
                     .build();
 
             trajParkAtSub = drive.actionBuilder(netZone)
-                    .strafeToLinearHeading(submersiblePark.position, submersiblePark.heading)
+                    .splineTo(submersiblePark.position, submersiblePark.heading)
+                    //.strafeToLinearHeading(submersiblePark.position, submersiblePark.heading)
                     .build();
 
         } else { //autoOption == RIGHT
@@ -254,36 +269,47 @@ public class AutonomousMode2 extends LinearOpMode {
                             trajMoveToSubAtStart,
                             new SleepAction(1),
                             //hang specimen
-                            specimenController.hangSpecimenAtStartAction(),
+                            //specimenController.hangSpecimenAtStartAction(),
                             // bring back specimenHandler
-                            specimenController.lowerSpecimenbackInitAfterHangAction(),
+                            //specimenController.lowerSpecimenbackInitAfterHangAction(),
                             //pick up sample
-                            intakeController.IntakeSampleAtStartAction(),
+                            //intakeController.IntakeSampleAtStartAction(),
                             trajMoveToBucketFromSub,
                             new SleepAction(1),
                             //drop sample at high bucket
 
                             //lower to transfer
-                            outtakeController.lowerToTransferAction(),
+                            //outtakeController.lowerToTransferAction(),
                             trajMoveToSampleOne,
+                            new SleepAction(1),
                             //intake sample
-                            intakeController.IntakeSampleAtYS1Action(),
-                            trajMoveToBucketFromFirst,
+                            //intakeController.IntakeSampleAtYS1Action(),
+                            trajMoveToBucketFromSampleOne,
                             new SleepAction(1),
                             //drop sample at high bucket
-                            outtakeController.placeSampleInHighBucketAction(),
+                            //outtakeController.placeSampleInHighBucketAction(),
                             //lower to transfer
-                            outtakeController.lowerToTransferAction(),
+                            //outtakeController.lowerToTransferAction(),
                             trajMoveToSampleTwo,
                             new SleepAction(1),
                             //intake sample
-                            intakeController.IntakeSampleAtYS2Action(),
-                            trajMoveToBucketFromSecond,
+                            //intakeController.IntakeSampleAtYS2Action(),
+                            trajMoveToBucketFromSampleTwo,
                             new SleepAction(1),
                             //drop sample at high bucket
-                            outtakeController.placeSampleInHighBucketAction(),
+                            //outtakeController.placeSampleInHighBucketAction(),
                             //lower to transfer
-                            outtakeController.lowerToTransferAction(),
+                            //outtakeController.lowerToTransferAction(),
+                            trajMoveToSampleThree,
+                            new SleepAction(1),
+                            //intake sample
+                            //intakeController.IntakeSampleAtYS2Action(),
+                            trajMoveToBucketFromSampleThree,
+                            new SleepAction(1),
+                            //drop sample at high bucket
+                            //outtakeController.placeSampleInHighBucketAction(),
+                            //lower to transfer
+                            //outtakeController.lowerToTransferAction(),
                             //TODO once tested and adjusted, add sample 3 code
                             trajParkAtSub,
                             new SleepAction(1)
@@ -347,6 +373,7 @@ public class AutonomousMode2 extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
+
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
@@ -397,7 +424,7 @@ public class AutonomousMode2 extends LinearOpMode {
 
     public void initSubsystems(){
 
-        telemetry.setAutoClear(false);
+        telemetry.setAutoClear(true);
 
         //Init Pressed
         telemetry.addLine("Robot Init Pressed");
@@ -437,18 +464,14 @@ public class AutonomousMode2 extends LinearOpMode {
         */
 
         /* Create Controllers */
-        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
-        telemetry.addLine("Gamepad DriveTrain Initialized");
-        telemetry.update();
+        //gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
+        //telemetry.addLine("Gamepad DriveTrain Initialized");
+        //telemetry.update();
 
         gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
                 outtake, specimenHandler, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
-
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
 
         /* Get last position after Autonomous mode ended from static class set in Autonomous */
         if ( GameField.poseSetInAutonomous) {
