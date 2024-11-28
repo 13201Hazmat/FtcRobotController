@@ -171,10 +171,12 @@ public class GamepadController {
                     case DYNAMIC:
                         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
                         break;
+                    case SPECIMEN_PICKUP:
                     case POST_TRANSFER:
                     case TRANSFER:
                         intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.IN_BETWEEN);
                         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PRE_PICKUP);
+                        specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.MIN_RETRACTED);
                         break;
                     case PRE_PICKUP:
                         if (intakeArm.intakeGripAutoClose) {
@@ -264,9 +266,11 @@ public class GamepadController {
                 intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
                 safeWaitMilliSeconds(200);
             }
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
-            safeWaitMilliSeconds(300);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            if (intakeArm.isIntakeArmSafeToMoveOuttake()) {
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
+                safeWaitMilliSeconds(300);
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            }
         }
 
         if(gp2GetDpad_leftPress()){
@@ -274,9 +278,11 @@ public class GamepadController {
                 intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
                 safeWaitMilliSeconds(200);
             }
-            outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
-            safeWaitMilliSeconds(300);
-            outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            if (intakeArm.isIntakeArmSafeToMoveOuttake()) {
+                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
+                safeWaitMilliSeconds(300);
+                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+            }
         }
 
         if(gp2GetLeftBumperPress()){
@@ -295,9 +301,11 @@ public class GamepadController {
                     intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
                     safeWaitMilliSeconds(200);
                 }
-                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.EJECT);
-                safeWaitMilliSeconds(300);
-                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                if (intakeArm.isIntakeArmSafeToMoveOuttake()) {
+                    outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.EJECT);
+                    safeWaitMilliSeconds(300);
+                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                }
             }
         } else {
             if (gp2GetDpad_downPress()) {
@@ -329,10 +337,18 @@ public class GamepadController {
         }
 
         if(gp2GetTrianglePress()){
+            if (specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN) {
+                specimenHandler.closeGrip();
+                safeWaitMilliSeconds(200);
+            }
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
         }
 
         if(!gp1GetStart() && gp2GetCirclePress()){
+            if (specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN) {
+                specimenHandler.closeGrip();
+                safeWaitMilliSeconds(200);
+            }
             specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.LOW_CHAMBER);
         }
 
@@ -359,6 +375,12 @@ public class GamepadController {
                 specimenHandler.manualResetSpecimenHandlerMotor();
             }
         }
+
+        if (specimenHandler.specimenSlidesState == SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP) {
+            intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+            intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.SPECIMEN_PICKUP);
+        }
+
     }
 
     public int climberAscentClickCounter = 0;

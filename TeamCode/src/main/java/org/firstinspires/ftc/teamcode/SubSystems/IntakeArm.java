@@ -36,6 +36,7 @@ public class IntakeArm {
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
         TRANSFER(0.60),
+        SPECIMEN_PICKUP(0.66),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -54,6 +55,7 @@ public class IntakeArm {
         PRE_TRANSFER(0.45),
         TRANSFER(0.27),
         INIT(0.28),
+        SPECIMEN_PICKUP(0.48),
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -132,6 +134,16 @@ public class IntakeArm {
                 intakeWristState = INTAKE_WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
+        }
+    }
+
+    public boolean isIntakeArmSafeToMoveOuttake(){
+        if (intakeArmState == INTAKE_ARM_STATE.TRANSFER ||
+            intakeArmState == INTAKE_ARM_STATE.SPECIMEN_PICKUP ||
+            intakeArmState == INTAKE_ARM_STATE.INIT) {
+            return false;
+        } else {
+            return true;
         }
     }
 
