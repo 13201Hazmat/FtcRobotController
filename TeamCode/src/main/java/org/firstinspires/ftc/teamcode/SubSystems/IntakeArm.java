@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -16,8 +14,8 @@ public class IntakeArm {
     //public NormalizedColorSensor intakeSensor;
 
     public enum INTAKE_GRIP_STATE {
-        OPEN(0.68),
-        CLOSED(0.93);
+        OPEN(0.36),
+        CLOSED(0.19);
 
         private final double gripPosition;
         INTAKE_GRIP_STATE(double gripPosition) {
@@ -26,16 +24,18 @@ public class IntakeArm {
     }
     public INTAKE_GRIP_STATE intakeGripState = INTAKE_GRIP_STATE.CLOSED;
 
+    public boolean intakeGripAutoClose = true;
+
     public enum INTAKE_ARM_STATE{
         //Zero position - Intake arm vertically downward
 
-        LOWEST(0.32), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.40),
-        PICKUP(0.36),//0.34
-        EJECT(0.45),
+        LOWEST(0.33), // Perpendicular to the ground downwards
+        PRE_PICKUP(0.38),
+        PICKUP(0.32),//0.34
+        EJECT_OR_PRE_TRANSFER(0.38),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
-        TRANSFER(0.62),
+        TRANSFER(0.60),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -48,11 +48,11 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(0.96),
+        PICKUP(1.0),
         EJECT(0.72),
         POST_TRANSFER(0.45),
-        PRE_TRANSFER(0.34),
-        TRANSFER(0.28),
+        PRE_TRANSFER(0.45),
+        TRANSFER(0.27),
         INIT(0.28),
         DYNAMIC(0.16);
 
@@ -66,9 +66,9 @@ public class IntakeArm {
 
     public enum INTAKE_SWIVEL_STATE{
         //Zero position - Grip Facing center, with specimen held vertical
-        LEFT180(0.24),
-        CENTERED(0.515),
-        RIGHT180(0.79),
+        LEFT180(0.235),
+        CENTERED(0.505),
+        RIGHT180(0.785),
         DYNAMIC(0.515);
 
         private final double swivelPosition;
@@ -77,7 +77,7 @@ public class IntakeArm {
         }
     }
     public INTAKE_SWIVEL_STATE intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
-    public double SWIVEL_DELTA = 0.135;
+    public double SWIVEL_DELTA = 0.135*2;
 
     public Telemetry telemetry;
     public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
@@ -113,7 +113,7 @@ public class IntakeArm {
                 intakeWristState = INTAKE_WRIST_STATE.PRE_TRANSFER;
                 moveSwivelCentered();
                 break;
-            case EJECT:
+            case EJECT_OR_PRE_TRANSFER:
                 intakeWristServo.setPosition(INTAKE_WRIST_STATE.EJECT.wristPosition);
                 intakeWristState = INTAKE_WRIST_STATE.EJECT;
                 break;
@@ -153,6 +153,20 @@ public class IntakeArm {
         intakeSwivelServo.setPosition(INTAKE_SWIVEL_STATE.CENTERED.swivelPosition);
         intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
     }
+
+    public void moveSwivelPerpendicular(){
+        intakeSwivelServo.setPosition(INTAKE_SWIVEL_STATE.LEFT180.swivelPosition);
+        intakeSwivelState = INTAKE_SWIVEL_STATE.LEFT180;
+    }
+
+    public void toggleSwivel(){
+        if (intakeSwivelState == INTAKE_SWIVEL_STATE.CENTERED) {
+            moveSwivelPerpendicular();
+        } else {
+            moveSwivelCentered();
+        }
+    }
+
 
     public void moveSwivelLeft(){
         double intakeSwivelServoPosition = intakeSwivelServo.getPosition();
@@ -243,6 +257,7 @@ public class IntakeArm {
         telemetry.addLine("Intake Grip");
         telemetry.addData("   State", intakeGripState);
         telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
+        telemetry.addData("   autoClose", intakeGripAutoClose);
         telemetry.addLine("=============");
     }
 }

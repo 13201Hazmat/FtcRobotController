@@ -9,8 +9,9 @@ public class ServoCalibration extends LinearOpMode{
     Servo masterServo;
     String masterServoName;
     String masterServoCalibPosition;
-    //double servoSetPosition;
+    double servoStartPosition;
     double servoCurrentPosition;
+
 
     /*
     Servos:
@@ -47,47 +48,56 @@ public class ServoCalibration extends LinearOpMode{
             if(gamepad1.x){
                 masterServoName = "intake_arm";
                 masterServoCalibPosition = "Zero is Intake Arm Vertically downward";
+                servoStartPosition = 0.0;
                 break;
             }
             if(gamepad1.y){
                 masterServoName = "intake_wrist";
                 masterServoCalibPosition ="Zero is Horizontallu Facing inward, with Intake Arm in Vertically upward position";
+                servoStartPosition = 0.0;
                 break;
             }
             if(gamepad1.a){
                 masterServoName = "intake_slide_right";
                 masterServoCalibPosition = "Max_Extended Right at 0.0";
+                servoStartPosition = 0.0;
                 break;
             }
             if(gamepad1.b){
                 masterServoName = "intake_slide_left";
                 masterServoCalibPosition = "Max_Extended Left at 1.0";
+                servoStartPosition = 1.0;
                 break;
             }
             if(gamepad1.right_bumper){
                 masterServoName = "intake_swivel";
-                masterServoCalibPosition = "Facing Center is 0.5";
+                masterServoCalibPosition = "Facing Center is 0.505";
+                servoStartPosition = 0.505;
                 break;
             }
             if(gamepad1.dpad_up){
                 masterServoName = "specimen_grip";
                 masterServoCalibPosition = "Full closed is 0.26";
+                servoStartPosition = 0.26;
                 break;
             }
             if(gamepad1.dpad_left){
                 masterServoName = "outtake_arm";
-                masterServoCalibPosition = "Fully in mechanical limit inwards is Zero";
+                masterServoCalibPosition = "Fully in mechanical limit inwards is 1.0";
+                servoStartPosition = 1.0;
                 break;
             }
             if(gamepad1.dpad_right){
                 masterServoCalibPosition = "Bucket holder parallel to arm is 0.75";
                 masterServoName = "outtake_wrist";
+                servoStartPosition = 0.75;
                 break;
             }
 
             if(gamepad1.dpad_down){
-                masterServoCalibPosition = "Grip Closed is 0.66";
+                masterServoCalibPosition = "Grip Closed is 0.20";
                 masterServoName = "intake_grip";
+                servoStartPosition = 0.20;
                 break;
             }
 
@@ -98,10 +108,14 @@ public class ServoCalibration extends LinearOpMode{
 
     public void runOpMode() throws InterruptedException {
         selectServo();
+        masterServo.setPosition(servoCurrentPosition);
         telemetry.addData("Selected Servo ", masterServoName);
         telemetry.addData("Calib position ", masterServoCalibPosition);
+        telemetry.addData("ServoStartPosition", servoStartPosition);
+        telemetry.addData("Servo Current Position: ", masterServo.getPosition());
         telemetry.addData("Selected Port  ", masterServo.getPortNumber());
         telemetry.update();
+
 
         waitForStart();
         while (opModeIsActive()) {

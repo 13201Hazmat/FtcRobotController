@@ -19,11 +19,15 @@ public class SpecimenHandler {
         CLOSED(0.28);
 
         private final double gripPosition;
+
         SPECIMEN_GRIP_STATE(double gripPosition) {
             this.gripPosition = gripPosition;
         }
     }
+
     public SPECIMEN_GRIP_STATE gripState = SPECIMEN_GRIP_STATE.CLOSED;
+
+    public boolean autoOpenSpecimenGrip = true;
 
     //Outtake Motor states
     public enum SPECIMEN_SLIDE_STATE {
@@ -34,6 +38,7 @@ public class SpecimenHandler {
         MAX_EXTENDED(2280);
 
         public final double motorPosition;
+
         SPECIMEN_SLIDE_STATE(double motorPosition) {
             this.motorPosition = motorPosition;
         }
@@ -50,7 +55,8 @@ public class SpecimenHandler {
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
 
     //Different constants of arm speed
-    public static final double SPECIMEN_MOTOR_POWER= 1.0;//0.75
+    public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75
+
     public enum SPECIMEN_MOVEMENT_DIRECTION {
         EXTEND,
         RETRACT
@@ -59,6 +65,7 @@ public class SpecimenHandler {
     public boolean runOuttakeMotorToLevelState = false;
 
     Telemetry telemetry;
+
     public SpecimenHandler(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
         this.telemetry = telemetry;
         gripServo = hardwareMap.get(Servo.class, "specimen_grip");
@@ -66,7 +73,7 @@ public class SpecimenHandler {
         initSpecimenHandler();
     }
 
-    public void initSpecimenHandler(){
+    public void initSpecimenHandler() {
 
         closeGrip();
 
@@ -79,9 +86,9 @@ public class SpecimenHandler {
     }
 
     /**
-     *If state of hand grip is set to open, set position of servo's to specified
+     * If state of hand grip is set to open, set position of servo's to specified
      */
-    public void openGrip(){
+    public void openGrip() {
         gripServo.setPosition(SPECIMEN_GRIP_STATE.OPEN.gripPosition);
         gripState = SPECIMEN_GRIP_STATE.OPEN;
     }
@@ -89,10 +96,19 @@ public class SpecimenHandler {
     /**
      * If state of hand grip is set to close, set position of servo's to specified
      */
-    public void closeGrip(){
+    public void closeGrip() {
         gripServo.setPosition(SPECIMEN_GRIP_STATE.CLOSED.gripPosition);
         gripState = SPECIMEN_GRIP_STATE.CLOSED;
     }
+
+    public void toggleGrip() {
+        if(gripState ==SPECIMEN_GRIP_STATE.OPEN) {
+            closeGrip();
+        } else {
+            openGrip();
+        }
+    }
+
 
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOn(){
@@ -182,6 +198,7 @@ public class SpecimenHandler {
         telemetry.addLine("Specimen Grip");
         telemetry.addData("    State", gripServo);
         telemetry.addData("    Grip Servo position", gripServo.getPosition());
+        telemetry.addData("    AutoGripOpen", autoOpenSpecimenGrip);
         telemetry.addLine("=============");
     }
 

@@ -60,6 +60,10 @@ public class IntakeSlides {
         this.intakeSlidesState = intakeSlidesState;
     }
 
+    public double slideExtensionFactor(){
+        return intakeSlideServoRight.getPosition()*25;
+    }
+
     /*
     public void locateAndMoveToBlock(ColorRange targetColor) {
         final double pixelToExtensionScale = 0.05;

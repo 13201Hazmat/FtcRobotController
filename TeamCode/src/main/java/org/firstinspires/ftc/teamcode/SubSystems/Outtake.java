@@ -17,11 +17,12 @@ public class Outtake {
 
 
     public enum OUTTAKE_ARM_STATE{
-        //Calib Position : Fully in mechanical limit inwards is Zero
+        //Calib Position : Fully in mechanical limit inwards is One
         INIT(1.0),
         TRANSFER(1.0),
-        DROP(0.30),
-        MAX(0.45);
+        DROP(0.42),
+        EJECT(0.42),
+        MAX(0.0);
 
         private double armPos;
         OUTTAKE_ARM_STATE(double armPos){
@@ -36,6 +37,7 @@ public class Outtake {
         INIT(0.55),
         TRANSFER(0.55),
         PRE_DROP(0.73),
+        EJECT(0.96),
         DROP(0.96),
         MAX(0.60);
 
@@ -50,6 +52,7 @@ public class Outtake {
     //Outtake Motor states
     public enum OUTTAKE_SLIDE_STATE {
         MIN_RETRACTED(0, 0),
+        EJECT(0,0),
         TRANSFER(0, 0),
         LOW_BUCKET(600, 600),
         HIGH_BUCKET(2100, 2100),
@@ -96,8 +99,8 @@ public class Outtake {
         resetOuttakeMotorMode();
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        outtakeSlideLeft.setPositionPIDFCoefficients(10.0);
-        outtakeSlideRight.setPositionPIDFCoefficients(10.0);
+        outtakeSlideLeft.setPositionPIDFCoefficients(5.0);
+        outtakeSlideRight.setPositionPIDFCoefficients(5.0);
         outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
         turnOuttakeBrakeModeOff();
@@ -123,6 +126,10 @@ public class Outtake {
             case DROP:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.PRE_DROP.wristPos);
                 outtakeWristState = OUTTAKE_WRIST_STATE.PRE_DROP;
+                break;
+            case EJECT:
+                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.EJECT.wristPos);
+                outtakeWristState = OUTTAKE_WRIST_STATE.EJECT;
                 break;
             case MAX:
                 outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.MAX.wristPos);
@@ -227,10 +234,8 @@ public class Outtake {
     }
 
     public boolean isOuttakeReadyToDrop(){
-        return ((isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE.LOW_BUCKET) ||
-                (isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE.HIGH_BUCKET)) &&
-                outtakeArmState == OUTTAKE_ARM_STATE.DROP &&
-                outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP));
+        return (outtakeArmState == OUTTAKE_ARM_STATE.DROP &&
+                outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP);
     }
 
     public void printDebugMessages() {

@@ -81,7 +81,7 @@ public class InspectionOpModeThread extends LinearOpMode {
             if (opModeIsActive()) {
                 //Move subsystems to maximum extended position
                 intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
-                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT);
+                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT_OR_PRE_TRANSFER);
                 intakeArm.closeGrip();
                 gamepadController.safeWaitMilliSeconds(1000);
                 outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
