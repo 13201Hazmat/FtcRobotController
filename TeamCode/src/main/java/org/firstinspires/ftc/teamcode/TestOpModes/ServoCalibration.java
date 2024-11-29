@@ -88,16 +88,16 @@ public class ServoCalibration extends LinearOpMode{
                 break;
             }
             if(gamepad1.dpad_right){
-                masterServoCalibPosition = "Bucket holder parallel to arm is 0.75";
+                masterServoCalibPosition = "Bucket upright when arm is in physical minimum is 0.55";
                 masterServoName = "outtake_wrist";
-                servoStartPosition = 0.75;
+                servoStartPosition = 0.55;
                 break;
             }
 
             if(gamepad1.dpad_down){
-                masterServoCalibPosition = "Grip Closed is 0.20";
+                masterServoCalibPosition = "Grip Closed is 0.17";
                 masterServoName = "intake_grip";
-                servoStartPosition = 0.20;
+                servoStartPosition = 0.17;
                 break;
             }
 

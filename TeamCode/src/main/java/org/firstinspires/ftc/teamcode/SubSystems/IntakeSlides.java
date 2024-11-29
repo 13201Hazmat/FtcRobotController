@@ -19,8 +19,7 @@ public class IntakeSlides {
 
     //IntakeSlides servo states
     public enum INTAKE_SLIDES_STATE{
-        INIT (0.8,0.2),
-        TRANSFER (0.8, 0.2),
+        TRANSFER_MIN_RETRACTED (0.8, 0.2),
         IN_BETWEEN(0.9,0.1),
         MAX_EXTENSION(1.0, 0.0);
 
@@ -31,7 +30,7 @@ public class IntakeSlides {
             this.rightSlidePos = rightSlidePos;
         }
     }
-    public INTAKE_SLIDES_STATE intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
+    public INTAKE_SLIDES_STATE intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED;
 
     public double INTAKE_SLIDE_DELTA = 0.03;
 
@@ -50,8 +49,8 @@ public class IntakeSlides {
     public void initIntakeSlides(){
         //intakeSlideServoLeft.setDirection(Servo.Direction.FORWARD);
         //intakeSlideServoRight.setDirection(Servo.Direction.REVERSE);
-        moveIntakeSlides(INTAKE_SLIDES_STATE.TRANSFER);
-        intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER;
+        moveIntakeSlides(INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+        intakeSlidesState = INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED;
     }
 
     public void moveIntakeSlides(INTAKE_SLIDES_STATE intakeSlidesState) {

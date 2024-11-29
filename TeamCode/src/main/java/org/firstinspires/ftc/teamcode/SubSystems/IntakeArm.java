@@ -14,8 +14,8 @@ public class IntakeArm {
     //public NormalizedColorSensor intakeSensor;
 
     public enum INTAKE_GRIP_STATE {
-        OPEN(0.36),
-        CLOSED(0.19);
+        OPEN(0.59),
+        CLOSED(0.17);
 
         private final double gripPosition;
         INTAKE_GRIP_STATE(double gripPosition) {
@@ -49,13 +49,13 @@ public class IntakeArm {
 
     public enum INTAKE_WRIST_STATE{
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
-        PICKUP(1.0),
-        EJECT(0.72),
-        POST_TRANSFER(0.45),
-        PRE_TRANSFER(0.45),
-        TRANSFER(0.27),
-        INIT(0.28),
-        SPECIMEN_PICKUP(0.48),
+        PICKUP(0.94),
+        EJECT(0.66),
+        POST_TRANSFER(0.39),
+        PRE_TRANSFER(0.39),
+        TRANSFER(0.15),
+        INIT(0.22),
+        SPECIMEN_PICKUP(0.42),
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -79,7 +79,7 @@ public class IntakeArm {
         }
     }
     public INTAKE_SWIVEL_STATE intakeSwivelState = INTAKE_SWIVEL_STATE.CENTERED;
-    public double SWIVEL_DELTA = 0.135*2;
+    public double SWIVEL_DELTA = 0.135;
 
     public Telemetry telemetry;
     public IntakeArm(HardwareMap hardwareMap, Telemetry telemetry) { //map hand servo's to each
@@ -134,10 +134,15 @@ public class IntakeArm {
                 intakeWristState = INTAKE_WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
+            case SPECIMEN_PICKUP:
+                intakeWristServo.setPosition(INTAKE_WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
+                intakeWristState = INTAKE_WRIST_STATE.SPECIMEN_PICKUP;
+                moveSwivelCentered();
+                break;
         }
     }
 
-    public boolean isIntakeArmSafeToMoveOuttake(){
+    public boolean isIntakeArmInSafeStateToMoveOuttake(){
         if (intakeArmState == INTAKE_ARM_STATE.TRANSFER ||
             intakeArmState == INTAKE_ARM_STATE.SPECIMEN_PICKUP ||
             intakeArmState == INTAKE_ARM_STATE.INIT) {

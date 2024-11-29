@@ -38,7 +38,7 @@ public class IntakeController {
         safeWaitMilliSeconds(500);
         intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitSeconds(1);
     }
 
@@ -65,7 +65,7 @@ public class IntakeController {
         safeWaitMilliSeconds(500);
         intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitSeconds(1);
 
 
@@ -94,7 +94,7 @@ public class IntakeController {
         safeWaitMilliSeconds(500);
         intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitSeconds(1);
     }
 
@@ -121,7 +121,7 @@ public class IntakeController {
         safeWaitMilliSeconds(500);
         intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitSeconds(1);
     }
 
@@ -148,7 +148,7 @@ public class IntakeController {
         safeWaitMilliSeconds(500);
         intakeArm.closeGrip();
         intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.TRANSFER);
-        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER);
+        intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitSeconds(1);
     }
 

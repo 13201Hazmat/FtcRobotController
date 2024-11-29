@@ -31,9 +31,10 @@ public class SpecimenHandler {
 
     //Outtake Motor states
     public enum SPECIMEN_SLIDE_STATE {
-        MIN_RETRACTED(0),
+        MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
         PICKUP(100),
         LOW_CHAMBER(400),
+        HICH_CHAMBER_LATCH(1100),
         HIGH_CHAMBER(1500),
         MAX_EXTENDED(2280);
 
@@ -44,15 +45,15 @@ public class SpecimenHandler {
         }
     }
 
-    public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
+    public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
 
     public int SLIDE_LOWER_DELTA_TO_LATCH = 400;
 
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
 
-    public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
-    public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
+    public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 25;//100
+    public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 25;//200
 
     //Different constants of arm speed
     public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75
@@ -79,10 +80,10 @@ public class SpecimenHandler {
 
         resetOuttakeMotorMode();
         specimenSlide.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        specimenSlide.setPositionPIDFCoefficients(10.0);
+        specimenSlide.setPositionPIDFCoefficients(5.0);
 
         turnOuttakeBrakeModeOff();
-        specimenSlidesState = SPECIMEN_SLIDE_STATE.PICKUP;
+        specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
     }
 
     /**
@@ -131,20 +132,23 @@ public class SpecimenHandler {
     }
 
     public void lowerSlideToLatch(){
-         specimenSlide.setTargetPosition((int)(specimenSlidesState.motorPosition - SLIDE_LOWER_DELTA_TO_LATCH));
-         runOuttakeMotorToLevelState = true;
-         runOuttakeMotorToLevel();
+        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.HIGH_CHAMBER) {
+            moveSpecimenSlides(SPECIMEN_SLIDE_STATE.HICH_CHAMBER_LATCH);
+        }
+        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.LOW_CHAMBER) {
+            moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
+        }
     }
 
     public void backToInit(){
-        moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED);
+        moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
         closeGrip();
     }
 
     //sets the Outtake motor power
     public void runOuttakeMotorToLevel(){
         double power = 0;
-        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.PICKUP) {
+        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH) {
             turnOuttakeBrakeModeOff();
         } else {
             turnOuttakeBrakeModeOn();
@@ -180,7 +184,7 @@ public class SpecimenHandler {
         runOuttakeMotorToLevel();
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
-        specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED;
+        specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
     }
 
     public double isOuttakeSlidesInStateError = 0;
