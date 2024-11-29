@@ -61,13 +61,14 @@ public class GamepadController {
     //public Lights lights;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
+    public IntakeController intakeController;
     public Outtake outtake;
+    public OuttakeController outtakeController;
     public SpecimenHandler specimenHandler;
+    public SpecimenController specimenController;
     public Climber climber;
     public Telemetry telemetry;
     LinearOpMode currentOpMode;
-    private int blockIntakeSequenceState = 0;
-    private int blockIntakeEjectstate = 0;
 
     /**
      * Constructor for HzGamepad1 and HzGamepad2 class that extends gamepad.
@@ -78,8 +79,11 @@ public class GamepadController {
                              //Lights lights,
                              IntakeArm intakeArm,
                              IntakeSlides intakeSlides,
+                             IntakeController intakeController,
                              Outtake outtake,
+                             OuttakeController outtakeController,
                              SpecimenHandler specimenHandler,
+                             SpecimenController specimenController,
                              Climber climber,
                              Telemetry telemetry,
                              LinearOpMode currentOpMode
@@ -88,8 +92,11 @@ public class GamepadController {
         this.hzGamepad2 = hzGamepad2;
         this.intakeArm = intakeArm;
         this.intakeSlides = intakeSlides;
+        this.intakeController = intakeController;
         this.outtake = outtake;
+        this.outtakeController = outtakeController;
         this.specimenHandler = specimenHandler;
+        this.specimenController = specimenController;
         this.climber = climber;
         //this.lights = lights;
         this.telemetry = telemetry;
@@ -345,19 +352,11 @@ public class GamepadController {
         }
 
         if(gp2GetTrianglePress()){
-            if (specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN) {
-                specimenHandler.closeGrip();
-                safeWaitMilliSeconds(200);
-            }
-            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+            specimenController.closeGripAndMoveTo(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
         }
 
         if(!gp1GetStart() && gp2GetCirclePress()){
-            if (specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN) {
-                specimenHandler.closeGrip();
-                safeWaitMilliSeconds(200);
-            }
-            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.LOW_CHAMBER);
+            specimenController.closeGripAndMoveTo(SpecimenHandler.SPECIMEN_SLIDE_STATE.LOW_CHAMBER);
         }
 
         if(!gp2GetStart() &&  gp2GetCrossPress()){
@@ -370,13 +369,7 @@ public class GamepadController {
 
         if (!gp2GetStart()) {
             if(gp2GetSquarePress()){
-                specimenHandler.lowerSlideToLatch();
-                if (specimenHandler.autoOpenSpecimenGrip) {
-                    safeWaitMilliSeconds(300);
-                    specimenHandler.openGrip();
-                    safeWaitMilliSeconds(200);
-                    specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
-                }
+                specimenController.latchAndOpenGripAndMoveToPickup();
             }
         } else {
             if(gp2GetSquarePress()){

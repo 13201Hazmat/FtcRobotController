@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeController;
+import org.firstinspires.ftc.teamcode.Controllers.OuttakeController;
+import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
@@ -25,16 +28,19 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "Hazmat Inspection OpMode", group = " 01-Teleop")
-public class InspectionOpModeThread extends LinearOpMode {
+@TeleOp(name = "Hazmat TeleOp Thread", group = " 00-Teleop")
+public class InspectionOpMode extends LinearOpMode {
 
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
+    public IntakeController intakeController;
     public Outtake outtake;
+    public OuttakeController outtakeController;
     public SpecimenHandler specimenHandler;
+    public SpecimenController specimenController;
     public Climber climber;
     public Lights lights;
 
@@ -76,8 +82,6 @@ public class InspectionOpModeThread extends LinearOpMode {
                 telemetry.update();
             }
 
-            //outtakeArm.backPlateAlignDown();
-
             if (opModeIsActive()) {
                 //Move subsystems to maximum extended position
                 intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
@@ -88,7 +92,6 @@ public class InspectionOpModeThread extends LinearOpMode {
                 outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
                 outtake.moveWristDrop();
             }
-
 
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
@@ -132,12 +135,24 @@ public class InspectionOpModeThread extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
+        intakeController = new IntakeController(intakeArm, intakeSlides, this);
+        telemetry.addLine("IntakeController Initialized");
+        telemetry.update();
+
         outtake = new Outtake(hardwareMap, telemetry);
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
+        outtakeController = new OuttakeController(outtake, this);
+        telemetry.addLine("Outtake Controller Initialized");
+        telemetry.update();
+
         specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
         telemetry.addLine("SpecimenHandler Initialized");
+        telemetry.update();
+
+        specimenController = new SpecimenController(specimenHandler, this);
+        telemetry.addLine("Specimen Controller Initialized");
         telemetry.update();
 
         climber = new Climber(hardwareMap, telemetry);
@@ -154,8 +169,8 @@ public class InspectionOpModeThread extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
-                outtake, specimenHandler, climber, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeController,
+                outtake, outtakeController, specimenHandler, specimenController, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -187,19 +202,7 @@ public class InspectionOpModeThread extends LinearOpMode {
         telemetry.addData("Robot ready to start","");
 
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
-            telemetry.addLine("Running Hazmat Inspection OpMode");
-            telemetry.addLine("Intake State");
-            telemetry.addData("    Slides", intakeSlides.intakeSlidesState);
-            telemetry.addData("    Arm", intakeArm.intakeArmState);
-            telemetry.addData("    Wrist", intakeArm.intakeWristState);
-            telemetry.addData("    Grip", intakeArm.intakeGripState);
-            telemetry.addLine("Outtake State");
-            telemetry.addData("    Slides",outtake.outtakeSlidesState);
-            telemetry.addData("    Arm",outtake.outtakeArmState);
-            telemetry.addData("    Wrist",outtake.outtakeWristState);
-            telemetry.addLine("============================");
-
-
+            telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();

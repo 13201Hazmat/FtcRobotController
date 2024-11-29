@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 @TeleOp(name = "Test Vision Vinayak", group = "00-Teleop")
 public class TestVisionVin extends LinearOpMode {
 
-    public GamepadController gamepadController;
+    public TestGamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
@@ -138,8 +138,10 @@ public class TestVisionVin extends LinearOpMode {
         telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
-                outtake, specimenHandler, climber, telemetry, this);
+        /* Create Controllers */
+        gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
+        telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
