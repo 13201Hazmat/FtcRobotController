@@ -59,6 +59,14 @@ public class Climber {
         initClimber();
     }
 
+    public void initClimber(){
+        climberStg1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        climberStg1Motor.setPositionPIDFCoefficients(10.0); //5
+        climberStg1Motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        startCurrentPosition = climberStg1Motor.getCurrentPosition();
+        turnClimberStg1BrakeModeOff();
+    }
+
     public void ascendClimberStg1Servo(){
         climberServoTimer.reset();
         climberStg1ServoLeft.setPower(climberServoPower);
@@ -83,13 +91,7 @@ public class Climber {
         climberStg1ServoRight.setPower(0);
     }
 
-    public void initClimber(){
-        climberStg1Motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        climberStg1Motor.setPositionPIDFCoefficients(10.0); //5
-        climberStg1Motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        startCurrentPosition = climberStg1Motor.getCurrentPosition();
-        turnClimberStg1BrakeModeOff();
-    }
+
 
     public void turnClimberStg1BrakeModeOn(){
         climberStg1Motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

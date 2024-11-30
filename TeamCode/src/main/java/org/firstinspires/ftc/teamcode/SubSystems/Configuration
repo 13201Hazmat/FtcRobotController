@@ -14,7 +14,7 @@ EH Motor 2:        outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake
 
 EH Servo 2:        intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
 RC Servo 2:        intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
-EH Servo 4:        intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
+EH Servo 4:        intakeGripServo = hardwareMap.get(Servo.class, "intake_grip");
 EH I2C Bus 1:      intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 EH Servo 3:        intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
 
