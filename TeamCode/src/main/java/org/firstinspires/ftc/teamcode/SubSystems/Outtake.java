@@ -20,8 +20,8 @@ public class Outtake {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(1.0),
         TRANSFER(1.0),
-        DROP(0.42),
-        EJECT(0.42),
+        DROP(0.40),
+        EJECT(0.40),
         MAX(0.0);
 
         private double armPos;
@@ -49,15 +49,17 @@ public class Outtake {
     public WRIST_STATE outtakeWristState = WRIST_STATE.TRANSFER;
     public double WRIST_DELTA = 0.01;
 
+    public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
+
     //Outtake Motor states
     public enum SLIDE_STATE {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(600, 600),
-        HIGH_BUCKET(2100, 2100),
-        CLIMBER2(2000, 2000),
-        MAX_EXTENDED(2280, 2280);
+        LOW_BUCKET(227, 227), //(600 for 435rpm motor)
+        HIGH_BUCKET(750, 750), //(2100 for 435rpm motor)
+        CLIMBER2(750, 750), //(2000 for 435rpm motor)
+        MAX_EXTENDED(800, 800); //(2280 for 435rpm motor)
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;

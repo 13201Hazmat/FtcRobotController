@@ -24,7 +24,7 @@ public class Vision {
     public ColorBlobLocatorProcessor colorLocator;
     public CameraName camera;
     public int X_RANGE = 320;
-    public int Y_RANGE = 640;
+    public int Y_RANGE = 240;
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
@@ -35,7 +35,7 @@ public class Vision {
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
                 .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0., 0.25, -0.25))  // search Left 1/4 of camera view
                 .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .setBlurSize(5)                               // Smooth the transitions between different colors in imag/e
                 .build();
 
         VisionPortal portal = new VisionPortal.Builder()

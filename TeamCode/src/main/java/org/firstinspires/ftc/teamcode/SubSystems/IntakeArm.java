@@ -23,7 +23,7 @@ public class IntakeArm {
 
     public enum GRIP_STATE {
         OPEN(0.59),
-        CLOSED(0.17);
+        CLOSED(0.16);
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {

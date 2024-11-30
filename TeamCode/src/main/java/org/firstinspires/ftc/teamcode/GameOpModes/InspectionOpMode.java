@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "Hazmat TeleOp Thread", group = " 00-Teleop")
+@TeleOp(name = "Inspection OpMode", group = " 00-Teleop")
 public class InspectionOpMode extends LinearOpMode {
 
     public GamepadController gamepadController;

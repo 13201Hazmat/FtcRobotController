@@ -23,7 +23,6 @@ package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -59,8 +58,8 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "Concept: Vision Color-Locator", group = "Concept")
-public class ConceptVisionColorLocator extends LinearOpMode
+@TeleOp(name = "Concept: Vision Color-Locator Test", group = "Concept")
+public class ConceptVisionColorLocatorTest extends LinearOpMode
 {
     @Override
     public void runOpMode()

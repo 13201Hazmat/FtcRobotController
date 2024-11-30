@@ -29,14 +29,16 @@ public class SpecimenHandler {
 
     public boolean autoOpenSpecimenGrip = true;
 
+    public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
+
     //Outtake Motor states
     public enum SLIDE_STATE {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
-        PICKUP(100),
-        LOW_CHAMBER(400),
-        HICH_CHAMBER_LATCH(1100),
-        HIGH_CHAMBER(1500),
-        MAX_EXTENDED(2280);
+        PICKUP(38), //100 for 435 rpm
+        LOW_CHAMBER(151), //400 for 435 rpm
+        HICH_CHAMBER_LATCH(400), //1100 for 435 rpm
+        HIGH_CHAMBER(567), //1500 for 435 rpm
+        MAX_EXTENDED(800); //2280 for 435 rpm
 
         public final double motorPosition;
 
@@ -47,21 +49,13 @@ public class SpecimenHandler {
 
     public SLIDE_STATE specimenSlidesState = SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
 
-    public int SLIDE_LOWER_DELTA_TO_LATCH = 400;
-
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
 
-    public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 25;//100
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 25;//200
 
     //Different constants of arm speed
     public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75
-
-    public enum SPECIMEN_MOVEMENT_DIRECTION {
-        EXTEND,
-        RETRACT
-    }
 
     public boolean runOuttakeMotorToLevelState = false;
 

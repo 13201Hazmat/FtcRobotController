@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.RotatedRect;
 
-@TeleOp (name = "Vision", group = "Testing")
+@TeleOp (name = "Test Vision", group = "Testing")
 public class TestVision extends LinearOpMode {
     public Vision vision;
     public VisionPortal visionPortal;
