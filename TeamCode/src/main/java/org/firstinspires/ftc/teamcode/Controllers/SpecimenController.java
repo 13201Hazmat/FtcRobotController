@@ -25,15 +25,15 @@ public class SpecimenController {
         this.currentOpMode = currentOpMode;
     }
 
-    public void closeGripAndMoveTo(SpecimenHandler.SPECIMEN_SLIDE_STATE toSlideState){
-        if (specimenHandler.gripState == SpecimenHandler.SPECIMEN_GRIP_STATE.OPEN) {
+    public void closeGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
+        if (specimenHandler.gripState == SpecimenHandler.GRIP_STATE.OPEN) {
             specimenHandler.closeGrip();
             safeWaitMilliSeconds(200);
         }
         specimenHandler.moveSpecimenSlides(toSlideState);
     }
 
-    public Action closeGripAndMoveToAction(SpecimenHandler.SPECIMEN_SLIDE_STATE toSlideState) {
+    public Action closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -41,23 +41,23 @@ public class SpecimenController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                closeGripAndMoveTo(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+                closeGripAndMoveTo(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER);
                 return false;
             }
         };
     }
 
-    public void latchAndOpenGripAndMoveToPickup(){
+    public void latchAndOpenGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
         specimenHandler.lowerSlideToLatch();
         if (specimenHandler.autoOpenSpecimenGrip) {
             safeWaitMilliSeconds(300);
             specimenHandler.openGrip();
             safeWaitMilliSeconds(200);
-            specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
+            specimenHandler.moveSpecimenSlides(toSlideState);
         }
     }
 
-    public Action latchAndOpenGripAndMoveToPickupAction() {
+    public Action latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -65,18 +65,17 @@ public class SpecimenController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                latchAndOpenGripAndMoveToPickup();
+                latchAndOpenGripAndMoveTo(toSlideState);
                 return false;
             }
         };
     }
 
-    public void moveToPickup(){
-        specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.PICKUP);
-
+    public void moveTo(SpecimenHandler.SLIDE_STATE toSlideState){
+        specimenHandler.moveSpecimenSlides(toSlideState);
     }
 
-    public Action moveToPickupAction() {
+    public Action moveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -84,7 +83,7 @@ public class SpecimenController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                moveToPickup();
+                moveTo(toSlideState);
                 return false;
             }
         };

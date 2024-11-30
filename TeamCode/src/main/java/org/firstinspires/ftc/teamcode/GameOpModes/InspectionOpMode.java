@@ -10,8 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
-import org.firstinspires.ftc.teamcode.Controllers.IntakeController;
-import org.firstinspires.ftc.teamcode.Controllers.OuttakeController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
 import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
@@ -20,6 +19,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
+import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
 
 /**
@@ -36,12 +36,12 @@ public class InspectionOpMode extends LinearOpMode {
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
-    public IntakeController intakeController;
+    public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
-    public OuttakeController outtakeController;
     public SpecimenHandler specimenHandler;
     public SpecimenController specimenController;
     public Climber climber;
+    public Vision vision;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -84,12 +84,12 @@ public class InspectionOpMode extends LinearOpMode {
 
             if (opModeIsActive()) {
                 //Move subsystems to maximum extended position
-                intakeSlides.moveIntakeSlides(IntakeSlides.INTAKE_SLIDES_STATE.MAX_EXTENSION);
-                intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.EJECT_OR_PRE_TRANSFER);
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
+                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
                 intakeArm.closeGrip();
                 gamepadController.safeWaitMilliSeconds(1000);
-                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
-                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
+                outtake.moveArm(Outtake.ARM_STATE.DROP);
                 outtake.moveWristDrop();
             }
 
@@ -135,28 +135,20 @@ public class InspectionOpMode extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        intakeController = new IntakeController(intakeArm, intakeSlides, this);
-        telemetry.addLine("IntakeController Initialized");
-        telemetry.update();
-
         outtake = new Outtake(hardwareMap, telemetry);
         telemetry.addLine("Outtake Initialized");
-        telemetry.update();
-
-        outtakeController = new OuttakeController(outtake, this);
-        telemetry.addLine("Outtake Controller Initialized");
         telemetry.update();
 
         specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
         telemetry.addLine("SpecimenHandler Initialized");
         telemetry.update();
 
-        specimenController = new SpecimenController(specimenHandler, this);
-        telemetry.addLine("Specimen Controller Initialized");
-        telemetry.update();
-
         climber = new Climber(hardwareMap, telemetry);
         telemetry.addLine("Climber Initialized");
+        telemetry.update();
+
+        vision = new Vision(hardwareMap, telemetry);
+        telemetry.addLine("Vision Initialized");
         telemetry.update();
 
         /* Create Lights */
@@ -165,13 +157,21 @@ public class InspectionOpMode extends LinearOpMode {
         telemetry.update();
 
         /* Create Controllers */
-        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
-        telemetry.addLine("Gamepad DriveTrain Initialized");
+        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake,  vision,this);
+        telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeController,
-                outtake, outtakeController, specimenHandler, specimenController, climber, telemetry, this);
+        specimenController = new SpecimenController(specimenHandler, this);
+        telemetry.addLine("Specimen Controller Initialized");
+        telemetry.update();
+
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
+                outtake, specimenHandler, specimenController, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
+
+        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
+        telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {

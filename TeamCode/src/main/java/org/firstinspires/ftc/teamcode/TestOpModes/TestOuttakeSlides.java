@@ -74,17 +74,17 @@ public class TestOuttakeSlides extends LinearOpMode {
 
                 //high bucket
                 if(gamepadController.gp2GetDpad_upPress()){
-                    outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.HIGH_BUCKET);
+                    outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_BUCKET);
                 }
 
                 //low bucket
                 if(gamepadController.gp2GetDpad_downPress()){
-                    outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.LOW_BUCKET);
+                    outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
                 }
 
                 //transfer
                 if(gamepadController.gp2GetDpad_leftPress()){
-                    outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.TRANSFER);
+                    outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
                 }
             }
         }

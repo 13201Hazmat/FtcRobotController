@@ -73,15 +73,15 @@ public class TestOuttakeArm extends LinearOpMode {
                 }
 
                 if(gamepadController.gp2GetDpad_upPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
+                    outtake.moveArm(Outtake.ARM_STATE.DROP);
                 }
 
                 if(gamepadController.gp2GetDpad_downPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
+                    outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
                 }
 
                 if(gamepadController.gp2GetDpad_leftPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.INIT);
+                    outtake.moveArm(Outtake.ARM_STATE.INIT);
                 }
             }
         }

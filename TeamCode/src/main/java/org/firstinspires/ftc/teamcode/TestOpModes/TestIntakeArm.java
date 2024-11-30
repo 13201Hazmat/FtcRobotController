@@ -87,12 +87,12 @@ public class TestIntakeArm extends LinearOpMode {
 
                 //Triangle (move arm-wrist  and slide to pickup)
                 if(gamepadController.gp1GetTrianglePress()){
-                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
                     //Move slide to pickup
                 }
 
                 if(gamepadController.gp1GetCrossPress()){
-                    if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED) {
+                    if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
                         intakeArm.openGrip();
                     } else {
                         intakeArm.closeGrip();
