@@ -29,14 +29,16 @@ public class SpecimenHandler {
 
     public boolean autoOpenSpecimenGrip = true;
 
+    public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
+
     //Outtake Motor states
     public enum SPECIMEN_SLIDE_STATE {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
-        PICKUP(100),
-        LOW_CHAMBER(400),
-        HICH_CHAMBER_LATCH(1100),
-        HIGH_CHAMBER(1500),
-        MAX_EXTENDED(2280);
+        PICKUP(100 * CONVERT_435_TO_1150),
+        LOW_CHAMBER(400 * CONVERT_435_TO_1150),
+        HICH_CHAMBER_LATCH(1100 * CONVERT_435_TO_1150),
+        HIGH_CHAMBER(1500 * CONVERT_435_TO_1150),
+        MAX_EXTENDED(2280 * CONVERT_435_TO_1150);
 
         public final double motorPosition;
 

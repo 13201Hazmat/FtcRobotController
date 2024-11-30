@@ -49,15 +49,17 @@ public class Outtake {
     public OUTTAKE_WRIST_STATE outtakeWristState = OUTTAKE_WRIST_STATE.TRANSFER;
     public double WRIST_DELTA = 0.01;
 
+    public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
+
     //Outtake Motor states
     public enum OUTTAKE_SLIDE_STATE {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(600, 600),
-        HIGH_BUCKET(2100, 2100),
-        CLIMBER2(2000, 2000),
-        MAX_EXTENDED(2280, 2280);
+        LOW_BUCKET(600 * CONVERT_435_TO_1150, 600  * CONVERT_435_TO_1150),
+        HIGH_BUCKET(2100  * CONVERT_435_TO_1150, 2100  * CONVERT_435_TO_1150),
+        CLIMBER2(2000  * CONVERT_435_TO_1150, 2000  * CONVERT_435_TO_1150),
+        MAX_EXTENDED(2280  * CONVERT_435_TO_1150, 2280  * CONVERT_435_TO_1150);
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;
