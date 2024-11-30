@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import android.graphics.Color;
+
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class IntakeArm {
     public Servo intakeArmServo;
@@ -11,7 +19,7 @@ public class IntakeArm {
     //public CRServo intakeRollerServo;
     public Servo intakeGripServo;
     public Servo intakeSwivelServo;
-    //public NormalizedColorSensor intakeSensor;
+    public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
         OPEN(0.59),
@@ -89,7 +97,7 @@ public class IntakeArm {
         //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
         intakeGripServo = hardwareMap.get(Servo.class, "intake_grip");
         intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
-        //intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
+        intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
         initIntakeArm();
     }
@@ -98,6 +106,16 @@ public class IntakeArm {
         moveArm(ARM_STATE.TRANSFER);
         intakeArmState = ARM_STATE.TRANSFER;
         openGrip();
+        if (intakeSensingActivated) {
+            if (intakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) intakeSensor).enableLight(true);
+            }
+            intakeSensor.setGain(2);
+        } else {
+            if (intakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) intakeSensor).enableLight(false);
+            }
+        }
     }
 
     public void moveArm(ARM_STATE toIntakeArmState){
@@ -235,6 +253,32 @@ public class IntakeArm {
         }
     }
 
+    public boolean intakeSensingActivated = true;
+    public boolean intakeSampleSensed = false;
+    public ColorRange sensedSampleColor = ColorRange.GREEN;
+    public double SENSE_DISTANCE = 150;
+    public float[] sensedSampleHsvValues = new float[3];
+    public NormalizedRGBA sensedColor;
+    public double intakeSensingDistance = 500;
+    public void senseIntakeSampleColor(){
+        if (intakeSensingActivated) {
+            if (intakeSensor instanceof DistanceSensor){
+                intakeSensingDistance = ((DistanceSensor) intakeSensor).getDistance(DistanceUnit.MM);
+            }
+            if(intakeSensingDistance < SENSE_DISTANCE){
+                intakeSampleSensed = true;
+                sensedColor = intakeSensor.getNormalizedColors();
+                Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
+
+            }
+
+        } else {
+            intakeSampleSensed = false;
+            sensedSampleColor = ColorRange.GREEN;
+        }
+
+    }
+
 
     /*public void runRollerToIntake(){
         intakeRollerTimer.reset();
@@ -275,6 +319,16 @@ public class IntakeArm {
         telemetry.addData("   State", intakeGripState);
         telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
         telemetry.addData("   autoClose", intakeGripAutoClose);
+        telemetry.addLine("Intake Sensor");
+        telemetry.addData("   intakeSensingActivated", intakeSensingActivated);
+        if (intakeSensingActivated) {
+            telemetry.addData("   intakeSensingDistance", intakeSensingDistance);
+            telemetry.addData("   intakeSampleSensed", intakeSampleSensed);
+            if (intakeSampleSensed) {
+                telemetry.addData("    RGB","%.3f, %.3f, %.3f", sensedColor.red, sensedColor.green, sensedColor.blue);
+                telemetry.addData("    HSVA","%.3f, %.3f, %.3f, %.3f", sensedSampleHsvValues[0], sensedSampleHsvValues[1], sensedSampleHsvValues[2], sensedColor.alpha);
+            }
+        }
         telemetry.addLine("=============");
     }
 }
