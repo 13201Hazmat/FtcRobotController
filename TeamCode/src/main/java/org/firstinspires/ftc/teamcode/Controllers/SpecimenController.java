@@ -3,21 +3,16 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
-import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
+
+import android.content.pm.LabeledIntent;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
-import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 
 
@@ -29,104 +24,81 @@ public class SpecimenController {
 
     public SpecimenController(SpecimenHandler specimenHandler, LinearOpMode currentOpMode) {
         this.specimenHandler = specimenHandler;
-
         this.currentOpMode = currentOpMode;
     }
 
-    public void hangSpecimenAtStart() {
-        specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
+    public void closeGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
+        if (specimenHandler.gripState == SpecimenHandler.GRIP_STATE.OPEN) {
+            specimenHandler.closeGrip();
+            safeWaitMilliSeconds(200);
+        }
+        specimenHandler.moveSpecimenSlides(toSlideState);
+    }
+
+    public Action closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                closeGripAndMoveTo(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER);
+                return false;
+            }
+        };
+    }
+
+    public void latchAndOpenGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
         specimenHandler.lowerSlideToLatch();
-        specimenHandler.openGrip();
-    }
-
-    public Action hangSpecimenAtStartAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
+        if (specimenHandler.autoOpenSpecimenGrip) {
+            safeWaitMilliSeconds(500);
+            if (specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.HICH_CHAMBER_LATCH) ||
+                    specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH)) {
+                specimenHandler.openGrip();
+                safeWaitMilliSeconds(200);
+                specimenHandler.moveSpecimenSlides(toSlideState);
             }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                hangSpecimenAtStartAction();
-                return false;
-            }
-        };
-    }
-
-    public void lowerSpecimenbackInitAfterHang() {
-        specimenHandler.backToInit();
-    }
-
-
-    public Action lowerSpecimenbackInitAfterHangAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                lowerSpecimenbackInitAfterHangAction();
-                return false;
-            }
-        };
-    }
-    public void pickupSpecimenFromObservation() {
-        //TODO add code to turn 180 and align specimenHandler with specimen
-        safeWaitSeconds(0.500);
-        specimenHandler.closeGrip();
-        specimenHandler.moveSpecimenSlides(SpecimenHandler.SPECIMEN_SLIDE_STATE.HIGH_CHAMBER);
-    }
-
-
-
-    public Action pickupSpecimenFromObservationAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                pickupSpecimenFromObservation();
-                return false;
-            }
-        };
-    }
-    public void hangSpecimenTopChamber() {
-        specimenHandler.lowerSlideToLatch();
-        safeWaitSeconds(.500);
-        specimenHandler.openGrip();
-        specimenHandler.backToInit();
-    }
-
-
-
-    public Action hangSpecimenTopChamberAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                hangSpecimenTopChamber();
-                return false;
-            }
-        };
-    }
-
-
-    public void safeWaitSeconds(double time) {
-        ElapsedTime timer = new ElapsedTime(SECONDS);
-        timer.reset();
-        while (!isStopRequested() && timer.time() < time) {
         }
     }
-    public final boolean isStopRequested() {
-        return this.stopRequested || Thread.currentThread().isInterrupted();
-    }
-    volatile boolean stopRequested = false;
 
+    public Action latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                latchAndOpenGripAndMoveTo(toSlideState);
+                return false;
+            }
+        };
+    }
+
+    public void moveTo(SpecimenHandler.SLIDE_STATE toSlideState){
+        specimenHandler.moveSpecimenSlides(toSlideState);
+    }
+
+    public Action moveToAction(SpecimenHandler.SLIDE_STATE toSlideState) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                moveTo(toSlideState);
+                return false;
+            }
+        };
+    }
+
+    public void safeWaitMilliSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!currentOpMode.isStopRequested() && timer.time() < time) {
+        }
+    }
 
 }

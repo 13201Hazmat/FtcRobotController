@@ -16,23 +16,23 @@ public class Outtake {
     public DcMotorEx outtakeSlideRight;
 
 
-    public enum OUTTAKE_ARM_STATE{
+    public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(1.0),
         TRANSFER(1.0),
-        DROP(0.42),
-        EJECT(0.42),
+        DROP(0.35),
+        EJECT(0.35),
         MAX(0.0);
 
         private double armPos;
-        OUTTAKE_ARM_STATE(double armPos){
+        ARM_STATE(double armPos){
             this.armPos = armPos;
         }
     }
-    public OUTTAKE_ARM_STATE outtakeArmState = OUTTAKE_ARM_STATE.TRANSFER;
+    public ARM_STATE outtakeArmState = ARM_STATE.TRANSFER;
     public double ARM_DELTA = 0.01;
 
-    public enum OUTTAKE_WRIST_STATE{
+    public enum WRIST_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.55),
         TRANSFER(0.55),
@@ -42,34 +42,34 @@ public class Outtake {
         MAX(0.60);
 
         private double wristPos;
-        OUTTAKE_WRIST_STATE(double wristPos){
+        WRIST_STATE(double wristPos){
             this.wristPos = wristPos;
         }
     }
-    public OUTTAKE_WRIST_STATE outtakeWristState = OUTTAKE_WRIST_STATE.TRANSFER;
+    public WRIST_STATE outtakeWristState = WRIST_STATE.TRANSFER;
     public double WRIST_DELTA = 0.01;
 
     public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
 
     //Outtake Motor states
-    public enum OUTTAKE_SLIDE_STATE {
+    public enum SLIDE_STATE {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(600 * CONVERT_435_TO_1150, 600  * CONVERT_435_TO_1150),
-        HIGH_BUCKET(2100  * CONVERT_435_TO_1150, 2100  * CONVERT_435_TO_1150),
-        CLIMBER2(2000  * CONVERT_435_TO_1150, 2000  * CONVERT_435_TO_1150),
-        MAX_EXTENDED(2280  * CONVERT_435_TO_1150, 2280  * CONVERT_435_TO_1150);
+        LOW_BUCKET(600, 600), //(600 for 435rpm motor)
+        HIGH_BUCKET(2000, 2000), //(2100 for 435rpm motor)
+        CLIMBER2(2000, 2000), //(2000 for 435rpm motor)
+        MAX_EXTENDED(2280, 2280); //(2280 for 435rpm motor)
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;
-        OUTTAKE_SLIDE_STATE(double leftMotorPosition, double rightMotorPosition) {
+        SLIDE_STATE(double leftMotorPosition, double rightMotorPosition) {
             this.leftMotorPosition = leftMotorPosition;
             this.rightMotorPosition = rightMotorPosition;
         }
     }
 
-    public OUTTAKE_SLIDE_STATE outtakeSlidesState = OUTTAKE_SLIDE_STATE.TRANSFER;
+    public SLIDE_STATE outtakeSlidesState = SLIDE_STATE.TRANSFER;
 
     public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
     public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
@@ -97,7 +97,7 @@ public class Outtake {
     }
 
     public void initOuttake(){
-        moveArm(OUTTAKE_ARM_STATE.TRANSFER);
+        moveArm(ARM_STATE.TRANSFER);
         resetOuttakeMotorMode();
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -106,44 +106,44 @@ public class Outtake {
         outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
         turnOuttakeBrakeModeOff();
-        outtakeSlidesState = OUTTAKE_SLIDE_STATE.TRANSFER;
+        outtakeSlidesState = SLIDE_STATE.TRANSFER;
     }
 
-    public void moveArm(OUTTAKE_ARM_STATE toOuttakeArmState){
+    public void moveArm(ARM_STATE toOuttakeArmState){
         outtakeArmServo.setPosition(toOuttakeArmState.armPos);
         moveWrist(toOuttakeArmState);
         outtakeArmState = toOuttakeArmState;
     }
 
-    public void moveWrist(OUTTAKE_ARM_STATE outtakeArmState){
+    public void moveWrist(ARM_STATE outtakeArmState){
         switch (outtakeArmState){
             case INIT:
-                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.INIT.wristPos);
-                outtakeWristState = OUTTAKE_WRIST_STATE.INIT;
+                outtakeWristServo.setPosition(WRIST_STATE.INIT.wristPos);
+                outtakeWristState = WRIST_STATE.INIT;
                 break;
             case TRANSFER:
-                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.TRANSFER.wristPos);
-                outtakeWristState = OUTTAKE_WRIST_STATE.TRANSFER;
+                outtakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPos);
+                outtakeWristState = WRIST_STATE.TRANSFER;
                 break;
             case DROP:
-                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.PRE_DROP.wristPos);
-                outtakeWristState = OUTTAKE_WRIST_STATE.PRE_DROP;
+                outtakeWristServo.setPosition(WRIST_STATE.PRE_DROP.wristPos);
+                outtakeWristState = WRIST_STATE.PRE_DROP;
                 break;
             case EJECT:
-                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.EJECT.wristPos);
-                outtakeWristState = OUTTAKE_WRIST_STATE.EJECT;
+                outtakeWristServo.setPosition(WRIST_STATE.EJECT.wristPos);
+                outtakeWristState = WRIST_STATE.EJECT;
                 break;
             case MAX:
-                outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.MAX.wristPos);
-                outtakeWristState = OUTTAKE_WRIST_STATE.MAX;
+                outtakeWristServo.setPosition(WRIST_STATE.MAX.wristPos);
+                outtakeWristState = WRIST_STATE.MAX;
                 break;
         }
     }
 
     public void moveWristDrop(){
-        if (outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP) {
-            outtakeWristServo.setPosition(OUTTAKE_WRIST_STATE.DROP.wristPos);
-            outtakeWristState = OUTTAKE_WRIST_STATE.DROP;
+        if (outtakeWristState == WRIST_STATE.PRE_DROP) {
+            outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
+            outtakeWristState = WRIST_STATE.DROP;
         }
     }
 
@@ -161,7 +161,7 @@ public class Outtake {
     }
 
     //Sets outtake slides to Transfer position
-    public void moveOuttakeSlides(OUTTAKE_SLIDE_STATE toOuttakeMotorState){
+    public void moveOuttakeSlides(SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
         outtakeMotorLeftCurrentPosition = outtakeSlideLeft.getCurrentPosition();
         outtakeMotorRightCurrentPosition = outtakeSlideRight.getCurrentPosition();
@@ -175,7 +175,7 @@ public class Outtake {
     //sets the Outtake motor power
     public void runOuttakeMotorToLevel(){
         double power = 0;
-        if (outtakeSlidesState == OUTTAKE_SLIDE_STATE.TRANSFER) {
+        if (outtakeSlidesState == SLIDE_STATE.TRANSFER) {
             turnOuttakeBrakeModeOff();
         } else {
             turnOuttakeBrakeModeOn();
@@ -219,32 +219,32 @@ public class Outtake {
         runOuttakeMotorToLevel();
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
-        outtakeSlidesState = OUTTAKE_SLIDE_STATE.MIN_RETRACTED;
+        outtakeSlidesState = SLIDE_STATE.MIN_RETRACTED;
     }
 
     public double isOuttakeSlidesInStateError = 0;
-    public boolean isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE toOuttakeSlideState) {
+    public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
         //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
         isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
         return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 100);
     }
 
     public boolean isOuttakeInTransfer(){
-        return (isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE.TRANSFER) &&
-                        outtakeArmState == OUTTAKE_ARM_STATE.TRANSFER &&
-                        outtakeWristState == OUTTAKE_WRIST_STATE.TRANSFER);
+        return (isOuttakeSlidesInState(SLIDE_STATE.TRANSFER) &&
+                        outtakeArmState == ARM_STATE.TRANSFER &&
+                        outtakeWristState == WRIST_STATE.TRANSFER);
     }
 
     public boolean isOuttakeReadyToDrop(){
-        return (outtakeArmState == OUTTAKE_ARM_STATE.DROP &&
-                outtakeWristState == OUTTAKE_WRIST_STATE.PRE_DROP);
+        return (outtakeArmState == ARM_STATE.DROP &&
+                outtakeWristState == WRIST_STATE.PRE_DROP);
     }
 
     public void printDebugMessages() {
         //******  debug ******
         telemetry.addLine("Outtake Slides");
         telemetry.addData("    State", outtakeSlidesState);
-        telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(OUTTAKE_SLIDE_STATE.TRANSFER));
+        telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(SLIDE_STATE.TRANSFER));
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
         telemetry.addLine("=============");

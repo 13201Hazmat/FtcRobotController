@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
+import android.graphics.Color;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+
+import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 /**
  * Static Class to define Gamefield Vector positions.
@@ -24,6 +28,8 @@ public class GameField {
         RED_ALLIANCE
     }
     public static  PLAYING_ALLIANCE playingAlliance;
+
+    public static ColorRange allianceColor;
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing

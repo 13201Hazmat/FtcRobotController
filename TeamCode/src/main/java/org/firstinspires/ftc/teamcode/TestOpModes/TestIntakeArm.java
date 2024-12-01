@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Lights;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
+@Disabled
 @TeleOp(name = "TestIntakeArm", group = "Testing")
 public class TestIntakeArm extends LinearOpMode {
 
@@ -87,12 +89,12 @@ public class TestIntakeArm extends LinearOpMode {
 
                 //Triangle (move arm-wrist  and slide to pickup)
                 if(gamepadController.gp1GetTrianglePress()){
-                    intakeArm.moveArm(IntakeArm.INTAKE_ARM_STATE.PICKUP);
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
                     //Move slide to pickup
                 }
 
                 if(gamepadController.gp1GetCrossPress()){
-                    if (intakeArm.intakeGripState == IntakeArm.INTAKE_GRIP_STATE.CLOSED) {
+                    if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
                         intakeArm.openGrip();
                     } else {
                         intakeArm.closeGrip();

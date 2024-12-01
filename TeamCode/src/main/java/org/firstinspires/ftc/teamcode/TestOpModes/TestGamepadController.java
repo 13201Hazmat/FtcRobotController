@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -48,6 +49,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
  *
  */
 
+@Disabled
 public class TestGamepadController {
 
     //Create object reference to objects to systems passed from TeleOp

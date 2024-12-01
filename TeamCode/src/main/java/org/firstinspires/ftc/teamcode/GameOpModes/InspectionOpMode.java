@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TestOpModes;
+package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
@@ -8,10 +8,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
+import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
+import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
+import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
 
 /**
@@ -20,12 +28,20 @@ import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "TestOuttakeBucket", group = "Testing")
-public class TestOuttakeBucket extends LinearOpMode {
+@TeleOp(name = "Inspection OpMode", group = " 00-Teleop")
+public class InspectionOpMode extends LinearOpMode {
 
-    public TestGamepadController gamepadController;
+    public GamepadController gamepadController;
+    public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
+    public IntakeArm intakeArm;
+    public IntakeSlides intakeSlides;
+    public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
+    public SpecimenHandler specimenHandler;
+    public SpecimenController specimenController;
+    public Climber climber;
+    public Vision vision;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -56,6 +72,8 @@ public class TestOuttakeBucket extends LinearOpMode {
         /* If Stop is pressed, exit OpMode */
         if (isStopRequested()) return;
 
+        gamepadDriveTrainController.start();
+
         /*If Start is pressed, enter loop and exit only when Stop is pressed */
         while (!isStopRequested()) {
 
@@ -64,30 +82,33 @@ public class TestOuttakeBucket extends LinearOpMode {
                 telemetry.update();
             }
 
+            if (opModeIsActive()) {
+                //Move subsystems to maximum extended position
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
+                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+                intakeArm.closeGrip();
+                gamepadController.safeWaitMilliSeconds(1000);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
+                outtake.moveArm(Outtake.ARM_STATE.DROP);
+                outtake.moveWristDrop();
+            }
+
             while (opModeIsActive()) {
-                //gamepadController.runByGamepadControl();
+                gamepadController.runByGamepadControl();
+                //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
+
+
+                /*if (gameTimer.time() > 85000 && gameTimer.time() < 90000) {
+                    //lights.setPattern(Lights.REV_BLINKIN_PATTERN.END_GAME);
+                }*/
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();
                     telemetry.update();
                 }
-
-                //Move bucket to transfer pos
-                if(gamepadController.gp2GetDpad_upPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.TRANSFER);
-                }
-
-                //move bucket to pre-drop pos, arm moves it to drop
-                if(gamepadController.gp2GetDpad_downPress()){
-                    outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.DROP);
-                }
-
-                //move wrist to drop
-                if(gamepadController.gp2GetDpad_leftPress()){
-                    outtake.moveWristDrop();
-                }
             }
         }
+        gamepadDriveTrainController.exit();
         GameField.poseSetInAutonomous = false;
     }
 
@@ -106,14 +127,51 @@ public class TestOuttakeBucket extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
+        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        telemetry.addLine("IntakeArm Initialized");
+        telemetry.update();
+
+        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        telemetry.addLine("IntakeSlides Initialized");
+        telemetry.update();
+
         outtake = new Outtake(hardwareMap, telemetry);
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
+        specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
+        telemetry.addLine("SpecimenHandler Initialized");
+        telemetry.update();
+
+        climber = new Climber(hardwareMap, telemetry);
+        telemetry.addLine("Climber Initialized");
+        telemetry.update();
+
+        vision = new Vision(hardwareMap, telemetry);
+        telemetry.addLine("Vision Initialized");
+        telemetry.update();
+
+        /* Create Lights */
+        lights = new Lights(hardwareMap, telemetry);
+        telemetry.addLine("Lights Initialized");
+        telemetry.update();
 
         /* Create Controllers */
-        gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
+        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake,  vision,this);
+        telemetry.addLine("IntakeController Initialized");
+        telemetry.update();
+
+        specimenController = new SpecimenController(specimenHandler, this);
+        telemetry.addLine("Specimen Controller Initialized");
+        telemetry.update();
+
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
+                outtake, specimenHandler, specimenController, climber, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
+
+        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
+        telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -128,9 +186,6 @@ public class TestOuttakeBucket extends LinearOpMode {
             driveTrain.pose = startPose;
             //driveTrain.getLocalizer().setPoseEstimate(startPose);
         }
-
-        //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
-        GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
 
         telemetry.addLine("+++++++++++++++++++++++");
         telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
@@ -151,7 +206,12 @@ public class TestOuttakeBucket extends LinearOpMode {
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();
+            intakeArm.printDebugMessages();
+            intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
+            specimenHandler.printDebugMessages();
+            climber.printDebugMessages();
+            lights.printDebugMessages();
         }
         telemetry.update();
     }

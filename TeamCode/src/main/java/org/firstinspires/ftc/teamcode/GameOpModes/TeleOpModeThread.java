@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
+import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
+import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
+import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
 
 /**
@@ -33,9 +36,12 @@ public class TeleOpModeThread extends LinearOpMode {
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
+    public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
     public SpecimenHandler specimenHandler;
+    public SpecimenController specimenController;
     public Climber climber;
+    public Vision vision;
     public Lights lights;
 
     //Static Class for knowing system state
@@ -132,19 +138,32 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Climber Initialized");
         telemetry.update();
 
+        vision = new Vision(hardwareMap, telemetry);
+        telemetry.addLine("Vision Initialized");
+        telemetry.update();
+
         /* Create Lights */
         lights = new Lights(hardwareMap, telemetry);
         telemetry.addLine("Lights Initialized");
         telemetry.update();
 
+        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
+        telemetry.addLine("IntakeController Initialized");
+        telemetry.update();
+
+        specimenController = new SpecimenController(specimenHandler, this);
+        telemetry.addLine("Specimen Controller Initialized");
+        telemetry.update();
+
+
+        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
+                outtake, specimenHandler, specimenController, climber, telemetry, this);
+        telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
+
         /* Create Controllers */
         gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
         telemetry.addLine("Gamepad DriveTrain Initialized");
-        telemetry.update();
-
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides,
-                outtake, specimenHandler, climber, telemetry, this);
-        telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {

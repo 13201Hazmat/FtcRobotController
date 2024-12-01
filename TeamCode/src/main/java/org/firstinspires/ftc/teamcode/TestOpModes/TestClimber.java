@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Lights;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
+@Disabled
 @TeleOp(name = "Climber", group = "Testing")
 public class TestClimber extends LinearOpMode {
 
@@ -83,11 +85,11 @@ public class TestClimber extends LinearOpMode {
                 if(!gamepadController.gp1GetStart()) {
                     if (gamepadController.gp1GetLeftTriggerPress()) {
                         climber.descendClimberStg1Servo();
-                        climber.moveClimberStg1Motor(Climber.CLIMBER_STAGE1_MOTOR_STATE.CLIMBED);
+                        climber.moveClimberStg1Motor(Climber.STAGE1_MOTOR_STATE.CLIMBED);
                     } else {
                         if (gamepadController.gp1GetLeftTriggerPress()) {
                             climber.ascendClimberStg1Servo();
-                            climber.moveClimberStg1Motor(Climber.CLIMBER_STAGE1_MOTOR_STATE.INITIAL);
+                            climber.moveClimberStg1Motor(Climber.STAGE1_MOTOR_STATE.INITIAL);
                         }
                     }
                 }

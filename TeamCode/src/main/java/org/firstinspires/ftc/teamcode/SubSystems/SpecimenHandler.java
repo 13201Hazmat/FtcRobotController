@@ -14,56 +14,48 @@ public class SpecimenHandler {
     public Servo gripServo;
     public DcMotorEx specimenSlide;
 
-    public enum SPECIMEN_GRIP_STATE {
+    public enum GRIP_STATE {
         OPEN(0.1),
         CLOSED(0.28);
 
         private final double gripPosition;
 
-        SPECIMEN_GRIP_STATE(double gripPosition) {
+        GRIP_STATE(double gripPosition) {
             this.gripPosition = gripPosition;
         }
     }
 
-    public SPECIMEN_GRIP_STATE gripState = SPECIMEN_GRIP_STATE.CLOSED;
+    public GRIP_STATE gripState = GRIP_STATE.CLOSED;
 
     public boolean autoOpenSpecimenGrip = true;
 
     public static double CONVERT_435_TO_1150 = 435.0/1150.0 ;
 
     //Outtake Motor states
-    public enum SPECIMEN_SLIDE_STATE {
+    public enum SLIDE_STATE {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
-        PICKUP(100 * CONVERT_435_TO_1150),
-        LOW_CHAMBER(400 * CONVERT_435_TO_1150),
-        HICH_CHAMBER_LATCH(1100 * CONVERT_435_TO_1150),
-        HIGH_CHAMBER(1500 * CONVERT_435_TO_1150),
-        MAX_EXTENDED(2280 * CONVERT_435_TO_1150);
+        PICKUP(100), //100 for 435 rpm
+        LOW_CHAMBER(400), //400 for 435 rpm
+        HICH_CHAMBER_LATCH(1100), //1100 for 435 rpm
+        HIGH_CHAMBER(1500), //1500 for 435 rpm
+        MAX_EXTENDED(2280); //2280 for 435 rpm
 
         public final double motorPosition;
 
-        SPECIMEN_SLIDE_STATE(double motorPosition) {
+        SLIDE_STATE(double motorPosition) {
             this.motorPosition = motorPosition;
         }
     }
 
-    public SPECIMEN_SLIDE_STATE specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
-
-    public int SLIDE_LOWER_DELTA_TO_LATCH = 400;
+    public SLIDE_STATE specimenSlidesState = SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
 
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
 
-    public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 25;//100
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 25;//200
 
     //Different constants of arm speed
     public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75
-
-    public enum SPECIMEN_MOVEMENT_DIRECTION {
-        EXTEND,
-        RETRACT
-    }
 
     public boolean runOuttakeMotorToLevelState = false;
 
@@ -85,27 +77,27 @@ public class SpecimenHandler {
         specimenSlide.setPositionPIDFCoefficients(5.0);
 
         turnOuttakeBrakeModeOff();
-        specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
+        specimenSlidesState = SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
     }
 
     /**
      * If state of hand grip is set to open, set position of servo's to specified
      */
     public void openGrip() {
-        gripServo.setPosition(SPECIMEN_GRIP_STATE.OPEN.gripPosition);
-        gripState = SPECIMEN_GRIP_STATE.OPEN;
+        gripServo.setPosition(GRIP_STATE.OPEN.gripPosition);
+        gripState = GRIP_STATE.OPEN;
     }
 
     /**
      * If state of hand grip is set to close, set position of servo's to specified
      */
     public void closeGrip() {
-        gripServo.setPosition(SPECIMEN_GRIP_STATE.CLOSED.gripPosition);
-        gripState = SPECIMEN_GRIP_STATE.CLOSED;
+        gripServo.setPosition(GRIP_STATE.CLOSED.gripPosition);
+        gripState = GRIP_STATE.CLOSED;
     }
 
     public void toggleGrip() {
-        if(gripState ==SPECIMEN_GRIP_STATE.OPEN) {
+        if(gripState == GRIP_STATE.OPEN) {
             closeGrip();
         } else {
             openGrip();
@@ -124,7 +116,7 @@ public class SpecimenHandler {
     }
 
     //Sets outtake slides to Transfer position
-    public void moveSpecimenSlides(SPECIMEN_SLIDE_STATE toOuttakeMotorState){
+    public void moveSpecimenSlides(SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
         specimenMotorCurrentPosition = specimenSlide.getCurrentPosition();
         specimenSlide.setTargetPosition((int)toOuttakeMotorState.motorPosition);
@@ -134,23 +126,23 @@ public class SpecimenHandler {
     }
 
     public void lowerSlideToLatch(){
-        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.HIGH_CHAMBER) {
-            moveSpecimenSlides(SPECIMEN_SLIDE_STATE.HICH_CHAMBER_LATCH);
+        if (specimenSlidesState == SLIDE_STATE.HIGH_CHAMBER) {
+            moveSpecimenSlides(SLIDE_STATE.HICH_CHAMBER_LATCH);
         }
-        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.LOW_CHAMBER) {
-            moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
+        if (specimenSlidesState == SLIDE_STATE.LOW_CHAMBER) {
+            moveSpecimenSlides(SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
         }
     }
 
     public void backToInit(){
-        moveSpecimenSlides(SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
+        moveSpecimenSlides(SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
         closeGrip();
     }
 
     //sets the Outtake motor power
     public void runOuttakeMotorToLevel(){
         double power = 0;
-        if (specimenSlidesState == SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH) {
+        if (specimenSlidesState == SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH) {
             turnOuttakeBrakeModeOff();
         } else {
             turnOuttakeBrakeModeOn();
@@ -186,11 +178,11 @@ public class SpecimenHandler {
         runOuttakeMotorToLevel();
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
-        specimenSlidesState = SPECIMEN_SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
+        specimenSlidesState = SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH;
     }
 
     public double isOuttakeSlidesInStateError = 0;
-    public boolean isOuttakeSlidesInState(SPECIMEN_SLIDE_STATE toOuttakeSlideState) {
+    public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
         isOuttakeSlidesInStateError = Math.abs(specimenSlide.getCurrentPosition() - toOuttakeSlideState.motorPosition);
         return (specimenSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 30);
     }
