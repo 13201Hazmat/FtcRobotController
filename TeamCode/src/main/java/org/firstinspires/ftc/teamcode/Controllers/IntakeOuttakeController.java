@@ -98,7 +98,7 @@ public class IntakeOuttakeController {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitMilliSeconds(100* intakeSlides.slideExtensionFactor());
         intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
-        safeWaitMilliSeconds(500);
+        safeWaitMilliSeconds(600);
         intakeArm.openGrip();
         safeWaitMilliSeconds(500);
         intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);

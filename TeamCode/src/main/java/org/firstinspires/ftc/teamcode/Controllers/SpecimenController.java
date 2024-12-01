@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
+import android.content.pm.LabeledIntent;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -50,10 +52,13 @@ public class SpecimenController {
     public void latchAndOpenGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
         specimenHandler.lowerSlideToLatch();
         if (specimenHandler.autoOpenSpecimenGrip) {
-            safeWaitMilliSeconds(300);
-            specimenHandler.openGrip();
-            safeWaitMilliSeconds(200);
-            specimenHandler.moveSpecimenSlides(toSlideState);
+            safeWaitMilliSeconds(500);
+            if (specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.HICH_CHAMBER_LATCH) ||
+                    specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH)) {
+                specimenHandler.openGrip();
+                safeWaitMilliSeconds(200);
+                specimenHandler.moveSpecimenSlides(toSlideState);
+            }
         }
     }
 

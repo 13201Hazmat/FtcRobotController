@@ -38,7 +38,7 @@ public class IntakeArm {
         //Zero position - Intake arm vertically downward
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.38),
+        PRE_PICKUP(0.41),
         PICKUP(0.32),//0.34
         EJECT_OR_PRE_TRANSFER(0.38),
         POST_TRANSFER (0.55),
@@ -61,7 +61,7 @@ public class IntakeArm {
         EJECT(0.66),
         POST_TRANSFER(0.39),
         PRE_TRANSFER(0.39),
-        TRANSFER(0.15),
+        TRANSFER(0.13), //0.15
         INIT(0.22),
         SPECIMEN_PICKUP(0.42),
         DYNAMIC(0.16);

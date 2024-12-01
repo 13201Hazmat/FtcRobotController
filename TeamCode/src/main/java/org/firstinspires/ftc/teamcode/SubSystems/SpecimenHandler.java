@@ -34,11 +34,11 @@ public class SpecimenHandler {
     //Outtake Motor states
     public enum SLIDE_STATE {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
-        PICKUP(38), //100 for 435 rpm
-        LOW_CHAMBER(151), //400 for 435 rpm
-        HICH_CHAMBER_LATCH(400), //1100 for 435 rpm
-        HIGH_CHAMBER(567), //1500 for 435 rpm
-        MAX_EXTENDED(800); //2280 for 435 rpm
+        PICKUP(100), //100 for 435 rpm
+        LOW_CHAMBER(400), //400 for 435 rpm
+        HICH_CHAMBER_LATCH(1100), //1100 for 435 rpm
+        HIGH_CHAMBER(1500), //1500 for 435 rpm
+        MAX_EXTENDED(2280); //2280 for 435 rpm
 
         public final double motorPosition;
 

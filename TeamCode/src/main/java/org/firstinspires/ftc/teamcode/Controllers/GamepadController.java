@@ -325,7 +325,7 @@ public class GamepadController {
 
         if (!gp2GetStart()) {
             if(gp2GetSquarePress()){
-                specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP);
+                specimenController.latchAndOpenGripAndMoveTo(SpecimenHandler.SLIDE_STATE.PICKUP);
             }
         } else {
             if(gp2GetSquarePress()){
