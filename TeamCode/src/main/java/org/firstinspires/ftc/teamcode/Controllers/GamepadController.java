@@ -83,7 +83,7 @@ public class GamepadController {
                              Climber climber,
                              Telemetry telemetry,
                              LinearOpMode currentOpMode
-                            ) {
+    ) {
         this.hzGamepad1 = hzGamepad1;
         this.hzGamepad2 = hzGamepad2;
         this.intakeArm = intakeArm;
@@ -114,6 +114,8 @@ public class GamepadController {
         while (!currentOpMode.isStopRequested() && timer.time() < time) {
         }
     }
+
+    public boolean gp1DpadEnabled = false;
 
     public void runIntake() {
         if (!gp1GetStart()) {
@@ -169,34 +171,46 @@ public class GamepadController {
         }
 
         // Move IntakeSlides forward and backward with D-pad
-        if (gp1GetDpad_upPress() || gp1GetLeftTriggerPress()
+        /*if (gp1GetDpad_upPress() || gp1GetLeftTriggerPress()
                 && intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
             intakeSlides.moveIntakeSlidesForward();
+        }*/
+
+        if (!gp1GetStart()) {
+            if (((gp1DpadEnabled && gp1GetDpad_upPress()) || gp1GetLeftBumperPress())
+                    && intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
+                intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                intakeSlides.moveIntakeSlidesForward();
+            }
+        } else {
+            if (gp1GetDpad_upPress()) {
+                gp1DpadEnabled = !gp1DpadEnabled;
+            }
         }
 
-        if (gp1GetDpad_downPress()
+        if (gp1DpadEnabled && gp1GetDpad_downPress()
                 && intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
             intakeSlides.moveIntakeSlidesBackward();
         }
 
         if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP
-            || intakeArm.intakeArmState == IntakeArm.ARM_STATE.PICKUP ) {
+                || intakeArm.intakeArmState == IntakeArm.ARM_STATE.PICKUP ) {
             if (gp1GetRightStickButtonPress()) {
                 intakeArm.toggleSwivel();
             }
-            if (gp1GetDpad_leftPress()) {
+            if (gp1DpadEnabled && gp1GetDpad_leftPress()) {
                 intakeArm.moveSwivelLeft();
             }
 
-            if (gp1GetDpad_rightPress()) {
+            if (gp1DpadEnabled && gp1GetDpad_rightPress()) {
                 intakeArm.moveSwivelRight();
             }
         }
 
         // Retract and extend IntakeSlides from Max to transfer
-        if (gp1GetLeftBumperPress() && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)) {
+        /*if (gp1GetLeftBumperPress() && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)) {
             intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
             intakeOuttakeController.moveOuttakeToTransfer();
 
@@ -207,6 +221,8 @@ public class GamepadController {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
             }
         }
+
+         */
 
 
         /*if (gp1GetLeftTriggerPress()) {
@@ -230,6 +246,18 @@ public class GamepadController {
 
 
     public void runOuttake(){
+        if (gp2GetRightStickButtonPress() && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)) {
+            intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
+            intakeOuttakeController.moveOuttakeToTransfer();
+
+            if (outtake.isOuttakeInTransfer()) {
+                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDrop();
+            } else {
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+            }
+        }
+
         if(gp2GetDpad_upPress()){
             if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.TRANSFER) {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);

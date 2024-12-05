@@ -23,7 +23,8 @@ public class IntakeArm {
 
     public enum GRIP_STATE {
         OPEN(0.59),
-        CLOSED(0.16);
+        LOOSENED(0.18),
+        CLOSED(0.15);
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -38,7 +39,7 @@ public class IntakeArm {
         //Zero position - Intake arm vertically downward
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.41),
+        PRE_PICKUP(0.47), //0,41
         PICKUP(0.32),//0.34
         EJECT_OR_PRE_TRANSFER(0.38),
         POST_TRANSFER (0.55),
@@ -146,6 +147,8 @@ public class IntakeArm {
                 intakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPosition);
                 intakeWristState = WRIST_STATE.TRANSFER;
                 moveSwivelCentered();
+                intakeGripServo.setPosition(GRIP_STATE.LOOSENED.gripPosition);
+                intakeGripState = GRIP_STATE.LOOSENED;
                 break;
             case POST_TRANSFER:
                 intakeWristServo.setPosition(WRIST_STATE.POST_TRANSFER.wristPosition);
