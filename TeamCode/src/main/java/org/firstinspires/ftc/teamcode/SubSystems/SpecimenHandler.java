@@ -52,7 +52,7 @@ public class SpecimenHandler {
     public int specimenMotorCurrentPosition = 0;
     public double specimenMotorNewPosition = specimenSlidesState.motorPosition;
 
-    public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 25;//200
+    public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 100;//200
 
     //Different constants of arm speed
     public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75

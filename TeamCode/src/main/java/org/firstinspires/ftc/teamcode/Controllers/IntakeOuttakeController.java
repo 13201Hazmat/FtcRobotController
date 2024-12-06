@@ -39,7 +39,7 @@ public class IntakeOuttakeController {
         return vision.xExtensionFactor;
     }
 
-    public void extendIntakeArmToPrePickup(ColorRange targetColor){
+    public void extendIntakeArmToPrePickupByColor(ColorRange targetColor){
         if (vision.targetBlobDetected) {
             intakeSlides.moveIntakeSlidesSpecific(
                     calculateIntakeSlideExtension(targetColor));
@@ -48,6 +48,48 @@ public class IntakeOuttakeController {
         }
         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
         safeWaitMilliSeconds(200 + 100* intakeSlides.slideExtensionFactor());
+    }
+
+    public void extendIntakeArmAndPickUpSampleByColor(ColorRange targetColor) {
+        extendIntakeArmToPrePickupByColor(targetColor);
+        pickupSequence();
+        //TODO: ADD CODE FOR COLOR SENSOR REJECT
+    }
+
+    public Action extendIntakeArmAndPickUpSampleByColorAction(ColorRange targetColor) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                extendIntakeArmAndPickUpSampleByColor(targetColor);
+                return false;
+            }
+        };
+
+    }
+
+    public void extendIntakeArmToPrePickupByExtensionFactor(double extensionFactor){
+        intakeSlides.moveIntakeSlidesToRange(extensionFactor);
+        intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+        safeWaitMilliSeconds(200 + 100* intakeSlides.slideExtensionFactor());
+    }
+
+    public Action extendIntakeArmToPrePickupByExtensionFactorAction(double extensionFactor) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                extendIntakeArmToPrePickupByExtensionFactor(extensionFactor);
+                return false;
+            }
+        };
+
     }
 
     public void pickupSequence(){
@@ -59,13 +101,7 @@ public class IntakeOuttakeController {
         safeWaitMilliSeconds(100);
     }
 
-    public void extendArmAndPickUpSample(ColorRange targetColor) {
-        extendIntakeArmToPrePickup(targetColor);
-        pickupSequence();
-        //TODO: ADD CODE FOR COLOR SENSOR REJECT
-    }
-
-    public Action extendArmAndPickUpSampleAction(ColorRange targetColor) {
+    public Action pickupSequenceAction() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -73,12 +109,28 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                extendArmAndPickUpSample(targetColor);
+                pickupSequence();
                 return false;
             }
         };
-
     }
+
+    public Action openIntakeGripAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                intakeArm.openGrip();
+                return false;
+            }
+        };
+    }
+
+
+
 
     //Transfer Actions
     public void closeGripAndMoveIntakeArmToPreTransfer(){
@@ -172,7 +224,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                extendArmAndPickUpSampleAction(targetColor);
+                extendIntakeArmAndPickUpSampleByColorAction(targetColor);
                 transferSampleFromIntakePreTransferToOuttakePreDropAction();
                 return false;
             }

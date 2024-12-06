@@ -63,8 +63,8 @@ import org.firstinspires.ftc.vision.opencv.ColorRange;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Autonomous Mode 1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousMode1 extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous Mode 2", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousMode2 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public SpecimenController specimenController;

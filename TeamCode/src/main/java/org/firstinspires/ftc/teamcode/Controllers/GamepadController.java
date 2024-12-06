@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
@@ -125,11 +126,13 @@ public class GamepadController {
                     case EJECT_OR_PRE_TRANSFER:
                     case LOWEST:
                     case DYNAMIC:
+                        GameField.turboFactor = false;
                         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                         break;
                     case SPECIMEN_PICKUP:
                     case POST_TRANSFER:
                     case TRANSFER:
+                        //GameField.turboFactor = false;
                         intakeSlides.moveIntakeSlidesToRange(0.5);
                         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                         if (specimenHandler.specimenSlidesState == SpecimenHandler.SLIDE_STATE.PICKUP) {
@@ -137,6 +140,7 @@ public class GamepadController {
                         }
                         break;
                     case PRE_PICKUP:
+                        //GameField.turboFactor = true;
                         if (intakeArm.intakeGripAutoClose) {
                             if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
                                 intakeOuttakeController.pickupSequence();
@@ -161,12 +165,20 @@ public class GamepadController {
             }
         }
 
-        if (!gp1GetStart() && gp1GetCrossPress()
-                && intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
-            if (intakeArm.intakeArmState != IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER) {
-                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
-            } else {
-                intakeArm.toggleGrip();
+        if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP || intakeArm.intakeArmState == IntakeArm.ARM_STATE.PICKUP) {
+            GameField.turboFactor = true;
+        } else {
+            GameField.turboFactor = false;
+        }
+
+        if (gp1DpadEnabled) {
+            if (!gp1GetStart() && gp1GetSquarePress()
+                    && intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
+                if (intakeArm.intakeArmState != IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER) {
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+                } else {
+                    intakeArm.toggleGrip();
+                }
             }
         }
 
@@ -246,7 +258,9 @@ public class GamepadController {
 
 
     public void runOuttake(){
-        if (gp2GetRightStickButtonPress() && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)) {
+        if (gp2GetRightStickButtonPress() && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)
+                && (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP)) {
+            GameField.turboFactor = false;
             intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
             intakeOuttakeController.moveOuttakeToTransfer();
 
@@ -382,7 +396,7 @@ public class GamepadController {
             }
         }
 
-        if (gp1GetSquarePress()){
+        if (gp1GetCrossPress()){
             if (climberDescendClickCounter !=2) {
                 climberDescendClickCounter++;
             } else {

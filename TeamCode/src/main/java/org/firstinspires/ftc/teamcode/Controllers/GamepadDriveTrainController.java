@@ -84,7 +84,11 @@ public class GamepadDriveTrainController extends Thread{
      * @return Cube of the stick input reduced to 25% speed
      */
     public double limitStick(double stickInput) {
-        return (stickInput * stickInput * stickInput * 0.50); //0.25
+        if (GameField.turboFactor) {
+            return (stickInput * stickInput * stickInput * 0.50); //0.50
+        } else {
+            return (stickInput * stickInput * stickInput);
+        }
     }
 
     /**
@@ -103,7 +107,11 @@ public class GamepadDriveTrainController extends Thread{
 
         rightTriggerValue = gp1GetRightTrigger();
         //acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
-        acceleration_factor = 1.0 + 1.0 * rightTriggerValue;
+        if (GameField.turboFactor) {
+            acceleration_factor = 1.0 + 1.0 * rightTriggerValue; //1.0
+        } else {
+            acceleration_factor = 1.0;
+        }
         turboFactor = limitStick(stickInput) * acceleration_factor;
         return turboFactor;
     }

@@ -50,6 +50,8 @@ public class GameField {
     }
     public static OP_MODE_RUNNING opModeRunning = OP_MODE_RUNNING.HAZMAT_AUTONOMOUS;
 
+    public static boolean turboFactor = false;
+
     //Static fields to pass Pos from Autonomous to TeleOp
     public static boolean poseSetInAutonomous = false;
     public static Pose2d currentPose = new Pose2d(0,0,0);
