@@ -213,6 +213,7 @@ public class TeleOpModeThread extends LinearOpMode {
             outtake.printDebugMessages();
             specimenHandler.printDebugMessages();
             climber.printDebugMessages();
+            //vision.printDebugMessages();
             lights.printDebugMessages();
         }
         telemetry.update();

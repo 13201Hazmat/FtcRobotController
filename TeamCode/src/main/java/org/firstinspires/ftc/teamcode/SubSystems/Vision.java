@@ -25,15 +25,18 @@ public class Vision {
     public CameraName camera;
     public int X_RANGE = 320;
     public int Y_RANGE = 240;
+    public int Y_AREA_OF_INTEREST_MAX = 120; // Full Extenstion 1.0
+    public int Y_AREA_OF_INTEREST_MIN = 33; // Half Extension 0.5
+
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
+                .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1, 0., 0.25, -0.25))  // search Left 1/4 of camera view
+                .setRoi(ImageRegion.asUnityCenterCoordinates(0.5, 1, 0.75, -0.25))
                 .setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(5)                               // Smooth the transitions between different colors in imag/e
                 .build();
@@ -67,14 +70,14 @@ public class Vision {
 
         if (targetBlobDetected) {
             numberOfBlobsDetected = blobs.size();
-            ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(numberOfBlobsDetected - 1);
+            ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(0);
             boxFit = closestBlob.getBoxFit();
 
             blockX = (int) boxFit.center.x;
             blockY = (int) boxFit.center.y;
 
-            xExtensionFactor = 1.0 - (double) blockX / (double) X_RANGE;
-            yExtensionFactor = (double) blockY / (double) Y_RANGE;
+            //xExtensionFactor = 1.0 - (double) blockX / (double) X_RANGE;
+            yExtensionFactor = (double) blockY * (1 - 0.5) / (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN);
         }
     }
 
@@ -86,7 +89,7 @@ public class Vision {
         telemetry.addData("    Target Blob Detected", targetBlobDetected);
         telemetry.addData("    Number of Blobs", blobs.size() );
         telemetry.addData("    Closest Block Position", "(%d, %d)", blockX, blockY);
-        telemetry.addData("    xExtensionFactor", xExtensionFactor);
+        //telemetry.addData("    xExtensionFactor", xExtensionFactor);
         telemetry.addData("    yExtensionFactor", yExtensionFactor);
         telemetry.addLine("=============");
     }
