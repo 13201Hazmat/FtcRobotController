@@ -43,7 +43,7 @@ public class SpecimenController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                closeGripAndMoveTo(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER);
+                closeGripAndMoveTo(toSlideState);
                 return false;
             }
         };

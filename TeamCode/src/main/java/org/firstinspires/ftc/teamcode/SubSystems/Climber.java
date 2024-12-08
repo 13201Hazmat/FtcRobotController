@@ -32,7 +32,7 @@ public class Climber {
 
     public enum STAGE1_MOTOR_STATE {
         INITIAL(0), //Position
-        CLIMBED(2200), //2000, 60 rpm motor
+        CLIMBED(1800), //2000, 60 rpm motor
         MAX(2500); //9000
 
         public final int motorPosition;

@@ -89,7 +89,27 @@ public class IntakeOuttakeController {
                 return false;
             }
         };
+    }
 
+    public void extendIntakeArmSwivelToPrePickupByExtensionFactor(double extensionFactor, double swivelDegrees){
+        intakeSlides.moveIntakeSlidesToRange(extensionFactor);
+        intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+        intakeArm.moveSwivelTo(swivelDegrees);
+        safeWaitMilliSeconds(200 + 100* intakeSlides.slideExtensionFactor());
+    }
+
+    public Action extendIntakeArmSwivelToPrePickupByExtensionFactorAction(double extensionFactor, double swivelDegrees) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                extendIntakeArmSwivelToPrePickupByExtensionFactor(extensionFactor, swivelDegrees);
+                return false;
+            }
+        };
     }
 
     public Action moveIntakeArmToAction(IntakeArm.ARM_STATE toArmState) {
@@ -248,6 +268,25 @@ public class IntakeOuttakeController {
         };
     }
 
+    public void dropSamplefromOuttakeOnly() {
+        outtake.moveWristDrop();
+        safeWaitMilliSeconds(500);
+    }
+
+    public Action dropSamplefromOuttakeOnlyAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                dropSamplefromOuttakeOnly();
+                return false;
+            }
+        };
+    }
+
     public Action pickSampleActionByColor(ColorRange targetColor) {
         return new Action() {
             @Override
@@ -297,14 +336,14 @@ public class IntakeOuttakeController {
         };
     }
 
-    public void setToAutoEndState() {
+    public void setToAutoEndStateObservationZonePark() {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
         outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }
 
-    public Action setToAutoEndStateAction() {
+    public Action setToAutoEndStateObservationZoneParkAction() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -312,11 +351,33 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                setToAutoEndState();
+                setToAutoEndStateObservationZonePark();
                 return false;
             }
         };
     }
+
+    public void setToAutoEndStateSubmerssiblePark() {
+        intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+        intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
+        outtake.moveArm(Outtake.ARM_STATE.DROP);
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+    }
+
+    public Action setToAutoEndStateSubmerssibleParkAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                setToAutoEndStateSubmerssiblePark();
+                return false;
+            }
+        };
+    }
+
 
     public void safeWaitTillOuttakeSlideStateMilliSeconds(double timeoutTime, Outtake.SLIDE_STATE toSlideState) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);

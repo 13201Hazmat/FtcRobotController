@@ -183,8 +183,9 @@ public class IntakeArm {
         intakeArmState = ARM_STATE.DYNAMIC;
     }
 
-    public void moveArmOffVision(){
-
+    public void moveSwivelTo(double servoDegrees){
+        intakeSwivelServo.setPosition(SWIVEL_STATE.CENTERED.swivelPosition * (1- servoDegrees/180.0));
+        intakeSwivelState = SWIVEL_STATE.DYNAMIC;
     }
 
     public void moveSwivelCentered(){

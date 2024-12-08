@@ -46,7 +46,6 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -66,9 +65,8 @@ import org.firstinspires.ftc.vision.opencv.ColorRange;
 /**
  * Hazmat Autonomous
  */
-@Disabled
-@Autonomous(name = "Hazmat Auto LEFT SAMPLE", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousMode2 extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous Mode 1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousMode1 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public SpecimenController specimenController;
@@ -186,13 +184,14 @@ public class AutonomousMode2 extends LinearOpMode {
         switch (GameField.startPosition) {
             case LEFT:
                 preBucket = new Pose2d(7, 0, Math.toRadians(0));
-                firstBucket = new Pose2d(6, 44-23.5, Math.toRadians(-45)); //7, 40, -45
-                bucket = new Pose2d(6, 40-23.5, Math.toRadians(-60)); //7, 40, -45
-                yellowSampleOne = new Pose2d(14, 43-23.5, Math.toRadians(-12));//-5
-                yellowSampleTwo = new Pose2d(12, 42-23.5, Math.toRadians(18));//7
-                yellowSampleThree = new Pose2d(14, 41-23.5, Math.toRadians(43));//28
-                submersiblePrePark = new Pose2d(47, 30-23.5, Math.toRadians(-25));
-                submersiblePark = new Pose2d(59, 4-23.5, Math.toRadians(-90));
+                firstBucket = new Pose2d(6, 44, Math.toRadians(-45)); //7, 40, -45
+                bucket = new Pose2d(6, 40, Math.toRadians(-60)); //7, 40, -45
+                yellowSampleOne = new Pose2d(14, 43, Math.toRadians(-9));//-5
+                yellowSampleTwo = new Pose2d(13, 42, Math.toRadians(18));//7
+                yellowSampleThree = new Pose2d(15, 41, Math.toRadians(45));//28
+                submersiblePrePark = new Pose2d(47, 30, Math.toRadians(-25));
+                submersiblePark = new Pose2d(59, 4, Math.toRadians(-90));
+
                 break;
 
             case RIGHT:
@@ -314,7 +313,7 @@ public class AutonomousMode2 extends LinearOpMode {
                             new SleepAction(intialWaitTime),
                             trajInitToFirstBucket,
                             new ParallelAction(
-                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 15),
                                     //intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.POST_TRANSFER),
                                     intakeOuttakeController.moveOuttakeHighBucketAction()
                             ),

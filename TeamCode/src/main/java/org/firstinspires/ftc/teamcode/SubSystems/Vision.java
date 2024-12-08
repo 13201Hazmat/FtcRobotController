@@ -26,7 +26,9 @@ public class Vision {
     public int X_RANGE = 320;
     public int Y_RANGE = 240;
     public int Y_AREA_OF_INTEREST_MAX = 120; // Full Extenstion 1.0
+    public double EXTENSION_FACTOR_MAX = 1.0;
     public int Y_AREA_OF_INTEREST_MIN = 33; // Half Extension 0.5
+    public double EXTENSION_FACTOR_MIN = 0.5;
 
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -77,7 +79,9 @@ public class Vision {
             blockY = (int) boxFit.center.y;
 
             //xExtensionFactor = 1.0 - (double) blockX / (double) X_RANGE;
-            yExtensionFactor = (double) blockY * (1 - 0.5) / (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN);
+            yExtensionFactor = EXTENSION_FACTOR_MIN +
+                    ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
+                    / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
         }
     }
 
