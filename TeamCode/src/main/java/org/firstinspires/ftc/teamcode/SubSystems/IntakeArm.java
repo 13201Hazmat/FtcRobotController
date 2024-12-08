@@ -104,8 +104,8 @@ public class IntakeArm {
     }
 
     public void initIntakeArm(){
-        moveArm(ARM_STATE.TRANSFER);
-        intakeArmState = ARM_STATE.TRANSFER;
+        moveArm(ARM_STATE.SPECIMEN_PICKUP);
+        intakeArmState = ARM_STATE.SPECIMEN_PICKUP;
         openGrip();
         if (intakeSensingActivated) {
             if (intakeSensor instanceof SwitchableLight) {

@@ -226,7 +226,7 @@ public class Outtake {
     public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
         //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
         isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
-        return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 100);
+        return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 50);
     }
 
     public boolean isOuttakeInTransfer(){

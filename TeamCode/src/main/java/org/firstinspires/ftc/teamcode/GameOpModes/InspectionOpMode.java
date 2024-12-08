@@ -91,6 +91,8 @@ public class InspectionOpMode extends LinearOpMode {
                 outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
                 outtake.moveArm(Outtake.ARM_STATE.DROP);
                 outtake.moveWristDrop();
+                specimenHandler.moveSpecimenSlides(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER);
+                climber.ascendClimberStg1Servo();
             }
 
             while (opModeIsActive()) {

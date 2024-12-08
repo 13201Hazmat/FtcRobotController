@@ -345,8 +345,14 @@ public class GamepadController {
     }
 
     public void runSpecimenHandler(){
-        if(gp2GetRightBumperPress()){
-            specimenHandler.toggleGrip();
+        if (!gp2GetStart()) {
+            if (gp2GetRightBumperPress()) {
+                specimenHandler.toggleGrip();
+            }
+        } else {
+            if (gp2GetRightBumperPress()) {
+                specimenHandler.autoOpenSpecimenGrip = !specimenHandler.autoOpenSpecimenGrip;
+            }
         }
 
         if(gp2GetTrianglePress()){

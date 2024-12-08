@@ -11,7 +11,7 @@ public class IntakeSlides {
 
     //IntakeSlides servo states
     public enum SLIDES_STATE {
-        TRANSFER_MIN_RETRACTED (0.8, 0.2),
+        TRANSFER_MIN_RETRACTED (0.78, 0.22),
         IN_BETWEEN(0.9,0.1),
         MAX_EXTENSION(1.0, 0.0);
 
@@ -52,7 +52,7 @@ public class IntakeSlides {
     }
 
     public double slideExtensionFactor(){
-        return intakeSlideServoRight.getPosition()*25;
+        return intakeSlideServoRight.getPosition()/SLIDES_STATE.TRANSFER_MIN_RETRACTED.leftSlidePos;
     }
 
     public void moveIntakeSlidesToRange(double extensionFactor) {
@@ -104,6 +104,7 @@ public class IntakeSlides {
         telemetry.addData("    State", intakeSlidesState);
         telemetry.addData("    Left Servo Position", intakeSlideServoLeft.getPosition());
         telemetry.addData("    Right Servo Position", intakeSlideServoRight.getPosition());
+        telemetry.addData("    Extension Factor", slideExtensionFactor());
         telemetry.addLine("=============");
     }
 

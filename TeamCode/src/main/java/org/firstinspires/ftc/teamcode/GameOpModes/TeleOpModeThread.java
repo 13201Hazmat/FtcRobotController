@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -118,16 +119,18 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
+        telemetry.update();
+
+        safeWaitSeconds(1);
+
         intakeArm = new IntakeArm(hardwareMap, telemetry);
         telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
 
         intakeSlides = new IntakeSlides(hardwareMap, telemetry);
         telemetry.addLine("IntakeSlides Initialized");
-        telemetry.update();
-
-        outtake = new Outtake(hardwareMap, telemetry);
-        telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
         specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
@@ -182,6 +185,13 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("+++++++++++++++++++++++");
         telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
         telemetry.update();
+    }
+
+    public void safeWaitSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(SECONDS);
+        timer.reset();
+        while (!isStopRequested() && timer.time() < time) {
+        }
     }
 
     /**

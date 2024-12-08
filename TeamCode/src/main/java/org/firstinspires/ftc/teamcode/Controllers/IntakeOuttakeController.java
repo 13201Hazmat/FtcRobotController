@@ -92,13 +92,28 @@ public class IntakeOuttakeController {
 
     }
 
+    public Action moveIntakeArmToAction(IntakeArm.ARM_STATE toArmState) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                intakeArm.moveArm(toArmState);
+                return false;
+            }
+        };
+
+    }
+
     public void pickupSequence(){
         intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
         safeWaitMilliSeconds(200);
         intakeArm.closeGrip();
         safeWaitMilliSeconds(100);
         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-        safeWaitMilliSeconds(100);
+        //safeWaitMilliSeconds(100);
     }
 
     public Action pickupSequenceAction() {
@@ -146,15 +161,30 @@ public class IntakeOuttakeController {
         }
     }
 
+    public Action moveOuttakeToTransferAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                moveOuttakeToTransfer();
+                return false;
+            }
+        };
+
+    }
+
     public void transferSampleFromIntakePreTransferToOuttakePreDrop(){
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
-        safeWaitMilliSeconds(100* intakeSlides.slideExtensionFactor());
+        safeWaitMilliSeconds(200+ 100* intakeSlides.slideExtensionFactor());
         intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
-        safeWaitMilliSeconds(600);
+        safeWaitMilliSeconds(800);
         intakeArm.openGrip();
         safeWaitMilliSeconds(500);
         intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
-        safeWaitMilliSeconds(300);
+        safeWaitMilliSeconds(200);
         outtake.moveArm(Outtake.ARM_STATE.DROP);
         safeWaitMilliSeconds(200);
     }
@@ -168,6 +198,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 transferSampleFromIntakePreTransferToOuttakePreDrop();
+                safeWaitMilliSeconds(200);
                 return false;
             }
         };
@@ -177,6 +208,7 @@ public class IntakeOuttakeController {
     //Drop Actions
     public void moveOuttakeTo(Outtake.SLIDE_STATE toOuttakeState) {
         outtake.moveOuttakeSlides(toOuttakeState);
+
         safeWaitMilliSeconds(300);
     }
 
@@ -196,10 +228,10 @@ public class IntakeOuttakeController {
 
     public void dropSamplefromOuttake() {
         outtake.moveWristDrop();
-        safeWaitMilliSeconds(750);
+        safeWaitMilliSeconds(500);
         outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
-        safeWaitMilliSeconds(200);
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+        safeWaitTillOuttakeSlideStateMilliSeconds(500, Outtake.SLIDE_STATE.TRANSFER);
     }
 
     public Action dropSamplefromOuttakeAction() {
@@ -216,7 +248,7 @@ public class IntakeOuttakeController {
         };
     }
 
-    public Action pickSampleAction(ColorRange targetColor) {
+    public Action pickSampleActionByColor(ColorRange targetColor) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -224,14 +256,14 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                extendIntakeArmAndPickUpSampleByColorAction(targetColor);
-                transferSampleFromIntakePreTransferToOuttakePreDropAction();
+                extendIntakeArmAndPickUpSampleByColor(targetColor);
+                transferSampleFromIntakePreTransferToOuttakePreDrop();
                 return false;
             }
         };
     }
 
-    public Action dropHighBucketAction() {
+    public Action pickSampleToOuttakePreDropAction() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -239,18 +271,35 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                moveOuttakeToAction(Outtake.SLIDE_STATE.HIGH_BUCKET);
-                dropSamplefromOuttakeAction();
+                pickupSequence();
+                closeGripAndMoveIntakeArmToPreTransfer();
+                transferSampleFromIntakePreTransferToOuttakePreDrop();
                 return false;
             }
         };
     }
 
+    public Action moveOuttakeHighBucketAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
 
-    
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                outtake.moveArm(Outtake.ARM_STATE.DROP);
+                moveOuttakeTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
+                safeWaitTillOuttakeSlideStateMilliSeconds(800, Outtake.SLIDE_STATE.HIGH_BUCKET);
+                safeWaitMilliSeconds(200);
+                dropSamplefromOuttake();
+                return false;
+            }
+        };
+    }
+
     public void setToAutoEndState() {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
-        intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
+        intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
         outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }
@@ -267,6 +316,14 @@ public class IntakeOuttakeController {
                 return false;
             }
         };
+    }
+
+    public void safeWaitTillOuttakeSlideStateMilliSeconds(double timeoutTime, Outtake.SLIDE_STATE toSlideState) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!currentOpMode.isStopRequested() && timer.time() < timeoutTime &&
+                !(outtake.isOuttakeSlidesInState(toSlideState))) {
+        }
     }
     
     public void safeWaitMilliSeconds(double time) {

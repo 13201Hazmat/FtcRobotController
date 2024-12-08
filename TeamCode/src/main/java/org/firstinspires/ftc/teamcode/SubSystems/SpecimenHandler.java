@@ -36,7 +36,7 @@ public class SpecimenHandler {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
         PICKUP(100), //100 for 435 rpm
         LOW_CHAMBER(400), //400 for 435 rpm
-        HICH_CHAMBER_LATCH(1100), //1100 for 435 rpm
+        HICH_CHAMBER_LATCH(1000), //1100 for 435 rpm
         HIGH_CHAMBER(1500), //1500 for 435 rpm
         MAX_EXTENDED(2280); //2280 for 435 rpm
 
@@ -56,6 +56,7 @@ public class SpecimenHandler {
 
     //Different constants of arm speed
     public static final double SPECIMEN_MOTOR_POWER = 1.0;//0.75
+
 
     public boolean runOuttakeMotorToLevelState = false;
 
@@ -184,7 +185,7 @@ public class SpecimenHandler {
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
         isOuttakeSlidesInStateError = Math.abs(specimenSlide.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        return (specimenSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 30);
+        return (specimenSlidesState == toOuttakeSlideState && (isOuttakeSlidesInStateError <= 30));
     }
 
     public void printDebugMessages() {
@@ -194,7 +195,7 @@ public class SpecimenHandler {
         telemetry.addData("    Specimen Slide Position", specimenSlide.getCurrentPosition());
         telemetry.addLine("=============");
         telemetry.addLine("Specimen Grip");
-        telemetry.addData("    State", gripServo);
+        telemetry.addData("    State", gripState);
         telemetry.addData("    Grip Servo position", gripServo.getPosition());
         telemetry.addData("    AutoGripOpen", autoOpenSpecimenGrip);
         telemetry.addLine("=============");

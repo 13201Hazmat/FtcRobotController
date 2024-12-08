@@ -52,13 +52,10 @@ public class SpecimenController {
     public void latchAndOpenGripAndMoveTo(SpecimenHandler.SLIDE_STATE toSlideState){
         specimenHandler.lowerSlideToLatch();
         if (specimenHandler.autoOpenSpecimenGrip) {
-            safeWaitMilliSeconds(500);
-            if (specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.HICH_CHAMBER_LATCH) ||
-                    specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH)) {
-                specimenHandler.openGrip();
-                safeWaitMilliSeconds(200);
-                specimenHandler.moveSpecimenSlides(toSlideState);
-            }
+            safeWaitTillLatchMilliSeconds(500);
+            specimenHandler.openGrip();
+            //safeWaitMilliSeconds(200);
+            specimenHandler.moveSpecimenSlides(toSlideState);
         }
     }
 
@@ -98,6 +95,15 @@ public class SpecimenController {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
         while (!currentOpMode.isStopRequested() && timer.time() < time) {
+        }
+    }
+
+    public void safeWaitTillLatchMilliSeconds(double timeoutTime) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!currentOpMode.isStopRequested() && timer.time() < timeoutTime &&
+                !(specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.HICH_CHAMBER_LATCH) ||
+                        specimenHandler.isOuttakeSlidesInState(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH))) {
         }
     }
 
