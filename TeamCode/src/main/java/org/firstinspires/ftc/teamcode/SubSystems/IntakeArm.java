@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class IntakeArm {
@@ -95,17 +96,37 @@ public class IntakeArm {
         this.telemetry = telemetry;
         intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
         intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
-        //intakeRollerServo = hardwareMap.get(CRServo.class, "intake_roller_servo");
         intakeGripServo = hardwareMap.get(Servo.class, "intake_grip");
         intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
         intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
-        initIntakeArm();
+        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS ||
+                GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_INSPECTION) {
+            initIntakeArmAuto();
+        } else { // TELEOP
+            initIntakeArmTeleOp();
+        }
     }
 
-    public void initIntakeArm(){
+    public void initIntakeArmAuto(){
         moveArm(ARM_STATE.SPECIMEN_PICKUP);
         intakeArmState = ARM_STATE.SPECIMEN_PICKUP;
+        openGrip();
+        if (intakeSensingActivated) {
+            if (intakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) intakeSensor).enableLight(true);
+            }
+            intakeSensor.setGain(2);
+        } else {
+            if (intakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) intakeSensor).enableLight(false);
+            }
+        }
+    }
+
+    public void initIntakeArmTeleOp(){
+        moveArm(ARM_STATE.POST_TRANSFER);
+        intakeArmState = ARM_STATE.POST_TRANSFER;
         openGrip();
         if (intakeSensingActivated) {
             if (intakeSensor instanceof SwitchableLight) {
@@ -257,13 +278,14 @@ public class IntakeArm {
         }
     }
 
-    public boolean intakeSensingActivated = true;
+    public boolean intakeSensingActivated = false;
     public boolean intakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
-    public double SENSE_DISTANCE = 150;
+    public double SENSE_DISTANCE = 20;
     public float[] sensedSampleHsvValues = new float[3];
     public NormalizedRGBA sensedColor;
     public double intakeSensingDistance = 500;
+
     public void senseIntakeSampleColor(){
         if (intakeSensingActivated) {
             if (intakeSensor instanceof DistanceSensor){
@@ -273,14 +295,12 @@ public class IntakeArm {
                 intakeSampleSensed = true;
                 sensedColor = intakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
-
             }
 
         } else {
             intakeSampleSensed = false;
             sensedSampleColor = ColorRange.GREEN;
         }
-
     }
 
 

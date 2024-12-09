@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -24,6 +26,8 @@ public class IntakeOuttakeController {
     public Vision vision;
     LinearOpMode currentOpMode;
 
+    public boolean autoTransferEnabled = false;
+    public boolean initiateAutoTransfer = false;
 
     public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, Vision vision, LinearOpMode currentOpMode) {
         this.intakeArm = intakeArm;
@@ -125,6 +129,19 @@ public class IntakeOuttakeController {
             }
         };
 
+    }
+    public Action moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE toSlideState){
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+                return false;
+            }
+        };
     }
 
     public void pickupSequence(){
@@ -337,8 +354,8 @@ public class IntakeOuttakeController {
     }
 
     public void setToAutoEndStateObservationZonePark() {
-        intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
-        intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
+        intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
+        intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
         outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }

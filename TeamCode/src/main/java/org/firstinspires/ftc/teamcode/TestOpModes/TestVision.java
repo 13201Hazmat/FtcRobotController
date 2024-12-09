@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
+import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
+import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
@@ -19,6 +25,8 @@ public class TestVision extends LinearOpMode {
     public VisionPortal visionPortal;
     public TestGamepadController gamepadController;
     public DriveTrain driveTrain;
+    public IntakeArm intakeArm;
+    public IntakeSlides intakeSlides;
 
     ColorRange selectedTargetColor = ColorRange.BLUE;
 
@@ -36,43 +44,110 @@ public class TestVision extends LinearOpMode {
 
             vision.locateNearestSamplefromRobot(selectedTargetColor);
 
+            if (!gamepadController.gp1GetStart()) {
+                if (gamepadController.gp1GetRightBumperPress()) {
+                    switch (intakeArm.intakeArmState) {
+                        case INIT:
+                        case EJECT_OR_PRE_TRANSFER:
+                        case LOWEST:
+                        case DYNAMIC:
+                            GameField.turboFactor = false;
+                            intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                            break;
+                        case SPECIMEN_PICKUP:
+                        case POST_TRANSFER:
+                        case TRANSFER:
+                            //GameField.turboFactor = false;
+                            intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
+                            intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                            break;
+                        case PRE_PICKUP:
+                            //GameField.turboFactor = true;
+                            if (intakeArm.intakeGripAutoClose) {
+                                if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
+                                    //PICKUP SEQUENCE
+                                    intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
+                                    safeWaitMilliSeconds(200);
+                                    intakeArm.closeGrip();
+                                    safeWaitMilliSeconds(100);
+                                    intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                                } else {
+                                    intakeArm.openGrip();
+                                }
+                            } else {
+                                intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
+                            }
+                            break;
+                        case PICKUP:
+                            intakeArm.toggleGrip();
+                            if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
+                                intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (gamepadController.gp1GetLeftBumperPress()){
+                //intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
+                intakeArm.closeGrip();
+                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+
+                //intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDrop();
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+                safeWaitMilliSeconds(200+ 100* intakeSlides.slideExtensionFactor());
+                intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
+                safeWaitMilliSeconds(800);
+                intakeArm.openGrip();
+                safeWaitMilliSeconds(500);
+                intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
+            }
+
             printDebugMessages();
         }
     }
 
     public void initSubsystems() {
 
-        telemetry.setAutoClear(false);
+            telemetry.setAutoClear(true);
 
-        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+            telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
+            telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
-        //Init Pressed
-        telemetry.addLine("Robot Init Pressed");
-        telemetry.addLine("==================");
-        telemetry.update();
+            //Init Pressed
+            telemetry.addLine("Robot Init Pressed");
+            telemetry.addLine("==================");
+            telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
-        telemetry.addLine("Vision Initialized");
-        telemetry.update();
+            vision = new Vision(hardwareMap, telemetry);
+            telemetry.addLine("Vision Initialized");
+            telemetry.update();
 
-        /* Create Controllers */
-        gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
-        telemetry.addLine("Gamepad Initialized");
-        telemetry.update();
+            intakeArm = new IntakeArm(hardwareMap, telemetry);
+            telemetry.addLine("IntakeArm Initialized");
+            telemetry.update();
 
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+            telemetry.addLine("IntakeSlides Initialized");
+            telemetry.update();
+
+            /* Create Controllers */
+            gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
+            telemetry.addLine("Gamepad Initialized");
+            telemetry.update();
+
+            for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            }
+
+            //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
+            GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
+
+            telemetry.addLine("+++++++++++++++++++++++");
+            telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
+            telemetry.update();
+
         }
-
-        //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
-        GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
-
-        telemetry.addLine("+++++++++++++++++++++++");
-        telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
-        telemetry.update();
-
-    }
 
     public void selectColor() {
         while (!isStopRequested()) {
@@ -115,6 +190,13 @@ public class TestVision extends LinearOpMode {
 
         }
         telemetry.update();
+    }
+
+    public void safeWaitMilliSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!isStopRequested() && timer.time() < time) {
+        }
     }
 }
 
