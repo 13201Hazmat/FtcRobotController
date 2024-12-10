@@ -64,7 +64,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto Left Sample", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Auto LEFT SAMPLE", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousLeftSample extends LinearOpMode {
 
     public GamepadController gamepadController;

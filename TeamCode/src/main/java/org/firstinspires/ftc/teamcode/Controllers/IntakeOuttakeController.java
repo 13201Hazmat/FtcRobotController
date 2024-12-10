@@ -75,11 +75,27 @@ public class IntakeOuttakeController {
 
     }
 
+    public Action extendIntakeArmByExtensionFactorAction(double extensionFactor) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                intakeSlides.moveIntakeSlidesToRange(extensionFactor);
+                return false;
+            }
+        };
+    }
+
     public void extendIntakeArmToPrePickupByExtensionFactor(double extensionFactor){
         intakeSlides.moveIntakeSlidesToRange(extensionFactor);
         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
         safeWaitMilliSeconds(200 + 100* intakeSlides.slideExtensionFactor());
     }
+
+
 
     public Action extendIntakeArmToPrePickupByExtensionFactorAction(double extensionFactor) {
         return new Action() {

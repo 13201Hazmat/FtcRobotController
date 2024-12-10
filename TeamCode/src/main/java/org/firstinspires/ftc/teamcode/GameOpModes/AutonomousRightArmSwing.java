@@ -46,6 +46,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -65,6 +66,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
+@Disabled
 @Autonomous(name = "Hazmat Auto RIGHT ARM SWING", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousRightArmSwing extends LinearOpMode {
 
@@ -255,7 +257,7 @@ public class AutonomousRightArmSwing extends LinearOpMode {
                         intakeOuttakeController.pickupSequenceAction(),
                         new ParallelAction(
                                 trajColorSampleFartoObservationDrop,
-                                intakeOuttakeController.extendIntakeArmToPrePickupByExtensionFactorAction(0.8)
+                                intakeOuttakeController.extendIntakeArmByExtensionFactorAction(0.8)
                         ),
                         intakeOuttakeController.openIntakeGripAction(),
                         new ParallelAction(
@@ -265,7 +267,7 @@ public class AutonomousRightArmSwing extends LinearOpMode {
                         intakeOuttakeController.pickupSequenceAction(),
                         new ParallelAction(
                                 trajColorSampleMiddleToObservationDrop,
-                                intakeOuttakeController.extendIntakeArmToPrePickupByExtensionFactorAction(0.8)
+                                intakeOuttakeController.extendIntakeArmByExtensionFactorAction(0.8)
                         ),
                         intakeOuttakeController.openIntakeGripAction(),
                         new ParallelAction(
@@ -275,7 +277,7 @@ public class AutonomousRightArmSwing extends LinearOpMode {
                         intakeOuttakeController.pickupSequenceAction(),
                         new ParallelAction(
                                 trajColorSampleNearToObservationDrop,
-                                intakeOuttakeController.extendIntakeArmToPrePickupByExtensionFactorAction(0.8)
+                                intakeOuttakeController.extendIntakeArmByExtensionFactorAction(0.8)
                         ),
                         intakeOuttakeController.openIntakeGripAction(),
                         new ParallelAction(
