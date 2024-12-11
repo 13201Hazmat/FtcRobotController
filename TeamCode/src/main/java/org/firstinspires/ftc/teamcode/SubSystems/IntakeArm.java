@@ -295,6 +295,8 @@ public class IntakeArm {
                 intakeSampleSensed = true;
                 sensedColor = intakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
+            } else {
+                intakeSampleSensed = false;
             }
 
         } else {

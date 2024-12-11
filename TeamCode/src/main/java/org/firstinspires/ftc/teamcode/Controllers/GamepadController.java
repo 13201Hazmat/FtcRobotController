@@ -215,9 +215,16 @@ public class GamepadController {
             }
         }
 
+
+        intakeArm.intakeSensingActivated = true;
+        intakeArm.senseIntakeSampleColor();
+        if (intakeArm.intakeSampleSensed) {
+            gp2RumbleFine(200);
+        }
+
         if (intakeOuttakeController.autoTransferEnabled) {
-            intakeArm.intakeSensingActivated = true;
-            intakeArm.senseIntakeSampleColor();
+            //intakeArm.intakeSensingActivated = true;
+            //intakeArm.senseIntakeSampleColor();
             if (intakeArm.intakeSampleSensed) {
                 intakeOuttakeController.initiateAutoTransfer = true;
             }
@@ -392,6 +399,9 @@ public class GamepadController {
         }
 
         if(gp1GetTrianglePress() && climber.climberServoState == Climber.SERVO_STATE.ASCENDED){
+            intakeOuttakeController.moveOuttakeTo(Outtake.SLIDE_STATE.TRANSFER);
+            intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+            intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
             climber.moveClimberStg1Motor(Climber.STAGE1_MOTOR_STATE.CLIMBED);
             climber.descendClimberStg1Servo();
             safeWaitMilliSeconds(200);
@@ -1085,6 +1095,14 @@ public class GamepadController {
 
     public boolean gp2GetLeftStickButtonPersistant(){
         return hzGamepad2.left_stick_button;
+    }
+
+    public void gp1RumbleFine(int duration){
+        hzGamepad1.rumble(0,1, duration);
+    }
+
+    public void gp2RumbleFine(int duration){
+        hzGamepad2.rumble(0,1, duration);
     }
 
 }

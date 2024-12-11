@@ -67,6 +67,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
+@Disabled
 @Autonomous(name = "Hazmat Auto RIGHT PASS THROUGH", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousRightPassThrough extends LinearOpMode {
 

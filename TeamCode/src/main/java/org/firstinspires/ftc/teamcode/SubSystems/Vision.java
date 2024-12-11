@@ -25,9 +25,9 @@ public class Vision {
     public CameraName camera;
     public int X_RANGE = 320;
     public int Y_RANGE = 240;
-    public int Y_AREA_OF_INTEREST_MAX = 120; // Full Extenstion 1.0
+    public int Y_AREA_OF_INTEREST_MAX = 125; // Full Extenstion 1.0
     public double EXTENSION_FACTOR_MAX = 1.0;
-    public int Y_AREA_OF_INTEREST_MIN = 33; // Half Extension 0.5
+    public int Y_AREA_OF_INTEREST_MIN = 25; // Half Extension 0.5
     public double EXTENSION_FACTOR_MIN = 0.5;
 
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
