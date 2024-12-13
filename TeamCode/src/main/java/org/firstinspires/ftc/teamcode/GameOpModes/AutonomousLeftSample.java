@@ -146,11 +146,11 @@ public class AutonomousLeftSample extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
         preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //7, 40, -45
-        bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //7, 40, -45
-        yellowSampleNear = new Pose2d(14, 19.5, Math.toRadians(-12));//-5
-        yellowSampleMiddle = new Pose2d(12, 18.5, Math.toRadians(18));//7
-        yellowSampleFar = new Pose2d(14, 17.5, Math.toRadians(43));//28
+        firstBucket = new Pose2d(4.5, 19, Math.toRadians(-48)); //6,20.5,-45
+        bucket = new Pose2d(4, 14, Math.toRadians(-60)); //6.-6.5.-60
+        yellowSampleNear = new Pose2d(13, 18.5, Math.toRadians(-9));//14,19.5,-9
+        yellowSampleMiddle = new Pose2d(10, 17.5, Math.toRadians(14));//12,18.5,18
+        yellowSampleFar = new Pose2d(13, 16.5, Math.toRadians(35));//14,17.5,34
         submersiblePrePark = new Pose2d(53, 5, Math.toRadians(90)); //47,6.5,-35
         submersiblePark = new Pose2d(53, -19, Math.toRadians(90));
 

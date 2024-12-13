@@ -379,7 +379,8 @@ public class GamepadController {
     public int climberAscentClickCounter = 0;
     public int climberDescendClickCounter = 0;
     public void runClimber(){
-        if (!gp1GetStart() && gp1GetCirclePress()){
+        //if (!gp1GetStart() && gp1GetCirclePress()){
+        if (gp2GetLeftTriggerPress()){
             if (climberAscentClickCounter !=2) {
                 climberAscentClickCounter++;
             } else {
