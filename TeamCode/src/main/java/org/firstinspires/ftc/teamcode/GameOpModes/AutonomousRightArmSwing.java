@@ -161,17 +161,17 @@ public class AutonomousRightArmSwing extends LinearOpMode {
         postSpecimenPreload = new Pose2d(18, -15, Math.toRadians(-44));
         //colorSampleFar = new Pose2d(17.75, -33, Math.toRadians(-51));
         colorSampleMiddle = new Pose2d(17, -28, Math.toRadians(-40));
-        colorSampleNear = new Pose2d(16, -27, Math.toRadians(-30));//-26
+        colorSampleNear = new Pose2d(16, -27, Math.toRadians(-29));//-26
         observationDrop = new Pose2d(16, -27.5, Math.toRadians(-141));
         prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
-        pickupSpecimenOne = new Pose2d(1, -28, Math.toRadians(-180)); //-180
+        pickupSpecimenOne = new Pose2d(0.5, -28, Math.toRadians(-180)); //-180
         submersibleSpecimenOne = new Pose2d(29, 12, Math.toRadians(0));
         prePickupSpecimenTwo = new Pose2d(8, -28, Math.toRadians(-175)); //-180
         pickupSpecimenTwo = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenTwo = new Pose2d(29, 15, Math.toRadians(0));
+        submersibleSpecimenTwo = new Pose2d(29, 14, Math.toRadians(0));
         prePickupSpecimenThree = new Pose2d(8, -28, Math.toRadians(-175)); //-180
         pickupSpecimenThree = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenThree = new Pose2d(29, 18, Math.toRadians(0));
+        submersibleSpecimenThree = new Pose2d(29, 16, Math.toRadians(0));
         observationPark = new Pose2d(4, -35, Math.toRadians(60));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
@@ -204,8 +204,8 @@ public class AutonomousRightArmSwing extends LinearOpMode {
                 .build();
 
         trajObservationDropToPickupSpecimenOne = drive.actionBuilder(observationDrop)
-                .setReversed(true)
-                .strafeToLinearHeading(prePickupSpecimenOne.position, prePickupSpecimenOne.heading)
+                //.setReversed(true)
+                //.strafeToLinearHeading(prePickupSpecimenOne.position, prePickupSpecimenOne.heading)
                 .strafeToLinearHeading(pickupSpecimenOne.position, pickupSpecimenOne.heading)
                 .build();
 
@@ -253,10 +253,11 @@ public class AutonomousRightArmSwing extends LinearOpMode {
                         trajColorSampleMiddleToObservationDrop,
                         new SleepAction(0.2),
                         intakeOuttakeController.openIntakeGripAction(),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.55, 20),
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
                         new SleepAction(0.2),
                         trajObservationDropToColorSampleNear,
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.55, 20),
+                        new SleepAction(0.2),
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
                         new SleepAction(0.2),
                         intakeOuttakeController.pickupSequenceAction(),
                         new SleepAction(0.2),
