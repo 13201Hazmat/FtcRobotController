@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.Controllers;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -234,9 +232,9 @@ public class IntakeOuttakeController {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitMilliSeconds(200+ 100* intakeSlides.slideExtensionFactor());
         intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
-        safeWaitMilliSeconds(800);
+        safeWaitMilliSeconds(800);//800
         intakeArm.openGrip();
-        safeWaitMilliSeconds(500);
+        safeWaitMilliSeconds(400);//500
         intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
         safeWaitMilliSeconds(200);
         outtake.moveArm(Outtake.ARM_STATE.DROP);
@@ -260,9 +258,8 @@ public class IntakeOuttakeController {
     }
 
     //Drop Actions
-    public void moveOuttakeTo(Outtake.SLIDE_STATE toOuttakeState) {
+    public void moveOuttakeSlidesTo(Outtake.SLIDE_STATE toOuttakeState) {
         outtake.moveOuttakeSlides(toOuttakeState);
-
         safeWaitMilliSeconds(300);
     }
 
@@ -274,7 +271,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                moveOuttakeTo(toOuttakeState);
+                moveOuttakeSlidesTo(toOuttakeState);
                 return false;
             }
         };
@@ -361,7 +358,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 outtake.moveArm(Outtake.ARM_STATE.DROP);
-                moveOuttakeTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
+                moveOuttakeSlidesTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
                 safeWaitTillOuttakeSlideStateMilliSeconds(800, Outtake.SLIDE_STATE.HIGH_BUCKET);
                 safeWaitMilliSeconds(200);
                 dropSamplefromOuttake();

@@ -144,6 +144,8 @@ public class AutonomousLeftSample extends LinearOpMode {
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
+        /*
+        //If initial action moves too much out
         drive = new MecanumDrive(hardwareMap, initPose);
         preBucket = new Pose2d(7, 0, Math.toRadians(0));
         firstBucket = new Pose2d(4.5, 19, Math.toRadians(-48)); //6,20.5,-45
@@ -151,8 +153,19 @@ public class AutonomousLeftSample extends LinearOpMode {
         yellowSampleNear = new Pose2d(13, 18.5, Math.toRadians(-9));//14,19.5,-9
         yellowSampleMiddle = new Pose2d(10, 17.5, Math.toRadians(14));//12,18.5,18
         yellowSampleFar = new Pose2d(13, 16.5, Math.toRadians(35));//14,17.5,34
-        submersiblePrePark = new Pose2d(53, 5, Math.toRadians(90)); //47,6.5,-35
-        submersiblePark = new Pose2d(53, -19, Math.toRadians(90));
+        submersiblePrePark = new Pose2d(53, 5, Math.toRadians(90)); //53,5,90
+        submersiblePark = new Pose2d(53, -19, Math.toRadians(90));//53,-19,90 */
+
+        //If initial action is moves too much in
+        drive = new MecanumDrive(hardwareMap, initPose);
+        preBucket = new Pose2d(7, 0, Math.toRadians(0));
+        firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //6,20.5,-45
+        bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //6.-16.5.-60
+        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(-9));//14,19.5,-9
+        yellowSampleMiddle = new Pose2d(11.5, 16.5, Math.toRadians(23.5));//11,16,5,20
+        yellowSampleFar = new Pose2d(13.5, 17.5, Math.toRadians(41.5));//14,17.5,40
+        submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
+        submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -207,6 +220,7 @@ public class AutonomousLeftSample extends LinearOpMode {
                         new SleepAction(0.2),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         trajYellowSampleNearToBucket,
+                        new SleepAction(0.2),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
@@ -215,6 +229,7 @@ public class AutonomousLeftSample extends LinearOpMode {
                                 )
                         ),
                         trajBucketToYellowSampleMiddle,
+                        new SleepAction(0.2),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         trajYellowSampleMiddleToBucket,
                         new ParallelAction(

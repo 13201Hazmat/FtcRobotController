@@ -38,15 +38,16 @@ public class IntakeArm {
 
     public enum ARM_STATE {
         //Zero position - Intake arm vertically downward
+        //Vertical up is 0.66
 
         LOWEST(0.33), // Perpendicular to the ground downwards
         PRE_PICKUP(0.52), //0.47
-        PICKUP(0.31),//0.34
+        PICKUP(0.32),//0.31//0.34
         EJECT_OR_PRE_TRANSFER(0.38),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
-        TRANSFER(0.64), //0.64
-        SPECIMEN_PICKUP(0.74),
+        TRANSFER(0.60), //0.64
+        SPECIMEN_PICKUP(0.71),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -59,6 +60,7 @@ public class IntakeArm {
 
     public enum WRIST_STATE {
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
+        //Go to pick up position and wrist should be vertically down
         PICKUP(0.94),
         EJECT(0.66),
         POST_TRANSFER(0.39),

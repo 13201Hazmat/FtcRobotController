@@ -53,7 +53,8 @@ public class ServoCalibration extends LinearOpMode{
             }
             if(gamepad1.y){
                 masterServoName = "intake_wrist";
-                masterServoCalibPosition ="Zero is Horizontallu Facing inward, with Intake Arm in Vertically upward position";
+                masterServoCalibPosition ="Zero is Horizontallu Facing inward, with Intake Arm in Vertically upward position," +
+                        "Go to pick up position on intake arm and wrist should be vertically down";
                 servoStartPosition = 0.0;
                 break;
             }

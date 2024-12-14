@@ -36,7 +36,7 @@ public class SpecimenHandler {
         MIN_RETRACTED_LOW_CHAMBER_LATCH(0),
         PICKUP(100), //100 for 435 rpm
         LOW_CHAMBER(400), //400 for 435 rpm
-        HICH_CHAMBER_LATCH(1000), //1100 for 435 rpm
+        HICH_CHAMBER_LATCH(1050), //1100 for 435 rpm
         HIGH_CHAMBER(1500), //1500 for 435 rpm
         MAX_EXTENDED(2280); //2280 for 435 rpm
 

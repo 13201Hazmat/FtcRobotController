@@ -204,13 +204,16 @@ public class GamepadController {
         if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP
                 || intakeArm.intakeArmState == IntakeArm.ARM_STATE.PICKUP ) {
             if (gp1GetRightStickButtonPress()) {
+                intakeArm.openGrip();
                 intakeArm.toggleSwivel();
             }
             if (gp1DpadEnabled && gp1GetDpad_leftPress()) {
+                intakeArm.openGrip();
                 intakeArm.moveSwivelLeft();
             }
 
             if (gp1DpadEnabled && gp1GetDpad_rightPress()) {
+                intakeArm.openGrip();
                 intakeArm.moveSwivelRight();
             }
         }
@@ -384,10 +387,10 @@ public class GamepadController {
             if (climberAscentClickCounter !=2) {
                 climberAscentClickCounter++;
             } else {
-                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+                outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
                 intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
                 climber.ascendClimberStg1Servo();
-
             }
         }
 
@@ -400,7 +403,8 @@ public class GamepadController {
         }
 
         if(gp1GetTrianglePress() && climber.climberServoState == Climber.SERVO_STATE.ASCENDED){
-            intakeOuttakeController.moveOuttakeTo(Outtake.SLIDE_STATE.TRANSFER);
+            outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+            outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
             intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
             intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
             climber.moveClimberStg1Motor(Climber.STAGE1_MOTOR_STATE.CLIMBED);
@@ -455,7 +459,7 @@ public class GamepadController {
      * @return Cube of the stick input reduced to 25% speed
      */
     public double limitStick(double stickInput) {
-        return (stickInput * stickInput * stickInput * 0.5); //0.25
+        return (stickInput * stickInput * stickInput)/1.5; //0.25
     }
 
     /**
@@ -475,7 +479,8 @@ public class GamepadController {
         rightTriggerValue = gp1GetRightTrigger();
         //acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
         //acceleration_factor = 1.0 + 2.0 * rightTriggerValue;
-        acceleration_factor = 1.0 + 1.0 * rightTriggerValue;
+        //acceleration_factor = 1.0 + 1.0 * rightTriggerValue;
+        acceleration_factor = 1.0 + 0.5 * rightTriggerValue;
         turboFactor = limitStick(stickInput) * acceleration_factor;
         return turboFactor;
     }

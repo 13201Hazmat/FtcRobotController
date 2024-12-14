@@ -20,7 +20,7 @@ public class Climber {
     public SERVO_STATE climberServoState = SERVO_STATE.INITIAL;
 
     public double climberServoPower = 1.0;
-    public int CLIMBER_SERVO_ASCEND_TIME = 2000;//1250;
+    public int CLIMBER_SERVO_ASCEND_TIME = 1500;//1250;
     public int CLIMBER_SERVO_DESCEND_TIME = 200;
     public ElapsedTime climberServoTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
