@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.GameOpModes.OldAuto;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
@@ -45,12 +45,14 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
 import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
@@ -63,9 +65,9 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-
-@Autonomous(name = "Hazmat Auto RIGHT ARM SWING", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousRightArmSwing extends LinearOpMode {
+@Disabled
+@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN 2", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousRightSpecimen2 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public SpecimenController specimenController;
@@ -160,18 +162,18 @@ public class AutonomousRightArmSwing extends LinearOpMode {
         submersibleSpecimenPreload = new Pose2d(31, 0, Math.toRadians(0));
         postSpecimenPreload = new Pose2d(18, -15, Math.toRadians(-44));
         //colorSampleFar = new Pose2d(17.75, -33, Math.toRadians(-51));
-        colorSampleMiddle = new Pose2d(17, -28, Math.toRadians(-40));
-        colorSampleNear = new Pose2d(16, -27, Math.toRadians(-29));//-26
+        colorSampleMiddle = new Pose2d(18.5, -27.5, Math.toRadians(-40.5));
+        colorSampleNear = new Pose2d(17, -27, Math.toRadians(-33));//-26
         observationDrop = new Pose2d(16, -27.5, Math.toRadians(-141));
         prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
         pickupSpecimenOne = new Pose2d(0.5, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenOne = new Pose2d(29, 12, Math.toRadians(0));
+        submersibleSpecimenOne = new Pose2d(30, 12, Math.toRadians(0));
         prePickupSpecimenTwo = new Pose2d(8, -28, Math.toRadians(-175)); //-180
         pickupSpecimenTwo = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenTwo = new Pose2d(29, 14, Math.toRadians(0));
+        submersibleSpecimenTwo = new Pose2d(30, 14, Math.toRadians(0));
         prePickupSpecimenThree = new Pose2d(8, -28, Math.toRadians(-175)); //-180
         pickupSpecimenThree = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenThree = new Pose2d(29, 16, Math.toRadians(0));
+        submersibleSpecimenThree = new Pose2d(30, 16, Math.toRadians(0));
         observationPark = new Pose2d(4, -35, Math.toRadians(60));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");

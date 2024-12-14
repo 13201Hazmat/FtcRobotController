@@ -395,6 +395,10 @@ public class IntakeOuttakeController {
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }
 
+    public void setToAutoEndStateSpecimenPark(){
+        intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
+    }
+
     public Action setToAutoEndStateSubmerssibleParkAction() {
         return new Action() {
             @Override
