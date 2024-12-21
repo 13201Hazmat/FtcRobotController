@@ -161,8 +161,8 @@ public class AutonomousRightSpecimen extends LinearOpMode {
         submersibleSpecimenPreload = new Pose2d(31, 0, Math.toRadians(0));
         postSpecimenPreload = new Pose2d(18, -15, Math.toRadians(-44));
         //colorSampleFar = new Pose2d(17.75, -33, Math.toRadians(-51));
-        colorSampleMiddle = new Pose2d(18.5, -27.5, Math.toRadians(-40));
-        colorSampleNear = new Pose2d(17, -27, Math.toRadians(-33));//-26
+        colorSampleMiddle = new Pose2d(18.5, -27.5, Math.toRadians(-41));
+        colorSampleNear = new Pose2d(17, -27, Math.toRadians(-31.75));//-26
         observationDrop = new Pose2d(16, -27.5, Math.toRadians(-141));
         prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
         pickupSpecimenOne = new Pose2d(0.5, -28, Math.toRadians(-180)); //-180

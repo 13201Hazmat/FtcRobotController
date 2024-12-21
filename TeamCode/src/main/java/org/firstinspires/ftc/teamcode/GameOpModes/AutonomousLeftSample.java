@@ -163,9 +163,9 @@ public class AutonomousLeftSample extends LinearOpMode {
         preBucket = new Pose2d(7, 0, Math.toRadians(0));
         firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //6,20.5,-45
         bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(-9));//13.5,19.5,-9
-        yellowSampleMiddle = new Pose2d(11.5, 16.5, Math.toRadians(23.5));//11,16,5,23.5
-        yellowSampleFar = new Pose2d(13.5, 17.5, Math.toRadians(33.5));//13.5,17.5,41.5
+        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(-9));//-9
+        yellowSampleMiddle = new Pose2d(11.5, 16.5, Math.toRadians(24.5));//23
+        yellowSampleFar = new Pose2d(12.5, 17.5, Math.toRadians(33));//41.5
         submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
         submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
 
@@ -197,7 +197,7 @@ public class AutonomousLeftSample extends LinearOpMode {
 
         trajBucketToYellowSampleFar = drive.actionBuilder(bucket)
                 .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
+                        new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
         trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
@@ -224,7 +224,7 @@ public class AutonomousLeftSample extends LinearOpMode {
                         new SleepAction(0.13),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         trajYellowSampleNearToBucket,
-                        new SleepAction(0.13),
+                        new SleepAction(0.2),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
@@ -233,7 +233,7 @@ public class AutonomousLeftSample extends LinearOpMode {
                                 )
                         ),
                         trajBucketToYellowSampleMiddle,
-                        new SleepAction(0.15),
+                        new SleepAction(0.13),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         trajYellowSampleMiddleToBucket,
                         new ParallelAction(
