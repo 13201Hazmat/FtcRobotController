@@ -175,7 +175,7 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         trajInitToFirstBucket = drive.actionBuilder(initPose)
                 //.strafeToLinearHeading(preBucket.position, preBucket.heading)
                 //.strafeToLinearHeading(firstBucket.position, firstBucket.heading)
-                .setTangent(Math.toRadians(180))
+                .setTangent(Math.toRadians(90))
                 .strafeToLinearHeading(firstBucket.position, firstBucket.heading)
                 .build();
 
