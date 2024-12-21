@@ -88,7 +88,7 @@ public class InspectionOpMode extends LinearOpMode {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
                 intakeArm.closeGrip();
                 gamepadController.safeWaitMilliSeconds(1000);
-                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_BUCKET);
                 outtake.moveArm(Outtake.ARM_STATE.DROP);
                 outtake.moveWristDrop();
                 specimenHandler.moveSpecimenSlides(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER);

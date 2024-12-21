@@ -83,8 +83,6 @@ public class TeleOpModeThread extends LinearOpMode {
                 telemetry.update();
             }
 
-            //outtakeArm.backPlateAlignDown();
-
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
                 //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
