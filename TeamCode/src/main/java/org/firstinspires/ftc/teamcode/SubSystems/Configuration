@@ -27,7 +27,7 @@ EH Servo 5:        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climb
 
 
 
-EH Servo 1:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+//EH Servo 1:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
 RC Servo 1:
 
