@@ -63,7 +63,7 @@ public class TestVision extends LinearOpMode {
                             break;
                         case PRE_PICKUP:
                             //GameField.turboFactor = true;
-                            if (intakeArm.intakeGripAutoClose) {
+                            //if (intakeArm.intakeGripAutoClose) {
                                 if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
                                     //PICKUP SEQUENCE
                                     intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
@@ -74,9 +74,9 @@ public class TestVision extends LinearOpMode {
                                 } else {
                                     intakeArm.openGrip();
                                 }
-                            } else {
+                            /*} else {
                                 intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
-                            }
+                            }*/
                             break;
                         case PICKUP:
                             intakeArm.toggleGrip();

@@ -119,50 +119,40 @@ public class GamepadController {
     public boolean gp1DpadEnabled = false;
 
     public void runIntake() {
-        if (!gp1GetStart()) {
-            if (gp1GetRightBumperPress()) {
-                switch (intakeArm.intakeArmState) {
-                    case INIT:
-                    case EJECT_OR_PRE_TRANSFER:
-                    case LOWEST:
-                    case DYNAMIC:
-                        GameField.turboFactor = false;
+        if (gp1GetRightBumperPress()) {
+            switch (intakeArm.intakeArmState) {
+                case INIT:
+                case EJECT_OR_PRE_TRANSFER:
+                case LOWEST:
+                case DYNAMIC:
+                    GameField.turboFactor = false;
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                    break;
+                case SPECIMEN_PICKUP:
+                case POST_TRANSFER:
+                case TRANSFER:
+                    //GameField.turboFactor = false;
+                    intakeSlides.moveIntakeSlidesToRange(0.5);
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                    if (specimenHandler.specimenSlidesState == SpecimenHandler.SLIDE_STATE.PICKUP) {
+                        specimenHandler.moveSpecimenSlides(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
+                    }
+                    break;
+                case POST_PICKUP:
+                case PRE_PICKUP:
+                    if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
+                        intakeOuttakeController.pickupSequence();
+                    } else {
+                        intakeArm.openGrip();
                         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                        break;
-                    case SPECIMEN_PICKUP:
-                    case POST_TRANSFER:
-                    case TRANSFER:
-                        //GameField.turboFactor = false;
-                        intakeSlides.moveIntakeSlidesToRange(0.5);
+                    }
+                    break;
+                case PICKUP:
+                    intakeArm.toggleGrip();
+                    if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
                         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                        if (specimenHandler.specimenSlidesState == SpecimenHandler.SLIDE_STATE.PICKUP) {
-                            specimenHandler.moveSpecimenSlides(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH);
-                        }
-                        break;
-                    case PRE_PICKUP:
-                        //GameField.turboFactor = true;
-                        if (intakeArm.intakeGripAutoClose) {
-                            if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
-                                intakeOuttakeController.pickupSequence();
-
-                            } else {
-                                intakeArm.openGrip();
-                            }
-                        } else {
-                            intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
-                        }
-                        break;
-                    case PICKUP:
-                        intakeArm.toggleGrip();
-                        if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
-                            intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                        }
-                        break;
-                }
-            }
-        } else {
-            if (gp1GetRightBumperPress()) {
-                intakeArm.intakeGripAutoClose = !intakeArm.intakeGripAutoClose;
+                    }
+                    break;
             }
         }
 
@@ -218,24 +208,18 @@ public class GamepadController {
             }
         }
 
-
-        intakeArm.intakeSensingActivated = true;
         intakeArm.senseIntakeSampleColor();
-        if (intakeArm.intakeSampleSensed) {
+        if (intakeArm.intakeSampleSensed &&
+                intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP &&
+                intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
+            intakeArm.moveArm(IntakeArm.ARM_STATE.POST_PICKUP);
             gp2RumbleFine(200);
-        }
-
-        if (intakeOuttakeController.autoTransferEnabled) {
-            //intakeArm.intakeSensingActivated = true;
-            //intakeArm.senseIntakeSampleColor();
-            if (intakeArm.intakeSampleSensed) {
+            if (intakeOuttakeController.autoTransferEnabled) {
                 intakeOuttakeController.initiateAutoTransfer = true;
+            } else {
+                intakeOuttakeController.initiateAutoTransfer = false;
             }
-        } else {
-            intakeArm.intakeSensingActivated = false;
-            intakeOuttakeController.initiateAutoTransfer = false;
         }
-
     }
 
 
@@ -244,9 +228,10 @@ public class GamepadController {
         if (!gp2GetStart()) {
             if ((gp2GetRightStickButtonPress()  || intakeOuttakeController.initiateAutoTransfer)
                     && (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP)
-                    && (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP)) {
+                    && (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP
+                            || intakeArm.intakeArmState == IntakeArm.ARM_STATE.POST_PICKUP)) {
                 GameField.turboFactor = false;
-                intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
+                //intakeOuttakeController.closeGripAndMoveIntakeArmToPreTransfer();
                 intakeOuttakeController.moveOuttakeToTransfer();
 
                 if (outtake.isOuttakeInTransfer()) {
@@ -291,10 +276,10 @@ public class GamepadController {
             if (outtake.isOuttakeReadyToDrop()) {
                 outtake.moveWristDrop();
             }
-            safeWaitMilliSeconds(750);
+            safeWaitMilliSeconds(500);//750
             if (intakeArm.isIntakeArmInSafeStateToMoveOuttake()) {
                 outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
-                safeWaitMilliSeconds(200);
+                //safeWaitMilliSeconds(200);
                 outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
             }
         }

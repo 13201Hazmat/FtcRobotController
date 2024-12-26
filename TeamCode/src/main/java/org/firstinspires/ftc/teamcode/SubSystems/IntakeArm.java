@@ -17,7 +17,6 @@ import org.firstinspires.ftc.vision.opencv.ColorRange;
 public class IntakeArm {
     public Servo intakeArmServo;
     public Servo intakeWristServo;
-    //public CRServo intakeRollerServo;
     public Servo intakeGripServo;
     public Servo intakeSwivelServo;
     public NormalizedColorSensor intakeSensor;
@@ -34,15 +33,16 @@ public class IntakeArm {
     }
     public GRIP_STATE intakeGripState = GRIP_STATE.CLOSED;
 
-    public boolean intakeGripAutoClose = true;
+    //public boolean intakeGripAutoClose = true;
 
     public enum ARM_STATE {
         //Zero position - Intake arm vertically downward
         //Vertical up is 0.66
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.52), //0.47
+        PRE_PICKUP(0.42), //0.52, 0.47
         PICKUP(0.32),//0.31//0.34
+        POST_PICKUP(0.34),
         EJECT_OR_PRE_TRANSFER(0.38),
         POST_TRANSFER (0.55),
         INIT(0.62), //vertically up
@@ -63,6 +63,7 @@ public class IntakeArm {
         //Go to pick up position and wrist should be vertically down
         PICKUP(0.94),
         EJECT(0.66),
+        POST_PICKUP(0.66),
         POST_TRANSFER(0.39),
         PRE_TRANSFER(0.39),
         TRANSFER(0.13), //0.15
@@ -165,6 +166,11 @@ public class IntakeArm {
             case PICKUP:
                 intakeWristServo.setPosition(WRIST_STATE.PICKUP.wristPosition);
                 intakeWristState = WRIST_STATE.PICKUP;
+                break;
+            case POST_PICKUP:
+                intakeWristServo.setPosition(WRIST_STATE.POST_PICKUP.wristPosition);
+                moveSwivelPerpendicular();
+                intakeWristState = WRIST_STATE.POST_PICKUP;
                 break;
             case TRANSFER:
                 intakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPosition);
@@ -280,7 +286,7 @@ public class IntakeArm {
         }
     }
 
-    public boolean intakeSensingActivated = false;
+    public boolean intakeSensingActivated = true;
     public boolean intakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
     public double SENSE_DISTANCE = 20;
@@ -308,28 +314,6 @@ public class IntakeArm {
     }
 
 
-    /*public void runRollerToIntake(){
-        intakeRollerTimer.reset();
-        intakeRollerServo.setPower(1);
-        intakeActivated = true;
-        intakeRollerState = INTAKE_ROLLER_STATE.RUNNING;
-    }
-
-    public void runRollerToEject() {
-        intakeRollerTimer.reset();
-        intakeRollerServo.setPower(-1);
-        reverseIntakeActivated = true;
-        intakeRollerState = INTAKE_ROLLER_STATE.REVERSE;
-    }
-
-    public void stopRoller(){
-        intakeRollerServo.setPower(0);
-        intakeActivated = false;
-        intakeRollerState = INTAKE_ROLLER_STATE.STOPPED;
-    }
-
-     */
-
     public void printDebugMessages() {
         //******  debug ******
         telemetry.addLine("Intake Arm");
@@ -338,15 +322,13 @@ public class IntakeArm {
         telemetry.addLine("Intake Wrist");
         telemetry.addData("   State", intakeWristState);
         telemetry.addData("   Wrist Servo position", intakeWristServo.getPosition());
-//        telemetry.addLine("Intake Roller");
-//        telemetry.addData("   State", intakeRollerState);
         telemetry.addLine("Intake Swivel");
         telemetry.addData("   State", intakeSwivelState);
         telemetry.addData("   Swivel Servo position", intakeSwivelServo.getPosition());
         telemetry.addLine("Intake Grip");
         telemetry.addData("   State", intakeGripState);
         telemetry.addData("   Grip Servo position", intakeGripServo.getPosition());
-        telemetry.addData("   autoClose", intakeGripAutoClose);
+        //telemetry.addData("   autoClose", intakeGripAutoClose);
         telemetry.addLine("Intake Sensor");
         telemetry.addData("   intakeSensingActivated", intakeSensingActivated);
         if (intakeSensingActivated) {

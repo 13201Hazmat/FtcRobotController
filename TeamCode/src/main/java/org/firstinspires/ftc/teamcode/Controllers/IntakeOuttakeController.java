@@ -170,7 +170,8 @@ public class IntakeOuttakeController {
         intakeArm.closeGrip();
         safeWaitMilliSeconds(100);
         intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-        //safeWaitMilliSeconds(100);
+        safeWaitMilliSeconds(100);
+
     }
 
     public Action pickupSequenceAction() {
@@ -272,7 +273,7 @@ public class IntakeOuttakeController {
 
     public void transferSampleFromIntakePreTransferToOuttakePreDrop(){
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
-        safeWaitMilliSeconds(200+ 100* intakeSlides.slideExtensionFactor());
+        safeWaitMilliSeconds(200+ 150* intakeSlides.slideExtensionFactor());//100
         intakeArm.moveArm(IntakeArm.ARM_STATE.TRANSFER);
         safeWaitMilliSeconds(800);//800
         intakeArm.openGrip();
