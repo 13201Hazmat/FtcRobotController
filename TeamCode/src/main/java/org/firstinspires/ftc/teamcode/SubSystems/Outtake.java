@@ -70,6 +70,7 @@ public class Outtake {
     }
 
     public SLIDE_STATE outtakeSlidesState = SLIDE_STATE.TRANSFER;
+    public SLIDE_STATE lastOuttakeSlideState = SLIDE_STATE.MIN_RETRACTED;
 
     public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
     public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
@@ -244,6 +245,7 @@ public class Outtake {
         //******  debug ******
         telemetry.addLine("Outtake Slides");
         telemetry.addData("    State", outtakeSlidesState);
+        telemetry.addData("    Last State", lastOuttakeSlideState);
         telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(SLIDE_STATE.TRANSFER));
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
