@@ -61,7 +61,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN OLD", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousRightSpecimenOld extends LinearOpMode {
 
     public GamepadController gamepadController;
@@ -152,8 +152,8 @@ public class AutonomousRightSpecimenOld extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
 
-        submersibleSpecimenPreload = new Pose2d(31, 0, Math.toRadians(0));
-        postSpecimenPreload = new Pose2d(18, -15, Math.toRadians(-44));
+        submersibleSpecimenPreload = new Pose2d(-31, 0, Math.toRadians(0));
+        postSpecimenPreload = new Pose2d(-18, 15, Math.toRadians(46));
         //colorSampleFar = new Pose2d(17.75, -33, Math.toRadians(-51));
         colorSampleMiddle = new Pose2d(18.5, -27.5, Math.toRadians(-41));
         colorSampleNear = new Pose2d(17, -27, Math.toRadians(-31.75));//-26
@@ -244,25 +244,25 @@ public class AutonomousRightSpecimenOld extends LinearOpMode {
                         trajPostPreloadToColorSampleMiddle,
                         intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1, 45),
                         new SleepAction(0.1),
-                        intakeOuttakeController.pickupSequenceAction(),
+                        //intakeOuttakeController.pickupSequenceAction(),
                         new SleepAction(0.1),
                         trajColorSampleMiddleToObservationDrop,
                         new SleepAction(0.1),
-                        intakeOuttakeController.openIntakeGripAction(),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
+                        //intakeOuttakeController.openIntakeGripAction(),
+                        //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
                         new SleepAction(0.1),
                         trajObservationDropToColorSampleNear,
                         new SleepAction(0.1),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
+                        //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
                         new SleepAction(0.1),
-                        intakeOuttakeController.pickupSequenceAction(),
+                        //intakeOuttakeController.pickupSequenceAction(),
                         new SleepAction(0.1),
                         trajColorSampleNearToObservationDrop,
                         new SleepAction(0.1),
-                        intakeOuttakeController.openIntakeGripAction(),
+                        //intakeOuttakeController.openIntakeGripAction(),
                         new SleepAction(0.1),
-                        intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
+                        //intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
+                        //intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
                         new SleepAction(0.1),
                         trajObservationDropToPickupSpecimenOne,
                         new SleepAction(0.1),
