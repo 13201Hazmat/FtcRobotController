@@ -15,19 +15,16 @@ public class ServoCalibration extends LinearOpMode{
 
     /*
     Servos:
+RC Servo 0:        intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
+RC Servo 1:        outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist");
+RC Servo 2:        intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
+RC Servo 4:        outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
+RC Servo 5:        outtakeGripServo = hardwareMap.get(Servo.class, "outtake_grip");
+EH Servo 0:        intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
+EH Servo 2:        intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
+EH Servo 3:        intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
+EH Servo 4:        intakeGripServo = hardwareMap.get(Servo.class, "intake_grip");
 
-    EH Servo 2:        intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
-    RC Servo 2:        intakeWristServo = hardwareMap.get(Servo.class, "intake_wrist");
-    RC Servo 0:        intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
-    EH Servo 0:        intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
-    RC Servo 3:        gripServo = hardwareMap.get(Servo.class, "specimen_grip");
-    RC Servo 4:        outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
-    RC Servo 1:        outtakeArmWrist = hardwareMap.get(Servo.class, "outtake_wrist");
-
-    CR Servos:
-    EH Servo 4:        intakeGrip = hardwareMap.get(Servo.class, "intake_grip");
-    RC Servo 5:        climberStg1ServoLeft = hardwareMap.get(CRServo.class, "climber1_servo_left");
-    EH Servo 5:        climberStg1ServoRight = hardwareMap.get(CRServo.class, "climber1_servo_right");
      */
 
     public void selectServo(){
@@ -40,22 +37,21 @@ public class ServoCalibration extends LinearOpMode{
             telemetry.addData("    intake_slide_left   ", "(A/Circle)");
             telemetry.addData("    intake_slide_right ", "(B/Cross)");
             telemetry.addData("    intake_swivel ", "(Right Bumper)");
-            telemetry.addData("    specimen_grip ", "(Dpad Up)");
+            telemetry.addData("    intake_grip", "(Dpad down)");
             telemetry.addData("    outtake_arm   ", "(Dpad left)");
             telemetry.addData("    outtake_wrist ", "(Dpad right)");
-            telemetry.addData("    intake_grip", "(Dpad down As Grip)");
+            telemetry.addData("    outtake_grip ", "(Dpad Up)");
 
             if(gamepad1.x){
                 masterServoName = "intake_arm";
                 masterServoCalibPosition = "Zero is Intake Arm Vertically downward";
-                servoStartPosition = 0.0;
+                servoStartPosition = 0.5;
                 break;
             }
             if(gamepad1.y){
                 masterServoName = "intake_wrist";
-                masterServoCalibPosition ="Zero is Horizontallu Facing inward, with Intake Arm in Vertically upward position," +
-                        "Go to pick up position on intake arm and wrist should be vertically down";
-                servoStartPosition = 0.0;
+                masterServoCalibPosition ="Pickup / Vertically facing down is 1.0";
+                servoStartPosition = 1.0;
                 break;
             }
             if(gamepad1.a){
@@ -76,10 +72,17 @@ public class ServoCalibration extends LinearOpMode{
                 servoStartPosition = 0.505;
                 break;
             }
+            if(gamepad1.dpad_down){
+                masterServoCalibPosition = "Grip Closed with block is 0.11";
+                masterServoName = "intake_grip";
+                servoStartPosition = 0.11;
+                break;
+            }
+
             if(gamepad1.dpad_up){
-                masterServoName = "specimen_grip";
-                masterServoCalibPosition = "Full closed is 0.26";
-                servoStartPosition = 0.26;
+                masterServoName = "outtake_grip";
+                masterServoCalibPosition = "Closed with a block is 0.22";
+                servoStartPosition = 0.22;
                 break;
             }
             if(gamepad1.dpad_left){
@@ -95,12 +98,7 @@ public class ServoCalibration extends LinearOpMode{
                 break;
             }
 
-            if(gamepad1.dpad_down){
-                masterServoCalibPosition = "Grip Closed is 0.17";
-                masterServoName = "intake_grip";
-                servoStartPosition = 0.17;
-                break;
-            }
+
 
             telemetry.update();
         }

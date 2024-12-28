@@ -22,9 +22,9 @@ public class IntakeArm {
     public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
-        OPEN(0.48), //0.59 max
-        LOOSENED(0.20),
-        CLOSED(0.15);
+        OPEN(0.52), //0.53 max
+        LOOSENED(0.15),//0.2
+        CLOSED(0.11);//0.15
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -40,13 +40,13 @@ public class IntakeArm {
         //Vertical up is 0.66
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.42), //0.52, 0.47
-        PICKUP(0.32),//0.31//0.34
-        POST_PICKUP(0.34),
-        EJECT_OR_PRE_TRANSFER(0.38),
+        PRE_PICKUP(0.42), //0.42
+        PICKUP(0.35),//0.32
+        POST_PICKUP(0.36),//0.34
+        EJECT_OR_PRE_TRANSFER(0.40),//0.38
         POST_TRANSFER (0.55),
-        INIT(0.62), //vertically up
-        TRANSFER(0.60), //0.64
+        INIT(0.50), //vertically up
+        TRANSFER(0.665), //0.64
         SPECIMEN_PICKUP(0.71),
         DYNAMIC(0.68);
 
@@ -61,13 +61,13 @@ public class IntakeArm {
     public enum WRIST_STATE {
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
         //Go to pick up position and wrist should be vertically down
-        PICKUP(0.94),
-        EJECT(0.66),
-        POST_PICKUP(0.66),
-        POST_TRANSFER(0.39),
-        PRE_TRANSFER(0.39),
-        TRANSFER(0.13), //0.15
-        INIT(0.22),
+        PICKUP(1.0),//0.94
+        EJECT(0.70),//0.66
+        POST_PICKUP(0.70),//0.66
+        POST_TRANSFER(0.45),//0.39
+        PRE_TRANSFER(0.45),//0.39
+        TRANSFER(0.05), //0.070.13
+        INIT(0.35),//0.22
         SPECIMEN_PICKUP(0.42),
         DYNAMIC(0.16);
 
@@ -81,10 +81,10 @@ public class IntakeArm {
 
     public enum SWIVEL_STATE {
         //Zero position - Grip Facing center, with specimen held vertical
-        LEFT180(0.235),
-        CENTERED(0.505),
-        RIGHT180(0.785),
-        DYNAMIC(0.515);
+        LEFT180(0.225),
+        CENTERED(0.495),
+        RIGHT180(0.775),
+        DYNAMIC(0.495);
 
         private final double swivelPosition;
         SWIVEL_STATE(double swivelPosition){
@@ -103,33 +103,13 @@ public class IntakeArm {
         intakeSwivelServo = hardwareMap.get(Servo.class, "intake_swivel");
         intakeSensor = hardwareMap.get(NormalizedColorSensor.class, "intake_sensor");
 
-        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS ||
-                GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_INSPECTION) {
-            initIntakeArmAuto();
-        } else { // TELEOP
-            initIntakeArmTeleOp();
-        }
+        initIntakeArm();
     }
 
-    public void initIntakeArmAuto(){
-        moveArm(ARM_STATE.SPECIMEN_PICKUP);
-        intakeArmState = ARM_STATE.SPECIMEN_PICKUP;
-        openGrip();
-        if (intakeSensingActivated) {
-            if (intakeSensor instanceof SwitchableLight) {
-                ((SwitchableLight) intakeSensor).enableLight(true);
-            }
-            intakeSensor.setGain(2);
-        } else {
-            if (intakeSensor instanceof SwitchableLight) {
-                ((SwitchableLight) intakeSensor).enableLight(false);
-            }
-        }
-    }
-
-    public void initIntakeArmTeleOp(){
-        moveArm(ARM_STATE.POST_TRANSFER);
-        intakeArmState = ARM_STATE.POST_TRANSFER;
+    public void initIntakeArm(){
+        moveArm(ARM_STATE.INIT);
+        moveWristAndSwivel(ARM_STATE.INIT);
+        intakeArmState = ARM_STATE.INIT;
         openGrip();
         if (intakeSensingActivated) {
             if (intakeSensor instanceof SwitchableLight) {
@@ -144,8 +124,8 @@ public class IntakeArm {
     }
 
     public void moveArm(ARM_STATE toIntakeArmState){
+        //moveWristAndSwivel(toIntakeArmState);
         intakeArmServo.setPosition(toIntakeArmState.armPos);
-        moveWristAndSwivel(toIntakeArmState);
         intakeArmState = toIntakeArmState;
     }
 
@@ -289,7 +269,7 @@ public class IntakeArm {
     public boolean intakeSensingActivated = true;
     public boolean intakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
-    public double SENSE_DISTANCE = 20;
+    public double SENSE_DISTANCE = 13;
     public float[] sensedSampleHsvValues = new float[3];
     public NormalizedRGBA sensedColor;
     public double intakeSensingDistance = 500;

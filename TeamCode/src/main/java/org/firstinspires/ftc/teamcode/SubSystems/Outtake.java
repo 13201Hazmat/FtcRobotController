@@ -2,19 +2,39 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class Outtake {
     public Servo outtakeArmServo;
     public Servo outtakeWristServo;
+    public Servo outtakeGripServo;
+    public NormalizedColorSensor outtakeSensor;
     public DcMotorEx outtakeSlideLeft;
     public DcMotorEx outtakeSlideRight;
 
+    public enum GRIP_STATE {
+        OPEN(0.52), //0.59 max
+        CLOSED(0.22);
+
+        private final double gripPosition;
+        GRIP_STATE(double gripPosition) {
+            this.gripPosition = gripPosition;
+        }
+    }
+    public Outtake.GRIP_STATE outtakeGripState = GRIP_STATE.CLOSED;
 
     public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
@@ -34,11 +54,11 @@ public class Outtake {
 
     public enum WRIST_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
-        INIT(0.55),
-        TRANSFER(0.55),
-        PRE_DROP(0.73),
+        INIT(0.24),
+        TRANSFER(0.27),//0.240.55
+        //PRE_DROP(0.73),
         EJECT(0.96),
-        DROP(0.96),
+        DROP(0.73),//0.96
         MAX(0.60);
 
         private double wristPos;
@@ -92,6 +112,8 @@ public class Outtake {
         this.telemetry = telemetry;
         outtakeArmServo = hardwareMap.get(Servo.class, "outtake_arm");
         outtakeWristServo = hardwareMap.get(Servo.class, "outtake_wrist");
+        outtakeGripServo = hardwareMap.get(Servo.class, "outtake_grip");
+        outtakeSensor = hardwareMap.get(NormalizedColorSensor.class, "outtake_sensor");
         outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
         outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
         initOuttake();
@@ -108,6 +130,17 @@ public class Outtake {
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
         turnOuttakeBrakeModeOff();
         outtakeSlidesState = SLIDE_STATE.TRANSFER;
+
+        if (outtakeSensingActivated) {
+            if (outtakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) outtakeSensor).enableLight(true);
+            }
+            outtakeSensor.setGain(2);
+        } else {
+            if (outtakeSensor instanceof SwitchableLight) {
+                ((SwitchableLight) outtakeSensor).enableLight(false);
+            }
+        }
     }
 
     public void moveArm(ARM_STATE toOuttakeArmState){
@@ -125,10 +158,11 @@ public class Outtake {
             case TRANSFER:
                 outtakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPos);
                 outtakeWristState = WRIST_STATE.TRANSFER;
+                openGrip();
                 break;
             case DROP:
-                outtakeWristServo.setPosition(WRIST_STATE.PRE_DROP.wristPos);
-                outtakeWristState = WRIST_STATE.PRE_DROP;
+                outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
+                outtakeWristState = WRIST_STATE.DROP;
                 break;
             case EJECT:
                 outtakeWristServo.setPosition(WRIST_STATE.EJECT.wristPos);
@@ -141,13 +175,37 @@ public class Outtake {
         }
     }
 
-    public void moveWristDrop(){
+    /*public void moveWristDrop(){
         if (outtakeWristState == WRIST_STATE.PRE_DROP) {
             outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
             outtakeWristState = WRIST_STATE.DROP;
         }
+        openGrip();
+    }*/
+
+    /**
+     *If state of hand grip is set to open, set position of servo's to specified
+     */
+    public void openGrip(){
+        outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN.gripPosition);
+        outtakeGripState = Outtake.GRIP_STATE.OPEN;
     }
 
+    /**
+     * If state of hand grip is set to close, set position of servo's to specified
+     */
+    public void closeGrip(){
+        outtakeGripServo.setPosition(Outtake.GRIP_STATE.CLOSED.gripPosition);
+        outtakeGripState = Outtake.GRIP_STATE.CLOSED;
+    }
+
+    public void toggleGrip(){
+        if (outtakeGripState == Outtake.GRIP_STATE.CLOSED) {
+            openGrip();
+        } else {
+            closeGrip();
+        }
+    }
 
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOn(){
@@ -238,8 +296,37 @@ public class Outtake {
 
     public boolean isOuttakeReadyToDrop(){
         return (outtakeArmState == ARM_STATE.DROP &&
-                outtakeWristState == WRIST_STATE.PRE_DROP);
+                outtakeWristState == WRIST_STATE.DROP);
     }
+
+    public boolean outtakeSensingActivated = true;
+    public boolean outtakeSampleSensed = false;
+    public ColorRange sensedSampleColor = ColorRange.GREEN;
+    public double SENSE_DISTANCE = 20;
+    public float[] sensedSampleHsvValues = new float[3];
+    public NormalizedRGBA sensedColor;
+    public double outtakeSensingDistance = 500;
+
+    public void senseOuttakeSampleColor(){
+        if (outtakeSensingActivated) {
+            if (outtakeSensor instanceof DistanceSensor){
+                outtakeSensingDistance = ((DistanceSensor) outtakeSensor).getDistance(DistanceUnit.MM);
+            }
+            if(outtakeSensingDistance < SENSE_DISTANCE){
+                outtakeSampleSensed = true;
+                sensedColor = outtakeSensor.getNormalizedColors();
+                Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
+            } else {
+                outtakeSampleSensed = false;
+            }
+
+        } else {
+            outtakeSampleSensed = false;
+            sensedSampleColor = ColorRange.GREEN;
+        }
+    }
+
+
 
     public void printDebugMessages() {
         //******  debug ******
@@ -253,11 +340,23 @@ public class Outtake {
         telemetry.addLine("Outtake Arm");
         telemetry.addData("   State", outtakeArmState);
         telemetry.addData("   Servo position", outtakeArmServo.getPosition());
-        telemetry.addLine("=============");
         telemetry.addLine("Outtake Wrist");
         telemetry.addData("   State", outtakeWristState);
         telemetry.addData("   Servo position", outtakeWristServo.getPosition());
-        telemetry.addLine("=============");
+        telemetry.addLine("Outtake Grip");
+        telemetry.addData("   State", outtakeGripState);
+        telemetry.addData("   Grip Servo position", outtakeGripServo.getPosition());
+        telemetry.addLine("Outtake Sensor");
+        telemetry.addData("   outtakeSensingActivated", outtakeSensingActivated);
+        if (outtakeSensingActivated) {
+            telemetry.addLine("Outtake Sensor");
+            telemetry.addData("   intakeSensingDistance", outtakeSensingDistance);
+            telemetry.addData("   intakeSampleSensed", outtakeSampleSensed);
+            if (outtakeSampleSensed) {
+                telemetry.addData("    RGB","%.3f, %.3f, %.3f", sensedColor.red, sensedColor.green, sensedColor.blue);
+                telemetry.addData("    HSVA","%.3f, %.3f, %.3f, %.3f", sensedSampleHsvValues[0], sensedSampleHsvValues[1], sensedSampleHsvValues[2], sensedColor.alpha);
+            }
+        }
 
     }
 

@@ -36,7 +36,6 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -50,14 +49,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
-import org.firstinspires.ftc.teamcode.Controllers.SpecimenController;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.SubSystems.Climber;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
-import org.firstinspires.ftc.teamcode.SubSystems.SpecimenHandler;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
 /**
@@ -68,14 +64,11 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 public class AutonomousRightSpecimen extends LinearOpMode {
 
     public GamepadController gamepadController;
-    public SpecimenController specimenController;
     public IntakeOuttakeController intakeOuttakeController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public SpecimenHandler specimenHandler;
-    public Climber climber;
     public Vision vision;
     //public Lights lights;
 
@@ -242,9 +235,9 @@ public class AutonomousRightSpecimen extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
-                        specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
+                        //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajInitToSubmerssiblePreload,
-                        specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
+                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
                         trajSubmerssiblePreloadToPostPreload,
                         intakeOuttakeController.extendIntakeArmByExtensionFactorAction(1),
                         trajPostPreloadToColorSampleMiddle,
@@ -272,22 +265,22 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                         new SleepAction(0.1),
                         trajObservationDropToPickupSpecimenOne,
                         new SleepAction(0.1),
-                        specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
+                        //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajPickupSpecimenOneToSubmerssibleOne,
                         new SleepAction(0.1),
-                        specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
+                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
                         trajSubmerssibleOneToPickupSpecimenTwo,
                         new SleepAction(0.1),
-                        specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
+                        //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajPickupSpecimenTwoToSubmerssibleTwo,
                         new SleepAction(0.1),
-                        specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
+                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
                         trajSubmerssibleTwoToPickupSpecimenThree,
                         new SleepAction(0.1),
-                        specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
+                        //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajPickupSpecimenThreeToSubmerssibleThree,
                         new SleepAction(0.1),
-                        specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH),
+                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH),
                         trajSubmerssibleThreeToObservationPark,
                         new SleepAction(0.1)
                 )
@@ -331,14 +324,6 @@ public class AutonomousRightSpecimen extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        specimenHandler = new SpecimenHandler(hardwareMap, telemetry);
-        telemetry.addLine("SpecimenHandler Initialized");
-        telemetry.update();
-
-        climber = new Climber(hardwareMap, telemetry);
-        telemetry.addLine("Climber Initialized");
-        telemetry.update();
-
         vision = new Vision(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
         telemetry.update();
@@ -358,12 +343,8 @@ public class AutonomousRightSpecimen extends LinearOpMode {
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 
-        specimenController = new SpecimenController(specimenHandler, this);
-        telemetry.addLine("Specimen Controller Initialized");
-        telemetry.update();
-
         gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
-                outtake, specimenHandler, specimenController, climber, telemetry, this);
+                outtake, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -412,26 +393,10 @@ public class AutonomousRightSpecimen extends LinearOpMode {
             intakeArm.printDebugMessages();
             intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
-            specimenHandler.printDebugMessages();
-            climber.printDebugMessages();
+            //specimenHandler.printDebugMessages();
+            //climber.printDebugMessages();
             //lights.printDebugMessages();
         }
         telemetry.update();
     }
-
-    public Action printDebugMessagesAction(String position) {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                printDebugMessages(position);
-                return false;
-            }
-        };
-    }
-
-
 }
