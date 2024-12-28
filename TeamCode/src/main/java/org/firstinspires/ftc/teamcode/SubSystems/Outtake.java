@@ -41,6 +41,7 @@ public class Outtake {
         INIT(1.0),
         TRANSFER(1.0),
         DROP(0.35),
+        HIGH_CHAMBER(0.35),
         EJECT(0.35),
         MAX(0.0);
 
@@ -57,6 +58,7 @@ public class Outtake {
         INIT(0.24),
         TRANSFER(0.27),//0.240.55
         //PRE_DROP(0.73),
+        HIGH_CHAMBER(0.59),
         EJECT(0.96),
         DROP(0.73),//0.96
         MAX(0.60);
@@ -78,6 +80,7 @@ public class Outtake {
         TRANSFER(0, 0),
         LOW_BUCKET(600, 600), //(600 for 435rpm motor)
         HIGH_BUCKET(2000, 2000), //(2100 for 435rpm motor)
+        HIGH_CHAMBER(200,200),
         CLIMBER2(2000, 2000), //(2000 for 435rpm motor)
         MAX_EXTENDED(2280, 2280); //(2280 for 435rpm motor)
 
@@ -163,6 +166,10 @@ public class Outtake {
             case DROP:
                 outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
                 outtakeWristState = WRIST_STATE.DROP;
+                break;
+            case HIGH_CHAMBER:
+                outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER.wristPos);
+                outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
                 break;
             case EJECT:
                 outtakeWristServo.setPosition(WRIST_STATE.EJECT.wristPos);

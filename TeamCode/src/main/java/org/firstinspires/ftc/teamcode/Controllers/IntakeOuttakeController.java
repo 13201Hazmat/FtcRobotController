@@ -286,9 +286,10 @@ public class IntakeOuttakeController {
         safeWaitMilliSeconds(200+ 200* intakeSlides.slideExtensionFactor());//100
         moveArm(IntakeArm.ARM_STATE.TRANSFER);
         outtake.senseOuttakeSampleColor();
-        safeWaitMilliSeconds(400);//500
+        //safeWaitMilliSeconds(700);//500
+        safeWaitTillOuttakeSensorSensedMilliSeconds(800);
         outtake.closeGrip();
-        safeWaitMilliSeconds(100);
+        safeWaitMilliSeconds(200);
         intakeArm.openGrip();
         safeWaitMilliSeconds(100);//400
         moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
@@ -388,6 +389,12 @@ public class IntakeOuttakeController {
                 return false;
             }
         };
+    }
+
+    public void moveOuttakeToHighChamber(){
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
+        outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+        safeWaitMilliSeconds(300);
     }
 
     public void dropSamplefromOuttake() {
@@ -610,6 +617,15 @@ public class IntakeOuttakeController {
         };
     }
 
+    public void safeWaitTillOuttakeSensorSensedMilliSeconds(double timeoutTime) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        outtake.senseOuttakeSampleColor();
+        while (!currentOpMode.isStopRequested() && timer.time() < timeoutTime &&
+                !(outtake.outtakeSampleSensed)) {
+            outtake.senseOuttakeSampleColor();
+        }
+    }
 
     public void safeWaitTillOuttakeSlideStateMilliSeconds(double timeoutTime, Outtake.SLIDE_STATE toSlideState) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);

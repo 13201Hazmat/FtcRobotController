@@ -46,7 +46,7 @@ public class IntakeArm {
         EJECT_OR_PRE_TRANSFER(0.40),//0.38
         POST_TRANSFER (0.55),
         INIT(0.50), //vertically up
-        TRANSFER(0.665), //0.64
+        TRANSFER(0.675), //0.665
         SPECIMEN_PICKUP(0.71),
         DYNAMIC(0.68);
 
