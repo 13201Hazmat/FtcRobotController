@@ -62,7 +62,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT SAMPLE", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Auto LEFT SAMPLE 1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousLeftSample extends LinearOpMode {
 
     public GamepadController gamepadController;
@@ -166,7 +166,9 @@ public class AutonomousLeftSample extends LinearOpMode {
         telemetry.update();
 
         trajInitToFirstBucket = drive.actionBuilder(initPose)
-                .strafeToLinearHeading(preBucket.position, preBucket.heading)
+                //.strafeToLinearHeading(preBucket.position, preBucket.heading)
+                //.strafeToLinearHeading(firstBucket.position, firstBucket.heading)
+                .setTangent(Math.toRadians(90))
                 .strafeToLinearHeading(firstBucket.position, firstBucket.heading)
                 .build();
 
@@ -209,38 +211,46 @@ public class AutonomousLeftSample extends LinearOpMode {
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
                         trajInitToFirstBucket,
+                        new SleepAction(3),
                         new ParallelAction(
+                                trajInitToFirstBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
-                                intakeOuttakeController.moveOuttakeHighBucketAction()
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
                         ),
+                        intakeOuttakeController.dropSamplefromOuttakeAction(),
                         trajFirstBucketToYellowSampleNear,
                         new SleepAction(0.13),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleNearToBucket,
+                        //trajYellowSampleNearToBucket,
                         new SleepAction(0.2),
                         new ParallelAction(
+                                trajYellowSampleNearToBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
-                                new SequentialAction(
-                                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction()
-                                )
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
                         ),
+                        intakeOuttakeController.dropSamplefromOuttakeAction(),
                         trajBucketToYellowSampleMiddle,
                         new SleepAction(0.13),
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleMiddleToBucket,
+                        //trajYellowSampleMiddleToBucket,
                         new ParallelAction(
+                                trajYellowSampleMiddleToBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -30),
-                                new SequentialAction(
-                                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction()
-                                )
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
                         ),
+                        intakeOuttakeController.dropSamplefromOuttakeAction(),
                         trajBucketToYellowSampleFar,
                         intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleFarToBucket,
-                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                        //trajYellowSampleFarToBucket,
+                        new ParallelAction(
+                                trajYellowSampleFarToBucket,
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
+                        ),
+                        intakeOuttakeController.dropSamplefromOuttakeAction(),
                         new ParallelAction(
                                 intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction(),
                                 trajBucketToSubmerssiblePark
