@@ -55,40 +55,56 @@ import java.util.List;
 public class MecanumDrive {
     public static class Params {
         // IMU orientation
+        // TODO Step 2 : Update direction of IMU by updating orientation of Driver Hub below
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        //public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-        // RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-        //public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-        // RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-
+        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        //TODO End Step 2
 
         // drive model parameters
-        public double inPerTick = 0.0029450022;
-        public double lateralInPerTick = 0.0016527851;
-        public double trackWidthTicks = 4399.472189464093;
+        //TODO Step 5 Set value of inPerTick after running ForwardPushTest
+        //TODO Step 14 Make value of inPerTick accurate after running LocalizationTest
+        public double inPerTick = 0.00296099414;
+
+        //TODO Step 6 (Only for DriveEncoder Localizer) Set value of lateralInPerTick after running LateralPushTest
+        //TODO Step 8 (Only for DeadWheel Localizer) Set value of lateralInPerTick after running LateralRampLogger
+        //TODO Step 14 Make value of lateralInPerTick accurate after running LocalizationTest
+        public double lateralInPerTick = 0.0023102560341538678;
+
+        //TODO Step 10 (Only for DriveEncoder Localizer) Set value of trackWidthTicks after running AngularRampLogger
+        //TODO Step 11 (Only for DeadWheel Localizer) Set value of trackWidthTicks after running AngularRampLogger
+        //      Go to Step 11.1 in Three or Two DeadWheelLocalizer and updated  values of par0YTicks, part1YTicks, perpXTicks
+        public double trackWidthTicks = 4420.26279817876;
 
         // feedforward parameters (in tick units)
-        public double kS = 2.701566221012617;
-        public double kV = 0.0004138515074909233;
-        public double kA = 0.0002;
+        //TODO Step 7 (Only for DeadWheel Localizer) Set value for kS and KV after running ForwardRampLogger
+        //TODO Step 9 (Only for DriveEncoder Localizer) Set value for kS and kV after running AngularRampLogger
+        public double kS = 0.7859273994685694;
+        public double kV = 0.0005571043083728906;
+        //TODO Step 12 Set value of kA after running ManualFeedforwardTuner.
+        //   In this emperical process update value in increments of 0.0001 for drive encoders and 0.00001 for dead-wheel encoders
+        public double kA = 0.00009;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 65; //50;
-        public double minProfileAccel = -45; //-30;
-        public double maxProfileAccel = 65; //50;
+        public double maxWheelVel = 65;
+        public double minProfileAccel = -45;
+        public double maxProfileAccel = 65;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 4;
-        public double lateralGain = 4.5;
-        public double headingGain = 5; // shared with turn
+        //TODO Step 13 Set value of Gains after running ManualFeedbackTuner
+        public double axialGain = 7.8;
+        public double lateralGain = 9.0;
+        public double headingGain = 2.0; // shared with turn
 
         public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
+        public double lateralVelGain = 3.5 ;
         public double headingVelGain = 0.0; // shared with turn
     }
 
@@ -139,9 +155,13 @@ public class MecanumDrive {
 
             imu = lazyImu.get();
 
-            // TODO: reverse encoders if needed
-            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+            //TODO Step 4.2 Run MecanumDirectionDebugger Tuning OpMode to set motor direction correctly
+            //Uncomment the lines for which the motorDirection need to be reversed to ensure all motors run forward in test
+            //leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+            //leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+            rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+            rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+            //TODO End Step 4.2
         }
 
         @Override
@@ -211,38 +231,51 @@ public class MecanumDrive {
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
-        //LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
+        LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        //TODO Step 1 Drive Classes : get basic hardware configured. Update motor names to what is used in robot configuration
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront_par0"); //RC 3
-        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");//RC 0
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront_par1"); //EH 0
-        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack_perp"); //EH 3
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront_par0");
+        leftBack = hardwareMap.get(DcMotorEx.class, "leftBack");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack_perp");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront_par1");
+        //TODO End Step 1
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // TODO: reverse motor directions if needed
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        //TODO Step 4.1 Run MecanumDirectionDebugger Tuning OpMode to set motor direction correctly
+        //Uncomment the lines for which the motorDirection need to be reversed to ensure all motors run forward in test
+        //leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        //leftBack.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+        rightBack.setDirection(DcMotorEx.Direction.REVERSE);
+        //TODO Make the same update in DriveLocalizer() function. Search for Step 4.2
+        //TODO End Step 4.1
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
+        //TODO Step 3: Specify how the robot should track its position
+        //Comment this line if NOT using Drive Encoder localization
         //localizer = new DriveLocalizer();
+        //Uncomment next line if using Two Dead Wheel Localizer and also check TwoDeadWheelLocalizer.java for Step 3.1
+        //localizer = new TwoDeadWheelLocalizer(hardwareMap, imu, PARAMS.inPerTick)
+
+        //Uncomment next line if using Three Dead Wheel Localizer and also check ThreeDeadWheelLocalizer.java for Step 3.1
         localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
+        //TODO End Step 3
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
