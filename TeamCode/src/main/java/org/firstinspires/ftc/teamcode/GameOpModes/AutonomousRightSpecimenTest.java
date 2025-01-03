@@ -216,7 +216,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
 
         trajPickupSpecimenOneToSubmersibleOne = drive.actionBuilder(pickupSpecimenOne)
                 //.setReversed(true)
-                .setTangent(-90)
+                .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(submersibleSpecimenOne, Math.toRadians(-90))
                 .build();
 
@@ -227,7 +227,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
 
         trajPickupSpecimenTwoToSubmersibleTwo = drive.actionBuilder(pickupSpecimenTwo)
                 //.setReversed(true)
-                .setTangent(-90)
+                .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(submersibleSpecimenTwo, Math.toRadians(-90))
                 .build();
 
@@ -238,7 +238,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
 
         trajPickupSpecimenThreeToSubmersibleThree = drive.actionBuilder(pickupSpecimenThree)
                 //.setReversed(true)
-                .setTangent(-90)
+                .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(submersibleSpecimenThree, Math.toRadians(-90))
                 .build();
 
@@ -249,7 +249,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
 
         trajPickupSpecimenFourToSubmsersibleFour = drive.actionBuilder(submersibleSpecimenTwo)
                 //.setReversed(false)
-                .setTangent(-90)
+                .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(pickupSpecimenThree, Math.toRadians(-90))
                 .build();
 
