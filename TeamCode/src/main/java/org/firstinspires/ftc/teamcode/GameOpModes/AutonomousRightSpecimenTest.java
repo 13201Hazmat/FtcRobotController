@@ -173,7 +173,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         submersibleSpecimenThree = new Pose2d(-33, -11, Math.toRadians(0));
         pickupSpecimenFour = new Pose2d(-8.7, 23.6, Math.toRadians(81.5)); //-180
         submersibleSpecimenFour = new Pose2d(-33, -13, Math.toRadians(0));
-        observationPark = new Pose2d(-3, 40, Math.toRadians(64.5));
+        observationPark = new Pose2d(-7, 30, Math.toRadians(64.5));
         //observationPark2 = new Pose2d(18, -15, Math.toRadians(-141));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
@@ -247,15 +247,15 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
                 .splineToLinearHeading(pickupSpecimenFour, Math.toRadians(81.5))
                 .build();
 
-        trajPickupSpecimenFourToSubmsersibleFour = drive.actionBuilder(submersibleSpecimenTwo)
+        trajPickupSpecimenFourToSubmsersibleFour = drive.actionBuilder(pickupSpecimenFour)
                 //.setReversed(false)
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(pickupSpecimenThree, Math.toRadians(-90))
+                .splineToLinearHeading(submersibleSpecimenFour, Math.toRadians(-90))
                 .build();
 
-        trajSubmersibleFourToObservationPark = drive.actionBuilder(submersibleSpecimenThree)
+        trajSubmersibleFourToObservationPark = drive.actionBuilder(submersibleSpecimenFour)
                 //.setReversed(false)
-                .splineToLinearHeading(observationPark, Math.toRadians(64.5))
+                .splineToLinearHeading(observationPark, Math.toRadians(75))
                 .build();
     }
 
@@ -296,7 +296,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
                         new SleepAction(0.1),
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajPickupSpecimenOneToSubmersibleOne,
-                        new SleepAction(0.5),
+                        new SleepAction(0.1),
                         //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
                         trajSubmersibleOneToPickupSpecimenTwo,
                         new SleepAction(0.1),
@@ -309,7 +309,6 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
                         trajPickupSpecimenThreeToSubmersibleThree,
                         new SleepAction(0.1),
-                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH),
                         trajSubmersibleThreeToPickupSpecimenFour,
                         new SleepAction(0.1),
                         trajPickupSpecimenFourToSubmsersibleFour,
