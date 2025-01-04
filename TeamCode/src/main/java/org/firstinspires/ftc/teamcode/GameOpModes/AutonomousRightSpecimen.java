@@ -60,7 +60,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Auto RIGHT", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousRightSpecimen extends LinearOpMode {
 
     public GamepadController gamepadController;
@@ -124,12 +124,15 @@ public class AutonomousRightSpecimen extends LinearOpMode {
     Pose2d submersibleSpecimenOne = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersibleSpecimenTwo = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersibleSpecimenThree = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d submersibleSpecimenFour = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d prePickupSpecimenOne = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d pickupSpecimenOne = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d prePickupSpecimenTwo = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d pickupSpecimenTwo = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d prePickupSpecimenThree = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d pickupSpecimenThree = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d pickupSpecimenFour = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d colorSampleFar = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d colorSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d colorSampleNear = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d observationDrop = new Pose2d(0, 0, Math.toRadians(0));
@@ -139,95 +142,120 @@ public class AutonomousRightSpecimen extends LinearOpMode {
     double intialWaitTime = 0;
 
     //List all Trajectories
-    Action trajInitToSubmerssiblePreload, trajSubmerssiblePreloadToPostPreload,
-            trajPostPreloadToColorSampleMiddle,  trajColorSampleMiddleToObservationDrop,
+    Action trajInitToSubmersiblePreload, trajSubmersiblePreloadToColorSampleFar,
+            trajColorSampleFarToObservationDrop,
+            trajObservationDropToColorSampleMiddle, trajColorSampleMiddleToObservationDrop,
             trajObservationDropToColorSampleNear, trajColorSampleNearToObservationDrop,
             trajObservationDropToPickupSpecimenOne,
-            trajPickupSpecimenOneToSubmerssibleOne, trajSubmerssibleOneToPickupSpecimenTwo,
-            trajPickupSpecimenTwoToSubmerssibleTwo, trajSubmerssibleTwoToPickupSpecimenThree,
-            trajPickupSpecimenThreeToSubmerssibleThree, trajSubmerssibleThreeToObservationPark;
+            trajPickupSpecimenOneToSubmersibleOne, trajSubmersibleOneToPickupSpecimenTwo,
+            trajPickupSpecimenTwoToSubmersibleTwo, trajSubmersibleTwoToPickupSpecimenThree,
+            trajPickupSpecimenThreeToSubmersibleThree, trajSubmersibleThreeToPickupSpecimenFour,
+            trajPickupSpecimenFourToSubmsersibleFour, trajSubmersibleFourToObservationPark;
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
 
-        submersibleSpecimenPreload = new Pose2d(31, 0, Math.toRadians(0));
-        postSpecimenPreload = new Pose2d(18, -15, Math.toRadians(-44));
-        //colorSampleFar = new Pose2d(17.75, -33, Math.toRadians(-51));
-        colorSampleMiddle = new Pose2d(18.5, -27.5, Math.toRadians(-41));
-        colorSampleNear = new Pose2d(17, -27, Math.toRadians(-31.75));//-26
-        observationDrop = new Pose2d(16, -27.5, Math.toRadians(-141));
-        prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
-        pickupSpecimenOne = new Pose2d(0.5, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenOne = new Pose2d(30, 12, Math.toRadians(0));
-        prePickupSpecimenTwo = new Pose2d(8, -28, Math.toRadians(-175)); //-180
-        pickupSpecimenTwo = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenTwo = new Pose2d(30, 14, Math.toRadians(0));
-        prePickupSpecimenThree = new Pose2d(8, -28, Math.toRadians(-175)); //-180
-        pickupSpecimenThree = new Pose2d(1, -28, Math.toRadians(-180)); //-180
-        submersibleSpecimenThree = new Pose2d(30, 16, Math.toRadians(0));
-        observationPark = new Pose2d(4, -35, Math.toRadians(60));
+        submersibleSpecimenPreload = new Pose2d(-33, -2.5, Math.toRadians(0));
+        //postSpecimenPreload = new Pose2d(-20, 28, Math.toRadians(121));
+        colorSampleFar = new Pose2d(-20, 28, Math.toRadians(115));
+        colorSampleMiddle = new Pose2d(-20, 28, Math.toRadians(125));//121
+        colorSampleNear = new Pose2d(-20, 28, Math.toRadians(140));//-26
+        observationDrop = new Pose2d(-20, 28, Math.toRadians(34));
+        //prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
+        pickupSpecimenOne = new Pose2d(-20, 28, Math.toRadians(46)); //-180
+        submersibleSpecimenOne = new Pose2d(-33, -7, Math.toRadians(0));
+        //prePickupSpecimenTwo = new Pose2d(8, -28, Math.toRadians(-175)); //-180
+        pickupSpecimenTwo = new Pose2d(-8.7, 23.6, Math.toRadians(81.5)); //-180
+        submersibleSpecimenTwo = new Pose2d(-33, -9, Math.toRadians(0));
+        //prePickupSpecimenThree = new Pose2d(8, -28, Math.toRadians(-175)); //-180
+        pickupSpecimenThree = new Pose2d(-8.7, 23.6, Math.toRadians(81.5)); //-180
+        submersibleSpecimenThree = new Pose2d(-33, -11, Math.toRadians(0));
+        pickupSpecimenFour = new Pose2d(-8.7, 23.6, Math.toRadians(81.5)); //-180
+        submersibleSpecimenFour = new Pose2d(-33, -13, Math.toRadians(0));
+        observationPark = new Pose2d(-7, 30, Math.toRadians(64.5));
         //observationPark2 = new Pose2d(18, -15, Math.toRadians(-141));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
 
-        trajInitToSubmerssiblePreload = drive.actionBuilder(initPose)
-                .splineTo(submersibleSpecimenPreload.position, submersibleSpecimenPreload.heading)
+        trajInitToSubmersiblePreload = drive.actionBuilder(initPose)
+                //.setTangent(180)
+                //.splineToLinearHeading(submersibleSpecimenPreload, Math.toRadians(180))
+                .strafeToLinearHeading(submersibleSpecimenPreload.position, submersibleSpecimenPreload.heading)
                 .build();
 
-        trajSubmerssiblePreloadToPostPreload = drive.actionBuilder(submersibleSpecimenPreload)
-                .setReversed(true)
-                .strafeToLinearHeading(postSpecimenPreload.position, postSpecimenPreload.heading)
+        trajSubmersiblePreloadToColorSampleFar = drive.actionBuilder(submersibleSpecimenPreload)
+                .setReversed(false)
+                .splineToLinearHeading(colorSampleFar, Math.toRadians(90))
                 .build();
 
-        trajPostPreloadToColorSampleMiddle = drive.actionBuilder(postSpecimenPreload)
-                .strafeToLinearHeading(colorSampleMiddle.position, colorSampleMiddle.heading)
+        trajColorSampleFarToObservationDrop = drive.actionBuilder(colorSampleFar)
+                .turnTo(observationDrop.heading)
+                .build();
+
+        trajObservationDropToColorSampleMiddle = drive.actionBuilder(observationDrop)
+                .turnTo(colorSampleMiddle.heading)
                 .build();
 
         trajColorSampleMiddleToObservationDrop = drive.actionBuilder(colorSampleMiddle)
-                .strafeToLinearHeading(observationDrop.position, observationDrop.heading)
+                .turnTo(observationDrop.heading)
                 .build();
 
         trajObservationDropToColorSampleNear = drive.actionBuilder(observationDrop)
-                .strafeToLinearHeading(colorSampleNear.position, colorSampleNear.heading)
+                .turnTo(colorSampleNear.heading)
                 .build();
 
-
         trajColorSampleNearToObservationDrop = drive.actionBuilder(colorSampleNear)
-                .strafeToLinearHeading(observationDrop.position, observationDrop.heading)
+                .turnTo(observationDrop.heading)
                 .build();
 
         trajObservationDropToPickupSpecimenOne = drive.actionBuilder(observationDrop)
+                .turnTo(pickupSpecimenOne.heading)
+                .build();
+
+        trajPickupSpecimenOneToSubmersibleOne = drive.actionBuilder(pickupSpecimenOne)
                 //.setReversed(true)
-                //.strafeToLinearHeading(prePickupSpecimenOne.position, prePickupSpecimenOne.heading)
-                .strafeToLinearHeading(pickupSpecimenOne.position, pickupSpecimenOne.heading)
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(submersibleSpecimenOne, Math.toRadians(-90))
                 .build();
 
-        trajPickupSpecimenOneToSubmerssibleOne = drive.actionBuilder(pickupSpecimenOne)
-                .strafeToLinearHeading(submersibleSpecimenOne.position, submersibleSpecimenOne.heading)
+        trajSubmersibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
+                //.setReversed(false)
+                .splineToLinearHeading(pickupSpecimenTwo, Math.toRadians(81.5))
                 .build();
 
-        trajSubmerssibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
-                .strafeToLinearHeading(prePickupSpecimenTwo.position, prePickupSpecimenTwo.heading)
-                .strafeToLinearHeading(pickupSpecimenTwo.position, pickupSpecimenTwo.heading)
+        trajPickupSpecimenTwoToSubmersibleTwo = drive.actionBuilder(pickupSpecimenTwo)
+                //.setReversed(true)
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(submersibleSpecimenTwo, Math.toRadians(-90))
                 .build();
 
-        trajPickupSpecimenTwoToSubmerssibleTwo = drive.actionBuilder(pickupSpecimenTwo)
-                .strafeToLinearHeading(submersibleSpecimenTwo.position, submersibleSpecimenTwo.heading)
+        trajSubmersibleTwoToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenTwo)
+                //.setReversed(false)
+                .splineToLinearHeading(pickupSpecimenThree, Math.toRadians(81.5))
                 .build();
 
-        trajSubmerssibleTwoToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenTwo)
-                .strafeToLinearHeading(prePickupSpecimenThree.position, prePickupSpecimenThree.heading)
-                .strafeToLinearHeading(pickupSpecimenThree.position, pickupSpecimenThree.heading)
+        trajPickupSpecimenThreeToSubmersibleThree = drive.actionBuilder(pickupSpecimenThree)
+                //.setReversed(true)
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(submersibleSpecimenThree, Math.toRadians(-90))
                 .build();
 
-        trajPickupSpecimenThreeToSubmerssibleThree = drive.actionBuilder(pickupSpecimenThree)
-                .strafeToLinearHeading(submersibleSpecimenThree.position, submersibleSpecimenThree.heading)
+        trajSubmersibleThreeToPickupSpecimenFour = drive.actionBuilder(submersibleSpecimenThree)
+                //.setReversed(false)
+                .splineToLinearHeading(pickupSpecimenFour, Math.toRadians(81.5))
                 .build();
 
-        trajSubmerssibleThreeToObservationPark = drive.actionBuilder(submersibleSpecimenThree)
-                .strafeToLinearHeading(observationPark.position, observationPark.heading)
+        trajPickupSpecimenFourToSubmsersibleFour = drive.actionBuilder(pickupSpecimenFour)
+                //.setReversed(false)
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(submersibleSpecimenFour, Math.toRadians(-90))
+                .build();
+
+        trajSubmersibleFourToObservationPark = drive.actionBuilder(submersibleSpecimenFour)
+                //.setReversed(false)
+                .splineToLinearHeading(observationPark, Math.toRadians(75))
                 .build();
     }
 
@@ -236,53 +264,57 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
-                        trajInitToSubmerssiblePreload,
+                        trajInitToSubmersiblePreload,
+                        new SleepAction(0.1),
                         //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
-                        trajSubmerssiblePreloadToPostPreload,
-                        intakeOuttakeController.extendIntakeArmByExtensionFactorAction(1),
-                        trajPostPreloadToColorSampleMiddle,
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1, 45),
+                        trajSubmersiblePreloadToColorSampleFar,
+
+                        //intakeOuttakeController.extendIntakeArmByExtensionFactorAction(1),
+                        //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1, 45),
+
                         new SleepAction(0.1),
-                        intakeOuttakeController.pickupSequenceAction(),
+                        trajColorSampleFarToObservationDrop,
                         new SleepAction(0.1),
+                        trajObservationDropToColorSampleMiddle,
+                        new SleepAction(0.1),
+                        //intakeOuttakeController.pickupSequenceAction(),
                         trajColorSampleMiddleToObservationDrop,
                         new SleepAction(0.1),
-                        intakeOuttakeController.openIntakeGripAction(),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
-                        new SleepAction(0.1),
+                        //intakeOuttakeController.openIntakeGripAction(),
+                        //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
                         trajObservationDropToColorSampleNear,
                         new SleepAction(0.1),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
-                        new SleepAction(0.1),
-                        intakeOuttakeController.pickupSequenceAction(),
-                        new SleepAction(0.1),
+                        //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.56, 20),
+                        //intakeOuttakeController.pickupSequenceAction(),
                         trajColorSampleNearToObservationDrop,
+
                         new SleepAction(0.1),
-                        intakeOuttakeController.openIntakeGripAction(),
-                        new SleepAction(0.1),
-                        intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
+                        //intakeOuttakeController.openIntakeGripAction(),
+                        //intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
                         //intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
-                        new SleepAction(0.1),
                         trajObservationDropToPickupSpecimenOne,
                         new SleepAction(0.1),
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
-                        trajPickupSpecimenOneToSubmerssibleOne,
+                        trajPickupSpecimenOneToSubmersibleOne,
                         new SleepAction(0.1),
                         //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
-                        trajSubmerssibleOneToPickupSpecimenTwo,
+                        trajSubmersibleOneToPickupSpecimenTwo,
                         new SleepAction(0.1),
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
-                        trajPickupSpecimenTwoToSubmerssibleTwo,
+                        trajPickupSpecimenTwoToSubmersibleTwo,
                         new SleepAction(0.1),
                         //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.PICKUP),
-                        trajSubmerssibleTwoToPickupSpecimenThree,
+                        trajSubmersibleTwoToPickupSpecimenThree,
                         new SleepAction(0.1),
                         //specimenController.closeGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.HIGH_CHAMBER),
-                        trajPickupSpecimenThreeToSubmerssibleThree,
+                        trajPickupSpecimenThreeToSubmersibleThree,
                         new SleepAction(0.1),
-                        //specimenController.latchAndOpenGripAndMoveToAction(SpecimenHandler.SLIDE_STATE.MIN_RETRACTED_LOW_CHAMBER_LATCH),
-                        trajSubmerssibleThreeToObservationPark,
-                        new SleepAction(0.1)
+                        trajSubmersibleThreeToPickupSpecimenFour,
+                        new SleepAction(0.1),
+                        trajPickupSpecimenFourToSubmsersibleFour,
+                        new SleepAction(0.1),
+                        trajSubmersibleFourToObservationPark
+
                 )
         );
     }
