@@ -27,7 +27,7 @@ public class IntakeOuttakeController {
     public Vision vision;
     LinearOpMode currentOpMode;
 
-    public boolean autoTransferEnabled = false;
+    public boolean autoTransferEnabled = true;
     public boolean initiateAutoTransfer = false;
 
     public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, Vision vision, LinearOpMode currentOpMode) {

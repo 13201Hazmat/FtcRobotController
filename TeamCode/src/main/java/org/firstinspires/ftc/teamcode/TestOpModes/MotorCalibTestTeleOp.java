@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name = "MotorCalibTestTeleOp", group = " 01 Testing")
+@TeleOp(name = "MotorCalibTestTeleOp", group = " 01-Testing")
 public class MotorCalibTestTeleOp extends LinearOpMode{
     DcMotorEx masterMotor;
     String masterMotorName;

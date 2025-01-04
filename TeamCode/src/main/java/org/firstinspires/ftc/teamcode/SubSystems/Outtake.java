@@ -35,15 +35,16 @@ public class Outtake {
         }
     }
     public Outtake.GRIP_STATE outtakeGripState = GRIP_STATE.CLOSED;
+    public double GRIP_DELTA = 0.01;
 
     public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
-        INIT(1.0),
-        TRANSFER(1.0),
-        DROP(0.35),
-        HIGH_CHAMBER(0.35),
-        EJECT(0.35),
-        MAX(0.0);
+        INIT(0.09),
+        TRANSFER(0.12),
+        DROP(0.64),
+        HIGH_CHAMBER(0.64),
+        EJECT(0.64),
+        MAX(0.64);
 
         private double armPos;
         ARM_STATE(double armPos){
@@ -55,13 +56,13 @@ public class Outtake {
 
     public enum WRIST_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
-        INIT(0.24),
-        TRANSFER(0.27),//0.240.55
+        INIT(0.20),
+        TRANSFER(0.19),//0.240.55
         //PRE_DROP(0.73),
-        HIGH_CHAMBER(0.59),
-        EJECT(0.96),
-        DROP(0.73),//0.96
-        MAX(0.60);
+        HIGH_CHAMBER(0.68),
+        EJECT(0.68),
+        DROP(0.68),//0.96
+        MAX(0.68);
 
         private double wristPos;
         WRIST_STATE(double wristPos){
@@ -78,11 +79,11 @@ public class Outtake {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(600, 600), //(600 for 435rpm motor)
-        HIGH_BUCKET(2000, 2000), //(2100 for 435rpm motor)
-        HIGH_CHAMBER(200,200),
-        CLIMBER2(2000, 2000), //(2000 for 435rpm motor)
-        MAX_EXTENDED(2280, 2280); //(2280 for 435rpm motor)
+        LOW_BUCKET(250, 250), //(600 for 435rpm motor)
+        HIGH_BUCKET(1100, 1100), //(2100 for 435rpm motor)
+        HIGH_CHAMBER(0,0),
+        CLIMBER2(1350, 1350), //(2000 for 435rpm motor)
+        MAX_EXTENDED(1400, 1400); //(2280 for 435rpm motor)
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;
@@ -152,6 +153,14 @@ public class Outtake {
         outtakeArmState = toOuttakeArmState;
     }
 
+    public void moveArmForward(){
+        outtakeArmServo.setPosition(outtakeArmServo.getPosition() + ARM_DELTA);
+    }
+
+    public void moveArmBackward(){
+        outtakeArmServo.setPosition(outtakeArmServo.getPosition() - ARM_DELTA);
+    }
+
     public void moveWrist(ARM_STATE outtakeArmState){
         switch (outtakeArmState){
             case INIT:
@@ -180,6 +189,14 @@ public class Outtake {
                 outtakeWristState = WRIST_STATE.MAX;
                 break;
         }
+    }
+
+    public void moveWristForward(){
+        outtakeWristServo.setPosition(outtakeWristServo.getPosition() + WRIST_DELTA);
+    }
+
+    public void moveWristBackward(){
+        outtakeWristServo.setPosition(outtakeWristServo.getPosition() - WRIST_DELTA);
     }
 
     /*public void moveWristDrop(){
@@ -212,6 +229,14 @@ public class Outtake {
         } else {
             closeGrip();
         }
+    }
+
+    public void moveGripForward(){
+        outtakeGripServo.setPosition(outtakeGripServo.getPosition() + GRIP_DELTA);
+    }
+
+    public void moveGripBackward(){
+        outtakeGripServo.setPosition(outtakeGripServo.getPosition() - GRIP_DELTA);
     }
 
     //Turns on the brake for Outtake motor

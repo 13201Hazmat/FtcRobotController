@@ -261,7 +261,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                         intakeOuttakeController.openIntakeGripAction(),
                         new SleepAction(0.1),
                         intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
+                        //intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
                         new SleepAction(0.1),
                         trajObservationDropToPickupSpecimenOne,
                         new SleepAction(0.1),

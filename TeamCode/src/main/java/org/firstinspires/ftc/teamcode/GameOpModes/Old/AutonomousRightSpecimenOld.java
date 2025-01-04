@@ -61,7 +61,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+@Autonomous(name = "Hazmat Auto RIGHT SPECIMEN OLD", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousRightSpecimenOld extends LinearOpMode {
 
     public GamepadController gamepadController;
@@ -262,7 +262,7 @@ public class AutonomousRightSpecimenOld extends LinearOpMode {
                         intakeOuttakeController.openIntakeGripAction(),
                         new SleepAction(0.1),
                         intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
+                        //intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
                         new SleepAction(0.1),
                         trajObservationDropToPickupSpecimenOne,
                         new SleepAction(0.1),

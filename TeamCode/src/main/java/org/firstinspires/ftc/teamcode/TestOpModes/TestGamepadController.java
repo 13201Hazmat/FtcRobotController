@@ -727,4 +727,14 @@ public class TestGamepadController {
         return hzGamepad2.start;
     }
 
+    public boolean gp2RightStickButtonLast = false;
+    public boolean gp2GetRightStickButtonPress() {
+        boolean isPressedRightStickButton = false;
+        if (!gp2RightStickButtonLast && hzGamepad2.right_stick_button) {
+            isPressedRightStickButton = true;
+        }
+        gp2RightStickButtonLast = hzGamepad2.right_stick_button;
+        return isPressedRightStickButton;
+    }
+
 }

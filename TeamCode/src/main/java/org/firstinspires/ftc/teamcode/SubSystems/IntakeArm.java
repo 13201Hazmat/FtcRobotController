@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class IntakeArm {
@@ -32,6 +31,7 @@ public class IntakeArm {
         }
     }
     public GRIP_STATE intakeGripState = GRIP_STATE.CLOSED;
+    public double GRIP_DELTA = 0.01;
 
     //public boolean intakeGripAutoClose = true;
 
@@ -39,15 +39,15 @@ public class IntakeArm {
         //Zero position - Intake arm vertically downward
         //Vertical up is 0.66
 
+
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.42), //0.42
-        PICKUP(0.35),//0.32
-        POST_PICKUP(0.36),//0.34
-        EJECT_OR_PRE_TRANSFER(0.40),//0.38
-        POST_TRANSFER (0.55),
-        INIT(0.50), //vertically up
-        TRANSFER(0.675), //0.665
-        SPECIMEN_PICKUP(0.71),
+        PRE_PICKUP(0.35), //0.42
+        PICKUP(0.28),//0.32
+        POST_PICKUP(0.35),//0.34
+        EJECT_OR_PRE_TRANSFER(0.35),//0.38
+        POST_TRANSFER (0.52),
+        INIT(0.57), //vertically up
+        TRANSFER(0.63), //0.665
         DYNAMIC(0.68);
 
         private double armPos;
@@ -61,14 +61,13 @@ public class IntakeArm {
     public enum WRIST_STATE {
         //Zero position - Horizontallu Facing inward, with Intake Arm in Vertically upward position
         //Go to pick up position and wrist should be vertically down
-        PICKUP(1.0),//0.94
-        EJECT(0.70),//0.66
-        POST_PICKUP(0.70),//0.66
-        POST_TRANSFER(0.45),//0.39
-        PRE_TRANSFER(0.45),//0.39
-        TRANSFER(0.05), //0.070.13
-        INIT(0.35),//0.22
-        SPECIMEN_PICKUP(0.42),
+        PICKUP(0.88),//0.94
+        EJECT(0.56),//0.66
+        POST_PICKUP(0.56),//0.66
+        POST_TRANSFER(0.38),//0.39
+        PRE_TRANSFER(0.38),//0.39
+        TRANSFER(0.07), //0.070.13
+        INIT(0.32),//0.22
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -77,7 +76,7 @@ public class IntakeArm {
         }
     }
     public WRIST_STATE intakeWristState = WRIST_STATE.INIT;
-    public double WRIST_UP_DELTA = 0.01;
+    public double WRIST_DELTA = 0.01;
 
     public enum SWIVEL_STATE {
         //Zero position - Grip Facing center, with specimen held vertical
@@ -164,17 +163,11 @@ public class IntakeArm {
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
-            case SPECIMEN_PICKUP:
-                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
-                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
-                moveSwivelCentered();
-                break;
         }
     }
 
     public boolean isIntakeArmInSafeStateToMoveOuttake(){
         if (intakeArmState == ARM_STATE.TRANSFER ||
-            intakeArmState == ARM_STATE.SPECIMEN_PICKUP ||
             intakeArmState == ARM_STATE.INIT) {
             return false;
         } else {
@@ -183,12 +176,12 @@ public class IntakeArm {
     }
 
     public void moveArmForward(){
-        intakeArmServo.setPosition(intakeArmServo.getPosition() + WRIST_UP_DELTA);
+        intakeArmServo.setPosition(intakeArmServo.getPosition() + ARM_DELTA);
         intakeArmState = ARM_STATE.DYNAMIC;
     }
 
     public void moveArmBackward(){
-        intakeArmServo.setPosition(intakeArmServo.getPosition() - WRIST_UP_DELTA);
+        intakeArmServo.setPosition(intakeArmServo.getPosition() - ARM_DELTA);
         intakeArmState = ARM_STATE.DYNAMIC;
     }
 
@@ -215,6 +208,14 @@ public class IntakeArm {
         }
     }
 
+    public void moveSwivelForward(){
+            intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() + SWIVEL_DELTA);
+    }
+
+    public void moveSwivelBackward(){
+        intakeSwivelServo.setPosition(intakeSwivelServo.getPosition() - SWIVEL_DELTA);
+    }
+
 
     public void moveSwivelLeft(){
         double intakeSwivelServoPosition = intakeSwivelServo.getPosition();
@@ -233,12 +234,12 @@ public class IntakeArm {
     }
 
     public void moveWristForward(){
-            intakeWristServo.setPosition(intakeWristServo.getPosition() + WRIST_UP_DELTA);
+            intakeWristServo.setPosition(intakeWristServo.getPosition() + WRIST_DELTA);
             intakeWristState = WRIST_STATE.DYNAMIC;
     }
 
     public void moveWristBackward(){
-            intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_UP_DELTA);
+            intakeWristServo.setPosition(intakeWristServo.getPosition() - WRIST_DELTA);
             intakeWristState = WRIST_STATE.DYNAMIC;
     }
 
@@ -264,6 +265,19 @@ public class IntakeArm {
         } else {
             closeGrip();
         }
+    }
+
+    public void loosenGrip(){
+        intakeGripServo.setPosition(GRIP_STATE.LOOSENED.gripPosition);
+        intakeGripState = GRIP_STATE.LOOSENED;
+    }
+
+    public void moveGripForward(){
+        intakeGripServo.setPosition(intakeGripServo.getPosition() + GRIP_DELTA);
+    }
+
+    public void moveGripBackward(){
+        intakeGripServo.setPosition(intakeGripServo.getPosition() - GRIP_DELTA);
     }
 
     public boolean intakeSensingActivated = true;

@@ -53,7 +53,6 @@ public class TestVision extends LinearOpMode {
                             GameField.turboFactor = false;
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                             break;
-                        case SPECIMEN_PICKUP:
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;

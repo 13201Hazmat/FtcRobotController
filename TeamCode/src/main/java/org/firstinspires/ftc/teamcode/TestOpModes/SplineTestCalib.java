@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 
-@TeleOp(name = "Hazmat Spline Calib", group = " 02-Testing")
+@TeleOp(name = "Hazmat Spline Calib", group = " 01-Testing")
 public final class SplineTestCalib extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
