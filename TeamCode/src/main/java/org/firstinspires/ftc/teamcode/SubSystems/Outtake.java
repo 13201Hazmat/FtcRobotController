@@ -98,6 +98,7 @@ public class Outtake {
 
     public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
     public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
+    public boolean climberRaised = false;
 
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
@@ -189,6 +190,15 @@ public class Outtake {
                 outtakeWristState = WRIST_STATE.MAX;
                 break;
         }
+    }
+
+    public void climb(){
+        moveOuttakeSlides(SLIDE_STATE.MAX_EXTENDED);
+        climberRaised = true;
+    }
+
+    public void ascend(){
+        moveOuttakeSlides(SLIDE_STATE.CLIMBER2);
     }
 
     public void moveWristForward(){

@@ -104,6 +104,10 @@ public class GamepadController {
     }
 
     public boolean gp1DpadEnabled = false;
+    private int circlePressCount = 0;
+    private ElapsedTime circlePressTimer = new ElapsedTime(MILLISECONDS);
+    private static final double CIRCLE_PRESS_TIMEOUT = 1000;
+
 
     public void runIntake() {
         if (gp1GetRightBumperPress()) {
@@ -285,6 +289,27 @@ public class GamepadController {
                     safeWaitMilliSeconds(300);
                 }
                 outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+            }
+        }
+
+        if(gp2GetCirclePress()) {
+            if (circlePressTimer.time() < CIRCLE_PRESS_TIMEOUT) {
+                circlePressCount++;
+            } else {
+                circlePressCount = 1;
+            }
+            circlePressTimer.reset();
+
+            if (circlePressCount == 3) {
+                outtake.climb();
+                circlePressCount = 0;
+            }
+        }
+
+
+        if(gp2GetRightBumperPress()){
+            if(outtake.climberRaised){
+            outtake.ascend();
             }
         }
 
