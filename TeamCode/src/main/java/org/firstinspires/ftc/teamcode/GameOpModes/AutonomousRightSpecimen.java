@@ -162,7 +162,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
         colorSampleFar = new Pose2d(-20, 28, Math.toRadians(115));
         colorSampleMiddle = new Pose2d(-20, 28, Math.toRadians(125));//121
         colorSampleNear = new Pose2d(-20, 28, Math.toRadians(140));//-26
-        observationDrop = new Pose2d(-20, 28, Math.toRadians(34));
+        observationDrop = new Pose2d(-19.5, 28, Math.toRadians(34));
         //prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
         pickupSpecimenOne = new Pose2d(-20, 28, Math.toRadians(46)); //-180
         submersibleSpecimenOne = new Pose2d(-33, -7, Math.toRadians(0));
@@ -304,7 +304,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                                 trajSubmersibleOneToPickupSpecimenTwo,
                                 intakeOuttakeController.moveOuttakeToTransferAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0)
-                                ),
+                        ),
                         new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction1(),
                         new SleepAction(0.2),
@@ -322,7 +322,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                                 trajSubmersibleTwoToPickupSpecimenThree,
                                 intakeOuttakeController.moveOuttakeToTransferAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0)
-                                ),
+                        ),
                         new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction1(),
                         new SleepAction(0.2),
@@ -340,7 +340,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                                 trajSubmersibleThreeToPickupSpecimenFour,
                                 intakeOuttakeController.moveOuttakeToTransferAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0)
-                                ),
+                        ),
                         new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction1(),
                         new SleepAction(0.2),
@@ -357,7 +357,7 @@ public class AutonomousRightSpecimen extends LinearOpMode {
                                 trajSubmersibleFourToObservationPark,
                                 intakeOuttakeController.moveOuttakeToTransferAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0)
-                                ),
+                        ),
                         new SleepAction(0.1)
                 )
         );
