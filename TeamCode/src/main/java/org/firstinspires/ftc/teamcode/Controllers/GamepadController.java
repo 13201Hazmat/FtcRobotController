@@ -116,13 +116,9 @@ public class GamepadController {
                 case EJECT_OR_PRE_TRANSFER:
                 case LOWEST:
                 case DYNAMIC:
-                    GameField.turboFactor = false;
-                    intakeOuttakeController.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                    break;
                 case POST_TRANSFER:
                 case TRANSFER:
-                    //GameField.turboFactor = false;
-                    intakeSlides.moveIntakeSlidesToRange(0.5);
+                    intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.IN_BETWEEN);
                     intakeOuttakeController.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                     break;
                 case POST_PICKUP:
@@ -192,7 +188,20 @@ public class GamepadController {
             }
         }
 
-        intakeArm.senseIntakeSampleColor();
+        if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP &&
+                intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
+            safeWaitMilliSeconds(200);
+            intakeArm.senseIntakeSampleColor();
+            if (intakeArm.intakeSampleSensed) {
+                gp2RumbleFine(200);
+                if (intakeOuttakeController.autoTransferEnabled) {
+                    intakeOuttakeController.initiateAutoTransfer = true;
+                } else {
+                    intakeOuttakeController.initiateAutoTransfer = false;
+                }
+            }
+        }
+        /*intakeArm.senseIntakeSampleColor();
         if (intakeArm.intakeSampleSensed &&
                 intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP &&
                 intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
@@ -203,7 +212,7 @@ public class GamepadController {
             } else {
                 intakeOuttakeController.initiateAutoTransfer = false;
             }
-        }
+        }*/
     }
 
     public void runOuttake(){
@@ -217,15 +226,20 @@ public class GamepadController {
                 intakeOuttakeController.moveOuttakeToTransfer();
 
                 if (outtake.isOuttakeInTransfer()) {
-                    intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDrop();
-                    intakeOuttakeController.moveOuttakeSlidesTo(outtake.lastOuttakeSlideState);
                     if (outtake.lastOuttakeSlideState == Outtake.SLIDE_STATE.HIGH_CHAMBER) {
-                        outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransfer();
+                    } else {
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDrop();
                     }
+                    intakeOuttakeController.moveOuttakeSlidesTo(outtake.lastOuttakeSlideState);
+                    /*if (outtake.lastOuttakeSlideState == Outtake.SLIDE_STATE.HIGH_CHAMBER) {
+                        outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+                    }*/
                 } else {
                     intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
                     intakeOuttakeController.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
                 }
+
                 intakeOuttakeController.initiateAutoTransfer = false;
             }
         } else {
@@ -265,11 +279,16 @@ public class GamepadController {
         }
 
         if(gp2GetLeftBumperPress()){
+            if (outtake.lastOuttakeSlideState == Outtake.SLIDE_STATE.HIGH_CHAMBER) {
+                intakeOuttakeController.moveOuttakeToHighChamber();
+            }
+
             if (outtake.isOuttakeReadyToDrop()) {
                 //outtake.moveWristDrop();
                 outtake.openGrip();
                 safeWaitMilliSeconds(200);//500
             }
+
             if (intakeArm.isIntakeArmInSafeStateToMoveOuttake()) {
                 outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
                 //safeWaitMilliSeconds(200);
@@ -279,37 +298,16 @@ public class GamepadController {
 
         if(gp2GetTrianglePress()) {
             outtake.lastOuttakeSlideState = Outtake.SLIDE_STATE.HIGH_CHAMBER;
-            if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.TRANSFER) {
-                intakeOuttakeController.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
-                safeWaitMilliSeconds(200);
-            }
-            if (intakeArm.isIntakeArmInSafeStateToMoveOuttake()) {
-                if (outtake.outtakeSlidesState != Outtake.SLIDE_STATE.HIGH_CHAMBER ) {
-                    outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
-                    safeWaitMilliSeconds(300);
-                }
-                outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
-            }
         }
 
         if(gp2GetCirclePress()) {
-            if (circlePressTimer.time() < CIRCLE_PRESS_TIMEOUT) {
-                circlePressCount++;
-            } else {
-                circlePressCount = 1;
-            }
-            circlePressTimer.reset();
-
-            if (circlePressCount == 3) {
-                outtake.climb();
-                circlePressCount = 0;
-            }
+            outtake.ascendToClimb();
         }
 
 
         if(gp2GetRightBumperPress()){
-            if(outtake.climberRaised){
-            outtake.ascend();
+            if(outtake.climberAscended){
+            outtake.climb();
             }
         }
 
@@ -336,20 +334,6 @@ public class GamepadController {
                 outtake.manualResetOuttakeMotor();
             }
         }
-
-
-        /*if (gp1GetLeftTriggerPress()) {
-            //EJECT TO BACK
-            if (outtake.isOuttakeInTransfer()) {
-                if (intakeArm.intakeArmState == IntakeArm.INTAKE_ARM_STATE.TRANSFER) {
-                    intakeOuttakeController.moveArm(IntakeArm.INTAKE_ARM_STATE.POST_TRANSFER);
-                    safeWaitMilliSeconds(200);
-                }
-                outtake.moveOuttakeSlides(Outtake.OUTTAKE_SLIDE_STATE.EJECT);
-                outtake.moveArm(Outtake.OUTTAKE_ARM_STATE.EJECT);
-                safeWaitMilliSeconds(300);
-            }
-        }*/
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********

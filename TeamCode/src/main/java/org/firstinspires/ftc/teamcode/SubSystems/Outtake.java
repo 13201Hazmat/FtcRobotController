@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class Outtake {
@@ -39,12 +40,12 @@ public class Outtake {
 
     public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
-        INIT(0.09),
-        TRANSFER(0.12),
-        DROP(0.64),
-        HIGH_CHAMBER(0.64),
-        EJECT(0.64),
-        MAX(0.64);
+        INIT(0.04),
+        TRANSFER(0.07),
+        DROP(0.59),
+        HIGH_CHAMBER(0.59),
+        EJECT(0.59),
+        MAX(0.59);
 
         private double armPos;
         ARM_STATE(double armPos){
@@ -79,11 +80,11 @@ public class Outtake {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(250, 250), //(600 for 435rpm motor)
-        HIGH_BUCKET(1100, 1100), //(2100 for 435rpm motor)
+        LOW_BUCKET(350, 350), //(600 for 435rpm motor)
+        HIGH_BUCKET(1200, 1200), //(2100 for 435rpm motor)
         HIGH_CHAMBER(0,0),
-        CLIMBER2(1350, 1350), //(2000 for 435rpm motor)
-        MAX_EXTENDED(1400, 1400); //(2280 for 435rpm motor)
+        CLIMBER2(1000, 1000), //(2000 for 435rpm motor)
+        MAX_EXTENDED(1500, 1500); //(2280 for 435rpm motor)
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;
@@ -98,7 +99,7 @@ public class Outtake {
 
     public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
     public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
-    public boolean climberRaised = false;
+    public boolean climberAscended = false;
 
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
@@ -146,6 +147,10 @@ public class Outtake {
                 ((SwitchableLight) outtakeSensor).enableLight(false);
             }
         }
+
+        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
+            closeGrip();
+        }
     }
 
     public void moveArm(ARM_STATE toOuttakeArmState){
@@ -192,12 +197,12 @@ public class Outtake {
         }
     }
 
-    public void climb(){
+    public void ascendToClimb(){
         moveOuttakeSlides(SLIDE_STATE.MAX_EXTENDED);
-        climberRaised = true;
+        climberAscended = true;
     }
 
-    public void ascend(){
+    public void climb(){
         moveOuttakeSlides(SLIDE_STATE.CLIMBER2);
     }
 

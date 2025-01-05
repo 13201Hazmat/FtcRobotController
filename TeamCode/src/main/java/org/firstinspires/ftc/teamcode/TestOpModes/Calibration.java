@@ -60,7 +60,7 @@ public class Calibration extends LinearOpMode {
         telemetry.update();
 
         intakeSlides.intakeSlideServoLeft.setPosition(0.0);
-        intakeSlides.intakeSlideServoRight.setPosition(0.0);
+        intakeSlides.intakeSlideServoRight.setPosition(0.045);
 
         /* If Stop is pressed, exit OpMode */
         if (isStopRequested()) return;
@@ -104,15 +104,30 @@ public class Calibration extends LinearOpMode {
                 intakeArm.moveArmBackward();
             }
 
-            intakeSlides.INTAKE_SLIDE_DELTA = 0.01;
+            intakeSlides.INTAKE_SLIDE_DELTA = 0.005;
             if (!gamepadController.gp1GetStart() && gamepadController.gp1GetCirclePress()) {
                 intakeSlides.moveIntakeSlideLeftForward();
-                intakeSlides.moveIntakeSlideRightForward();
             }
             if (gamepadController.gp1GetSquarePress()) {
                 intakeSlides.moveIntakeSlideLeftBackward();
+            }
+
+            if (gamepadController.gp1GetTrianglePress()) {
+                intakeSlides.moveIntakeSlideRightForward();
+            }
+            if (!gamepadController.gp1GetStart() && gamepadController.gp1GetCrossPress()) {
                 intakeSlides.moveIntakeSlideRightBackward();
             }
+
+            if (!gamepadController.gp2GetStart() && gamepadController.gp2GetCirclePress()) {
+                intakeSlides.moveIntakeSlideLeftForward();
+                intakeSlides.moveIntakeSlideRightForward();
+            }
+            if (gamepadController.gp2GetSquarePress()) {
+                intakeSlides.moveIntakeSlideLeftBackward();
+                intakeSlides.moveIntakeSlideRightBackward();
+            }
+
 
 
 
@@ -238,40 +253,59 @@ public class Calibration extends LinearOpMode {
             //intakeSlides.printDebugMessages();
             //outtake.printDebugMessages();
             telemetry.addLine("Intake Grip: GP1 + Dpad_right, - Dpad_left");
-            telemetry.addLine("    Tight Close with Sample is 0.11, Fully open is 0.52");
+            telemetry.addLine("    Tight Close with Sample is 0.11, Fully open is 0.50");
             telemetry.addData("    Grip Position", intakeArm.intakeGripServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Intake Swivel: GP1 + Right Triggger, - Left Trigger");
             telemetry.addLine("    Centered is 0.495");
             telemetry.addData("     Swivel Position", intakeArm.intakeSwivelServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Intake Wrist: GP1 + Dpad_up, - Dpad_down");
             telemetry.addLine("     Zero is when Arm fully pushed in when Arm held horizontally");
             telemetry.addData("     Wrist Position", intakeArm.intakeWristServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Intake Arm: GP1 + Right Bumper, - Left Bumper");
             telemetry.addLine("     Zero is Arm perpendicularly down from slides");
             telemetry.addData("     Arm Position", intakeArm.intakeArmServo.getPosition());
+            telemetry.addLine("----------");
 
-            telemetry.addLine("Intake Slides Left + Right : GP1 + Square, - Circle");
+            telemetry.addLine("Intake Slides Left: GP1 + Square, - Circle");
+            telemetry.addLine("     Zero is Slides fully in");
+            telemetry.addData("     Left Position", intakeSlides.intakeSlideServoLeft.getPosition());
+            telemetry.addLine("----------");
+
+            telemetry.addLine("Intake Slides Right : GP1 + Triangle, - Cross");
+            telemetry.addLine("     Zero is Slides fully in");
+            telemetry.addData("     Right Position", intakeSlides.intakeSlideServoRight.getPosition());
+            telemetry.addLine("----------");
+
+            telemetry.addLine("Intake Slides Left + Right : GP2 + Square, - Circle");
             telemetry.addLine("     Zero is Slides fully in");
             telemetry.addData("     Left Position", intakeSlides.intakeSlideServoLeft.getPosition());
             telemetry.addData("     Right Position", intakeSlides.intakeSlideServoRight.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Outtake Grip: GP2+ Dpad_right, - Dpad_left");
             telemetry.addLine("    Grip closed tight with Sample is 0.22");
             telemetry.addData("     Grip Position", outtake.outtakeGripServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Outtake Wrist: GP2 + Dpad_up, - Dpad_down");
             telemetry.addLine("    Zero when outtake arm is fully in mechanical limit and wrist parallel to arm");
             telemetry.addData("     Wrist Position", outtake.outtakeWristServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Outtake Arm: GP2 + Right Bumper, - Left Bumper");
             telemetry.addLine("    Zero when outtake arm is fully in mechanical limit");
             telemetry.addData("      Arm Position", outtake.outtakeArmServo.getPosition());
+            telemetry.addLine("----------");
 
             telemetry.addLine("Outtake Slides: GP2 + Triangle, - Cross, power:Left Bumper");
             telemetry.addData("Outtake Slides Position", outtake.outtakeSlideLeft.getCurrentPosition());
+            telemetry.addLine("----------");
         }
         telemetry.update();
     }

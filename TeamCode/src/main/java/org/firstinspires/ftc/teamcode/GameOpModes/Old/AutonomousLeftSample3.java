@@ -222,19 +222,19 @@ public class AutonomousLeftSample3 extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 trajFirstBucketToYellowSampleNear,
-                                intakeOuttakeController.moveOuttakeToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
                         new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction1(),
-                        intakeOuttakeController.closeIntakeGripAction(),
+                        //intakeOuttakeController.closeIntakeGripAction(),
                         //trajYellowSampleNearToBucket,
                         new SleepAction(0.2),
                         new ParallelAction(
                                 trajYellowSampleNearToBucket,
                                 new SequentialAction(
                                         intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction1(),
+                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
                                         new ParallelAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
@@ -247,7 +247,7 @@ public class AutonomousLeftSample3 extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 trajBucketToYellowSampleMiddle,
-                                intakeOuttakeController.moveOuttakeToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
                         new SleepAction(0.13),
@@ -259,7 +259,7 @@ public class AutonomousLeftSample3 extends LinearOpMode {
                                 trajYellowSampleMiddleToBucket,
                                 new SequentialAction(
                                         intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction1(),
+                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
                                         new ParallelAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
@@ -272,20 +272,20 @@ public class AutonomousLeftSample3 extends LinearOpMode {
                         ),
                         new ParallelAction(
                                 trajBucketToYellowSampleFar,
-                                intakeOuttakeController.moveOuttakeToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
                         //intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         intakeOuttakeController.pickupSequenceAction1(),
                         intakeOuttakeController.closeIntakeGripAction(),
                         intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction1(),
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
                         //trajYellowSampleFarToBucket,
                         new ParallelAction(
                                 trajYellowSampleFarToBucket,
                                 new SequentialAction(
                                         intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction1(),
+                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
                                         new ParallelAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
@@ -294,7 +294,7 @@ public class AutonomousLeftSample3 extends LinearOpMode {
                         ),
                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                         new ParallelAction(
-                                intakeOuttakeController.moveOuttakeToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
                         new ParallelAction(
