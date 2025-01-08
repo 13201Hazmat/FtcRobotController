@@ -28,7 +28,7 @@ public class Outtake {
 
     public enum GRIP_STATE {
         OPEN(0.52), //0.59 max
-        CLOSED(0.22);
+        CLOSED(0.21);
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -41,11 +41,12 @@ public class Outtake {
     public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.04),
-        TRANSFER(0.07),
-        DROP(0.59),
-        HIGH_CHAMBER(0.59),
-        EJECT(0.59),
-        MAX(0.59);
+        PRE_TRANFER(0.06),
+        TRANSFER(0.1),
+        DROP(0.62),
+        HIGH_CHAMBER(0.62),
+        EJECT(0.62),
+        MAX(0.62);
 
         private double armPos;
         ARM_STATE(double armPos){
@@ -58,7 +59,8 @@ public class Outtake {
     public enum WRIST_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.20),
-        TRANSFER(0.19),//0.240.55
+        PRE_TRANSFER(0.21),
+        TRANSFER(0.21),//0.240.55
         //PRE_DROP(0.73),
         HIGH_CHAMBER(0.68),
         EJECT(0.68),
@@ -80,11 +82,11 @@ public class Outtake {
         MIN_RETRACTED(0, 0),
         EJECT(0,0),
         TRANSFER(0, 0),
-        LOW_BUCKET(350, 350), //(600 for 435rpm motor)
-        HIGH_BUCKET(1200, 1200), //(2100 for 435rpm motor)
+        LOW_BUCKET(710, 710), //508 for 312 (350 for 435rpm motor)
+        HIGH_BUCKET(2340, 2340), //1673 for 312 (1200 for 435rpm motor)
         HIGH_CHAMBER(0,0),
-        CLIMBER2(1000, 1000), //(2000 for 435rpm motor)
-        MAX_EXTENDED(1500, 1500); //(2280 for 435rpm motor)
+        CLIMBER2(1400, 1400), //1000 for 312 ( for 435rpm motor)
+        MAX_EXTENDED(2925, 2925); //2091 for 312 (1500 for 435rpm motor)
 
         public final double leftMotorPosition;
         public final double rightMotorPosition;
@@ -173,6 +175,10 @@ public class Outtake {
                 outtakeWristServo.setPosition(WRIST_STATE.INIT.wristPos);
                 outtakeWristState = WRIST_STATE.INIT;
                 break;
+            case PRE_TRANFER:
+                outtakeWristServo.setPosition(WRIST_STATE.PRE_TRANSFER.wristPos);
+                outtakeWristState = WRIST_STATE.PRE_TRANSFER;
+                openGrip();
             case TRANSFER:
                 outtakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPos);
                 outtakeWristState = WRIST_STATE.TRANSFER;
@@ -349,7 +355,7 @@ public class Outtake {
     public boolean outtakeSensingActivated = true;
     public boolean outtakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
-    public double SENSE_DISTANCE = 20;
+    public double SENSE_DISTANCE = 15;
     public float[] sensedSampleHsvValues = new float[3];
     public NormalizedRGBA sensedColor;
     public double outtakeSensingDistance = 500;

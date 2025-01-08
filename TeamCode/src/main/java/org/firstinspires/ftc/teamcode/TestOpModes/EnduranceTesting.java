@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.GameOpModes.Old;
+package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
@@ -38,16 +38,11 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
@@ -63,8 +58,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT SAMPLE OLD", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeftSampleOld extends LinearOpMode {
+@TeleOp(name = "Endurance Testing", group = " 01-Testing")
+public class EnduranceTesting extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -88,22 +83,20 @@ public class AutonomousLeftSampleOld extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
-        GameField.opModeRunning = GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS;
+        GameField.opModeRunning = GameField.OP_MODE_RUNNING.HAZMAT_TELEOP;
         GameField.startPosition = GameField.START_POSITION.LEFT;
 
         /* Set Initial State of any subsystem when OpMode is to be started*/
         initSubsystems();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        telemetry.addData("Selected Starting Position", GameField.startPosition);
-
         //Build trajectories
-        buildAutonoumousMode();
+        //buildAutonoumousMode();
 
         //lights.setPattern(Lights.REV_BLINKIN_PATTERN.DEMO);
 
         while (!isStopRequested() && !opModeIsActive()) {
-            telemetry.addLine("LEFT SAMPLE AUTO");
+            telemetry.addLine("Endurance Tests");
             telemetry.update();
         }
 
@@ -113,142 +106,123 @@ public class AutonomousLeftSampleOld extends LinearOpMode {
             startTimer.reset();
             //Turn Lights Green
             //lights.setPattern(Lights.REV_BLINKIN_PATTERN.NONE);
-
-            runAutonomousMode();
         }
+
+        while (opModeIsActive() && !isStopRequested()) {
+            telemetry.addLine(" Press Triangle for running Outtake Cycling");
+            telemetry.addData("Outtake Cycling Avg Time", triangleAvgTime);
+            telemetry.addLine(" Press Square for running Intake Cycling");
+            telemetry.addData("Intake Cycling Avg Time", squareAvgTime);
+            telemetry.addLine(" Press Circle for running Full Pickup to Drop High Bucket Cycling");
+            telemetry.addData("Pickup to Drop High Bucket Avg Time", circleAvgTime);
+            telemetry.addLine(" Press Cross for running Full Pickup to Drop High Chamber Cycling");
+            telemetry.addData("Pickup to Drop High Chamber Avg Time", crossAvgTime);
+            telemetry.update();
+            runEnduranceTests();
+        }
+
     }   // end runOpMode()
 
-    //List All Poses
-    Pose2d initPose = new Pose2d(0, 0, Math.toRadians(0)); // Starting Pose
-    Pose2d preBucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d firstBucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d bucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d yellowSampleNear = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
+    ElapsedTime triangleTimer = new ElapsedTime(MILLISECONDS);
+    ElapsedTime crossTimer = new ElapsedTime(MILLISECONDS);
+    ElapsedTime circleTimer = new ElapsedTime(MILLISECONDS);
+    ElapsedTime squareTimer = new ElapsedTime(MILLISECONDS);
 
-    double intialWaitTime = 0;
+    int triangleCounter, crossCounter, circleCounter, squareCounter;
+    double triangleAvgTime = 0;
+    double crossAvgTime = 0;
+    double circleAvgTime = 0;
+    double squareAvgTime = 0;
 
-    //List all Trajectories
-    Action trajInitToFirstBucket,
-            trajFirstBucketToYellowSampleNear, trajYellowSampleNearToBucket,
-            trajBucketToYellowSampleMiddle, trajYellowSampleMiddleToBucket,
-            trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
-            trajBucketToSubmerssiblePark;
+    public void runEnduranceTests() {
+        //Outtake Cycling
+        if (gamepadController.gp1GetTrianglePress()) {
+            triangleTimer.reset();
 
-    public void buildAutonoumousMode() {
-        //Initialize Pose2d as desired
-        /*
-        //If initial action moves too much out
-        drive = new MecanumDrive(hardwareMap, initPose);
-        preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(4.5, 19, Math.toRadians(-48)); //6,20.5,-45
-        bucket = new Pose2d(4, 14, Math.toRadians(-60)); //6.-6.5.-60
-        yellowSampleNear = new Pose2d(13, 18.5, Math.toRadians(-9));//14,19.5,-9
-        yellowSampleMiddle = new Pose2d(10, 17.5, Math.toRadians(14));//12,18.5,18
-        yellowSampleFar = new Pose2d(13, 16.5, Math.toRadians(35));//14,17.5,34
-        submersiblePrePark = new Pose2d(53, 5, Math.toRadians(90)); //53,5,90
-        submersiblePark = new Pose2d(53, -19, Math.toRadians(90));//53,-19,90 */
+            for (triangleCounter = 1; triangleCounter < 11; triangleCounter++) {
+                Actions.runBlocking(
+                        new SequentialAction(
+                                intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.POST_TRANSFER),
+                                intakeOuttakeController.closeOuttakeGripAction(),
+                                intakeOuttakeController.moveOuttakeHighBucketAction(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET),
+                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                intakeOuttakeController.moveOuttakeToTransferAction(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER),
+                                intakeOuttakeController.openOuttakeGripAction()
+                        )
+                );
+                triangleAvgTime = triangleTimer.time()/ triangleCounter;
+                telemetry.addData("Counter", triangleCounter);
+                telemetry.addData("Outtake Cycling Avg Time", triangleAvgTime);
+                telemetry.update();
+            }
+        }
 
-        //If initial action is moves too much in
-        drive = new MecanumDrive(hardwareMap, initPose);
-        preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //6,20.5,-45
-        bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(-9));//-9
-        yellowSampleMiddle = new Pose2d(11.5, 16.5, Math.toRadians(24.5));//23
-        yellowSampleFar = new Pose2d(12.5, 17.5, Math.toRadians(33));//41.5
-        submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
-        submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
+        //Intake Cycling
+        if (gamepadController.gp1GetSquarePress()) {
+            squareTimer.reset();
 
-        telemetry.addLine("+++++ After Pose Assignments ++++++");
-        telemetry.update();
-
-        trajInitToFirstBucket = drive.actionBuilder(initPose)
-                .strafeToLinearHeading(preBucket.position, preBucket.heading)
-                .strafeToLinearHeading(firstBucket.position, firstBucket.heading)
-                .build();
-
-        //move to yellow sample one
-        trajFirstBucketToYellowSampleNear = drive.actionBuilder(firstBucket)
-                .strafeToLinearHeading(yellowSampleNear.position, yellowSampleNear.heading)
-                .build();
-
-        trajYellowSampleNearToBucket = drive.actionBuilder(yellowSampleNear)
-                .strafeToLinearHeading(bucket.position, bucket.heading)
-                .build();
-
-        trajBucketToYellowSampleMiddle = drive.actionBuilder(bucket)
-                .strafeToLinearHeading(yellowSampleMiddle.position, yellowSampleMiddle.heading)
-                .build();
-
-        trajYellowSampleMiddleToBucket = drive.actionBuilder(yellowSampleMiddle)
-                .strafeToLinearHeading(bucket.position, bucket.heading,
-                        new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
-                .build();
-
-        trajBucketToYellowSampleFar = drive.actionBuilder(bucket)
-                .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
-                .build();
-
-        trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
-                .strafeToLinearHeading(bucket.position, bucket.heading)
-                .build();
-
-        trajBucketToSubmerssiblePark = drive.actionBuilder(bucket)
-                .strafeToLinearHeading(submersiblePrePark.position, submersiblePrePark.heading)
-                .strafeToLinearHeading(submersiblePark.position, submersiblePark.heading)
-                .build();
-
-    }
-
-    public void runAutonomousMode() {
-        Actions.runBlocking(
-                new SequentialAction(
-                        new SleepAction(intialWaitTime),
-                        trajInitToFirstBucket,
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
-                                intakeOuttakeController.moveOuttakeHighBucketAction()
-                        ),
-                        trajFirstBucketToYellowSampleNear,
-                        new SleepAction(0.13),
-                        intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleNearToBucket,
-                        new SleepAction(0.2),
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
-                                new SequentialAction(
-                                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction()
+            for (squareCounter = 1; squareCounter < 11; squareCounter++){
+                Actions.runBlocking(
+                        new SequentialAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(squareCounter/10, -90 + (double) (squareCounter-1) * 20),
+                                intakeOuttakeController.pickupSequenceAction(),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
+                                intakeOuttakeController.openIntakeGripAction()
                                 )
-                        ),
-                        trajBucketToYellowSampleMiddle,
-                        new SleepAction(0.13),
-                        intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleMiddleToBucket,
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -30),
-                                new SequentialAction(
-                                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction()
-                                )
-                        ),
-                        trajBucketToYellowSampleFar,
-                        intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        trajYellowSampleFarToBucket,
-                        intakeOuttakeController.moveOuttakeHighBucketAction(),
-                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
-                        new ParallelAction(
-                                intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction(),
-                                trajBucketToSubmerssiblePark
-                        ),
-                        new SleepAction(1)
-                )
-        );
+                        );
+                squareAvgTime = squareTimer.time()/ squareCounter;
+                telemetry.addData("Counter", squareCounter);
+                telemetry.addData("Intake Cycling Avg Time", squareAvgTime);
+                telemetry.update();
+            }
+        }
+
+        // Intake to High Bucket Transfer Cycling
+        if (gamepadController.gp1GetCirclePress()) {
+            circleTimer.reset();
+
+            for (circleCounter = 1; circleCounter < 11; circleCounter++) {
+                Actions.runBlocking(
+                        new SequentialAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(circleCounter/10, -90 + (double) (circleCounter-1) * 20),
+                                intakeOuttakeController.pickupSequenceAction(),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
+                                intakeOuttakeController.moveOuttakeHighBucketAction(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET),
+                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                intakeOuttakeController.moveOuttakeToTransferAction(),
+                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
+                        )
+                );
+                circleAvgTime = circleTimer.time()/ circleCounter;
+                telemetry.addData("Counter", circleCounter);
+                telemetry.addData("Pickup to Drop High Bucket Avg Time", circleAvgTime);
+                telemetry.update();
+            }
+        }
+
+        // Intake to High Chamber Cycling
+        if (gamepadController.gp1GetCrossPress()) {
+            crossTimer.reset();
+
+            for (crossCounter = 1; crossCounter < 11; crossCounter++) {
+                Actions.runBlocking(
+                        new SequentialAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(crossCounter/10, -90 + (double) (crossCounter-1) * 20),
+                                intakeOuttakeController.pickupSequenceAction(),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
+                                intakeOuttakeController.moveOuttakeToHighChamberDropSpecimenAction(),
+                                intakeOuttakeController.moveOuttakeToTransferAction()
+                        )
+                );
+                crossAvgTime = crossTimer.time()/ crossCounter;
+                telemetry.addData("Counter", crossCounter);
+                telemetry.addData("Pickup to Drop High Chamber Avg Time", crossAvgTime);
+                telemetry.update();
+            }
+        }
     }
 
     //method to wait safely with stop button working if needed. Use this instead of sleep
