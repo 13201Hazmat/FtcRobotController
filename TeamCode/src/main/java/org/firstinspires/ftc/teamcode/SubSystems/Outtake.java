@@ -5,6 +5,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
@@ -24,11 +26,13 @@ public class Outtake {
     public Servo outtakeGripServo;
     public NormalizedColorSensor outtakeSensor;
     public DcMotorEx outtakeSlideLeft;
+    public DcMotorEx outtakeSlideLeftClimb;
     public DcMotorEx outtakeSlideRight;
+    public DcMotorEx outtakeSlideRightClimb;
 
     public enum GRIP_STATE {
         OPEN(0.52), //0.59 max
-        CLOSED(0.21);
+        CLOSED(0.19);
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -44,8 +48,7 @@ public class Outtake {
         PRE_TRANFER(0.06),
         TRANSFER(0.1),
         DROP(0.62),
-        HIGH_CHAMBER(0.62),
-        EJECT(0.62),
+        HIGH_CHAMBER(0.66),
         MAX(0.62);
 
         private double armPos;
@@ -62,8 +65,7 @@ public class Outtake {
         PRE_TRANSFER(0.21),
         TRANSFER(0.21),//0.240.55
         //PRE_DROP(0.73),
-        HIGH_CHAMBER(0.68),
-        EJECT(0.68),
+        HIGH_CHAMBER(0.61),
         DROP(0.68),//0.96
         MAX(0.68);
 
@@ -79,28 +81,24 @@ public class Outtake {
 
     //Outtake Motor states
     public enum SLIDE_STATE {
-        MIN_RETRACTED(0, 0),
-        EJECT(0,0),
-        TRANSFER(0, 0),
-        LOW_BUCKET(710, 710), //508 for 312 (350 for 435rpm motor)
-        HIGH_BUCKET(2340, 2340), //1673 for 312 (1200 for 435rpm motor)
-        HIGH_CHAMBER(0,0),
-        CLIMBER2(1400, 1400), //1000 for 312 ( for 435rpm motor)
-        MAX_EXTENDED(2925, 2925); //2091 for 312 (1500 for 435rpm motor)
+        TRANSFER(0),
+        LOW_BUCKET(508), //710 for 223, 508 for 312 (350 for 435rpm motor)
+        HIGH_BUCKET(1673), //2340 for 223, 1673 for 312 (1200 for 435rpm motor)
+        HIGH_CHAMBER(75),
+        CLIMBER2(1000), //1400 for 223, 1000 for 312 ( for 435rpm motor)
+        MAX_EXTENDED(1950); //2925 for 223, 2091 for 312 (1500 for 435rpm motor)
 
-        public final double leftMotorPosition;
-        public final double rightMotorPosition;
-        SLIDE_STATE(double leftMotorPosition, double rightMotorPosition) {
-            this.leftMotorPosition = leftMotorPosition;
-            this.rightMotorPosition = rightMotorPosition;
+        public final double motorPosition;
+        SLIDE_STATE(double motorPosition) {
+            this.motorPosition = motorPosition;
+
         }
     }
 
     public SLIDE_STATE outtakeSlidesState = SLIDE_STATE.TRANSFER;
-    public SLIDE_STATE lastOuttakeSlideState = SLIDE_STATE.MIN_RETRACTED;
+    public SLIDE_STATE lastOuttakeSlideState = SLIDE_STATE.TRANSFER;
 
     public int outtakeMotorLeftCurrentPosition, outtakeMotorRightCurrentPosition = 0;
-    public double outtakeMotorLeftNewPosition, outtakeMotorRightNewPosition = outtakeSlidesState.leftMotorPosition;
     public boolean climberAscended = false;
 
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_MAX = 50;//100
@@ -113,6 +111,10 @@ public class Outtake {
         RETRACT
     }
 
+    public ElapsedTime outtakeStallTimer = new ElapsedTime(MILLISECONDS);
+    public boolean outtakeStallTimingFlag = false;
+    public double STALL_TIME = 1500;
+
     public boolean runOuttakeMotorToLevelState = false;
 
     Telemetry telemetry;
@@ -124,18 +126,14 @@ public class Outtake {
         outtakeSensor = hardwareMap.get(NormalizedColorSensor.class, "outtake_sensor");
         outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
         outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
+        outtakeSlideLeftClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_left");
+        outtakeSlideRightClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_right");
         initOuttake();
     }
 
     public void initOuttake(){
         moveArm(ARM_STATE.TRANSFER);
         resetOuttakeMotorMode();
-        outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        outtakeSlideLeft.setPositionPIDFCoefficients(5.0);
-        outtakeSlideRight.setPositionPIDFCoefficients(5.0);
-        outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
         turnOuttakeBrakeModeOff();
         outtakeSlidesState = SLIDE_STATE.TRANSFER;
 
@@ -191,10 +189,6 @@ public class Outtake {
             case HIGH_CHAMBER:
                 outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER.wristPos);
                 outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
-                break;
-            case EJECT:
-                outtakeWristServo.setPosition(WRIST_STATE.EJECT.wristPos);
-                outtakeWristState = WRIST_STATE.EJECT;
                 break;
             case MAX:
                 outtakeWristServo.setPosition(WRIST_STATE.MAX.wristPos);
@@ -264,21 +258,25 @@ public class Outtake {
     public void turnOuttakeBrakeModeOn(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         outtakeSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOff(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         outtakeSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
     //Sets outtake slides to Transfer position
     public void moveOuttakeSlides(SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
-        outtakeMotorLeftCurrentPosition = outtakeSlideLeft.getCurrentPosition();
-        outtakeMotorRightCurrentPosition = outtakeSlideRight.getCurrentPosition();
-        outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.leftMotorPosition);
-        outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.leftMotorPosition);
+        outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
@@ -296,29 +294,45 @@ public class Outtake {
 
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         if (runOuttakeMotorToLevelState == true){
             outtakeSlideLeft.setPower(power);
             outtakeSlideRight.setPower(power);
+            outtakeSlideLeftClimb.setPower(power);
+            outtakeSlideRightClimb.setPower(power);
             runOuttakeMotorToLevelState = false;
         } else{
             outtakeSlideLeft.setPower(0.0);
             outtakeSlideRight.setPower(0.0);
+            outtakeSlideLeftClimb.setPower(0.0);
+            outtakeSlideRightClimb.setPower(0.0);
         }
     }
 
     //Resets the arm
     public void resetOuttakeMotorMode(){
-        DcMotorEx.RunMode runMode1 = outtakeSlideLeft.getMode();
-        DcMotorEx.RunMode runMode2 = outtakeSlideRight.getMode();
+        DcMotorEx.RunMode runModeOuttakeSlideLeft = outtakeSlideLeft.getMode();
+        DcMotorEx.RunMode runModeOuttakeSlideRight = outtakeSlideRight.getMode();
+        DcMotorEx.RunMode runModeOuttakeSlideLeftClimb = outtakeSlideLeftClimb.getMode();
+        DcMotorEx.RunMode runModeOuttakeSlideRightClimb = outtakeSlideRightClimb.getMode();
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeSlideLeft.setMode(runMode1);
-        outtakeSlideRight.setMode(runMode2);
-        outtakeSlideLeft.setPositionPIDFCoefficients(5.0);
-        outtakeSlideRight.setPositionPIDFCoefficients(5.0); //5
+        outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlideLeft.setMode(runModeOuttakeSlideLeft);
+        outtakeSlideRight.setMode(runModeOuttakeSlideRight);
+        outtakeSlideLeftClimb.setMode(runModeOuttakeSlideLeftClimb);
+        outtakeSlideRightClimb.setMode(runModeOuttakeSlideRightClimb);
+        outtakeSlideLeft.setPositionPIDFCoefficients(10.0);
+        outtakeSlideRight.setPositionPIDFCoefficients(10.0);
+        outtakeSlideLeftClimb.setPositionPIDFCoefficients(10.0);
+        outtakeSlideRightClimb.setPositionPIDFCoefficients(10.0);
         outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
+        outtakeSlideLeftClimb.setDirection(DcMotorEx.Direction.FORWARD);
+        outtakeSlideRightClimb.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     //TODO : Add logic to use Voltage Sensor to measure motor stalling and reset.
@@ -327,17 +341,19 @@ public class Outtake {
         timer.reset();
         outtakeSlideLeft.setTargetPosition((int) (outtakeSlideLeft.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         outtakeSlideRight.setTargetPosition((int) (outtakeSlideRight.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
+        outtakeSlideLeftClimb.setTargetPosition((int) (outtakeSlideLeftClimb.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
+        outtakeSlideRightClimb.setTargetPosition((int) (outtakeSlideRightClimb.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
-        outtakeSlidesState = SLIDE_STATE.MIN_RETRACTED;
+        outtakeSlidesState = SLIDE_STATE.TRANSFER;
     }
 
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
         //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.leftMotorPosition);
+        isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
         return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 50);
     }
 
@@ -348,7 +364,7 @@ public class Outtake {
     }
 
     public boolean isOuttakeReadyToDrop(){
-        return (outtakeArmState == ARM_STATE.DROP &&
+        return ((outtakeArmState == ARM_STATE.DROP || outtakeArmState == ARM_STATE.HIGH_CHAMBER) &&
                 outtakeWristState == WRIST_STATE.DROP);
     }
 
@@ -387,8 +403,17 @@ public class Outtake {
         telemetry.addData("    State", outtakeSlidesState);
         telemetry.addData("    Last State", lastOuttakeSlideState);
         telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(SLIDE_STATE.TRANSFER));
+        telemetry.addData("    outtakeStallTimingFlag", outtakeStallTimingFlag);
+        telemetry.addData("    outtakeStallTimer.time", outtakeStallTimer.time());
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
+        telemetry.addData("    Left Climb Motor Position", outtakeSlideLeftClimb.getCurrentPosition());
+        telemetry.addData("    Right Climb Motor Position", outtakeSlideRightClimb.getCurrentPosition());
+        telemetry.addData("    Outtake Slides Left Current", outtakeSlideLeft.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("    Outtake Slides Right Current", outtakeSlideRight.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("    Outtake Slides Left Climb Current", outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("    Outtake Slides Right Climb Current", outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
+
         telemetry.addLine("=============");
         telemetry.addLine("Outtake Arm");
         telemetry.addData("   State", outtakeArmState);

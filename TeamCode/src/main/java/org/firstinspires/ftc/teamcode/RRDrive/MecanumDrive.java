@@ -65,12 +65,12 @@ public class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 0.00295470884; //0.0029450022;
-        public double lateralInPerTick = -0.001593170809176658; //0.0016527851;
-        public double trackWidthTicks = 4452.242478375934; //4399.472189464093;
+        public double lateralInPerTick = 0.001391317271321756; //0.0016527851;
+        public double trackWidthTicks = 4265.67390841566; //4399.472189464093;
 
         // feedforward parameters (in tick units)
-        public double kS = 2.701566221012617; //2.701566221012617;
-        public double kV = 0.0004138515074909233; //0.0004138515074909233;
+        public double kS = 3.3245070276142092; //2.701566221012617; //2.701566221012617;
+        public double kV = 0.00026557763247210244; //0.0004138515074909233; //0.0004138515074909233;
         public double kA = 0.0002; //0.0002;
 
         // path profile parameters (in inches)
@@ -83,9 +83,9 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 7; //4
-        public double lateralGain = 7; //4.5
-        public double headingGain = 7; //5 shared with turn
+        public double axialGain = 9; //4
+        public double lateralGain = 21; //4.5
+        public double headingGain = 8; //5 shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -237,7 +237,7 @@ public class MecanumDrive {
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+               PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
