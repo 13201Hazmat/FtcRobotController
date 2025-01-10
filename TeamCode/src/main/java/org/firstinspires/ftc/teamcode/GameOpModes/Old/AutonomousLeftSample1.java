@@ -212,6 +212,22 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
+                        trajInitToFirstBucket,
+                        new SleepAction(0.2),
+                        trajFirstBucketToYellowSampleNear,
+                        new SleepAction(0.2),
+                        trajYellowSampleNearToBucket,
+                        new SleepAction(0.2),
+                        trajBucketToYellowSampleMiddle,
+                        new SleepAction(0.2),
+                        trajYellowSampleMiddleToBucket,
+                        new SleepAction(0.2),
+                        trajBucketToYellowSampleFar,
+                        new SleepAction(0.2),
+                        trajYellowSampleFarToBucket,
+                        new SleepAction(0.2),
+                        trajBucketToSubmerssiblePark
+                        /*
                         new ParallelAction(
                                 trajInitToFirstBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
@@ -302,6 +318,8 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                                 intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                         ),
                         new SleepAction(1)
+
+                         */
                 )
         );
 
