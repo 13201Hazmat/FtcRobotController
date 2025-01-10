@@ -736,5 +736,14 @@ public class TestGamepadController {
         gp2RightStickButtonLast = hzGamepad2.right_stick_button;
         return isPressedRightStickButton;
     }
+    public boolean gp2LeftStickButtonLast = false;
+    public boolean gp2GetLeftStickButtonPress() {
+        boolean isPressedLeftStickButton = false;
+        if (!gp2LeftStickButtonLast && hzGamepad2.left_stick_button) {
+            isPressedLeftStickButton = true;
+        }
+        gp2LeftStickButtonLast = hzGamepad2.left_stick_button;
+        return isPressedLeftStickButton;
+    }
 
 }

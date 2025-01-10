@@ -362,7 +362,7 @@ public class IntakeOuttakeController {
         //moveArm(IntakeArm.ARM_STATE.TRANSFER);
         outtake.senseOuttakeSampleColor();
         //safeWaitMilliSeconds(700);//500
-        safeWaitTillOuttakeSensorSensedMilliSeconds(800);
+        safeWaitTillOuttakeSensorSensedMilliSeconds(200);
         moveOuttakeArm(Outtake.ARM_STATE.TRANSFER);//Added
         safeWaitMilliSeconds(100);
         outtake.closeGrip();

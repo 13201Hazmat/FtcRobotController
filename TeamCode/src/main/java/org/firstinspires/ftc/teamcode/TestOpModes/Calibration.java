@@ -165,35 +165,41 @@ public class Calibration extends LinearOpMode {
                 intakeArm.moveWristAndSwivel(IntakeArm.ARM_STATE.TRANSFER);
             }
 
+            if (gamepadController.gp2GetLeftStickButtonPress()) {
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
+                outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+                outtake.moveWrist(Outtake.ARM_STATE.HIGH_CHAMBER);
+            }
+
             if (gamepadController.gp2GetTrianglePersistent() ||
                     gamepadController.gp2GetCrossPersistent()) {
                 while (gamepadController.gp2GetTrianglePersistent() && !isStopRequested()) {
                     outtake.outtakeSlideLeft.setTargetPosition(outtake.outtakeSlideLeft.getCurrentPosition() + 100);
                     outtake.outtakeSlideRight.setTargetPosition(outtake.outtakeSlideRight.getCurrentPosition() + 100);
-                    outtake.outtakeSlideLeftClimb.setTargetPosition(outtake.outtakeSlideLeftClimb.getCurrentPosition() + 100);
-                    outtake.outtakeSlideRightClimb.setTargetPosition(outtake.outtakeSlideRightClimb.getCurrentPosition() + 100);
+                    //outtake.outtakeSlideLeftClimb.setTargetPosition(outtake.outtakeSlideLeftClimb.getCurrentPosition() + 100);
+                    //outtake.outtakeSlideRightClimb.setTargetPosition(outtake.outtakeSlideRightClimb.getCurrentPosition() + 100);
                     outtake.outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     outtake.outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    outtake.outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    outtake.outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    //outtake.outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    //outtake.outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     outtake.outtakeSlideLeft.setPower(1.0);
                     outtake.outtakeSlideRight.setPower(1.0);
-                    outtake.outtakeSlideLeftClimb.setPower(1.0);
-                    outtake.outtakeSlideRightClimb.setPower(1.0);
+                    //outtake.outtakeSlideLeftClimb.setPower(1.0);
+                    //outtake.outtakeSlideRightClimb.setPower(1.0);
                 }
                 while (gamepadController.gp2GetCrossPersistent() && !isStopRequested()) {
                     outtake.outtakeSlideLeft.setTargetPosition(outtake.outtakeSlideLeft.getCurrentPosition() - 100);
                     outtake.outtakeSlideRight.setTargetPosition(outtake.outtakeSlideRight.getCurrentPosition() - 100);
-                    outtake.outtakeSlideLeftClimb.setTargetPosition(outtake.outtakeSlideLeftClimb.getCurrentPosition() - 100);
-                    outtake.outtakeSlideRightClimb.setTargetPosition(outtake.outtakeSlideRightClimb.getCurrentPosition() - 100);
+                    //outtake.outtakeSlideLeftClimb.setTargetPosition(outtake.outtakeSlideLeftClimb.getCurrentPosition() - 100);
+                    //outtake.outtakeSlideRightClimb.setTargetPosition(outtake.outtakeSlideRightClimb.getCurrentPosition() - 100);
                     outtake.outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     outtake.outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    outtake.outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    outtake.outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    //outtake.outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                    //outtake.outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     outtake.outtakeSlideLeft.setPower(1.0);
                     outtake.outtakeSlideRight.setPower(1.0);
-                    outtake.outtakeSlideLeftClimb.setPower(1.0);
-                    outtake.outtakeSlideRightClimb.setPower(1.0);
+                    //outtake.outtakeSlideLeftClimb.setPower(1.0);
+                    //outtake.outtakeSlideRightClimb.setPower(1.0);
                 }
             }
 
@@ -319,12 +325,12 @@ public class Calibration extends LinearOpMode {
             telemetry.addLine("Outtake Slides: GP2 + Triangle, - Cross");
             telemetry.addData("Outtake Slides Left Position", outtake.outtakeSlideLeft.getCurrentPosition());
             telemetry.addData("Outtake Slides Right Position", outtake.outtakeSlideRight.getCurrentPosition());
-            telemetry.addData("Outtake Slides Left Climb Position", outtake.outtakeSlideLeftClimb.getCurrentPosition());
-            telemetry.addData("Outtake Slides Right Climb Position", outtake.outtakeSlideRightClimb.getCurrentPosition());
+            //telemetry.addData("Outtake Slides Left Climb Position", outtake.outtakeSlideLeftClimb.getCurrentPosition());
+            //telemetry.addData("Outtake Slides Right Climb Position", outtake.outtakeSlideRightClimb.getCurrentPosition());
             telemetry.addData("Outtake Slides Left Current", outtake.outtakeSlideLeft.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("Outtake Slides Right Current", outtake.outtakeSlideRight.getCurrent(CurrentUnit.AMPS));
-            telemetry.addData("Outtake Slides Left Climb Current", outtake.outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
-            telemetry.addData("Outtake Slides Right Climb Current", outtake.outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
+            //telemetry.addData("Outtake Slides Left Climb Current", outtake.outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
+            //telemetry.addData("Outtake Slides Right Climb Current", outtake.outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
 
             telemetry.addLine("----------");
         }

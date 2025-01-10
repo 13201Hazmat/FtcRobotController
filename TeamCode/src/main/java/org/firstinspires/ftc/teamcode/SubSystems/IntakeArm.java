@@ -41,8 +41,8 @@ public class IntakeArm {
 
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.37), //0.42
-        PICKUP(0.28),//0.32
+        PRE_PICKUP(0.38), //0.42
+        PICKUP(0.27),//0.32
         POST_PICKUP(0.35),//0.34
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
