@@ -136,7 +136,7 @@ public class AutonomousLeftSample1 extends LinearOpMode {
             trajFirstBucketToYellowSampleNear, trajYellowSampleNearToBucket,
             trajBucketToYellowSampleMiddle, trajYellowSampleMiddleToBucket,
             trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
-            trajBucketToSubmerssiblePark;
+            trajBucketToSubmersiblePark;
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
@@ -155,11 +155,11 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
         preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //6,20.5,-45
-        bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(9));//-9
-        yellowSampleMiddle = new Pose2d(13.5, 19.5, Math.toRadians(-9));//23
-        yellowSampleFar = new Pose2d(11.5, 16.5, Math.toRadians(24.5));//41.5
+        firstBucket = new Pose2d(7.6, 17.5, Math.toRadians(-45)); //6,20.5,-45
+        bucket = new Pose2d(7.6, 17.5, Math.toRadians(-45)); //6.-16.5.-60
+        yellowSampleNear = new Pose2d(11.3, 17.2, Math.toRadians(-18.7));//-9
+        yellowSampleMiddle = new Pose2d(11.7, 18.3, Math.toRadians(-0.9));//23
+        yellowSampleFar = new Pose2d(13.7, 19, Math.toRadians(17.6));//41.5
         submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
         submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
 
@@ -200,7 +200,7 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                 .strafeToLinearHeading(bucket.position, bucket.heading)
                 .build();
 
-        trajBucketToSubmerssiblePark = drive.actionBuilder(bucket)
+        trajBucketToSubmersiblePark = drive.actionBuilder(bucket)
                 .setTangent(0)
                 .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
                 .build();
@@ -212,22 +212,7 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
-                        trajInitToFirstBucket,
-                        new SleepAction(0.2),
-                        trajFirstBucketToYellowSampleNear,
-                        new SleepAction(0.2),
-                        trajYellowSampleNearToBucket,
-                        new SleepAction(0.2),
-                        trajBucketToYellowSampleMiddle,
-                        new SleepAction(0.2),
-                        trajYellowSampleMiddleToBucket,
-                        new SleepAction(0.2),
-                        trajBucketToYellowSampleFar,
-                        new SleepAction(0.2),
-                        trajYellowSampleFarToBucket,
-                        new SleepAction(0.2),
-                        trajBucketToSubmerssiblePark
-                        /*
+
                         new ParallelAction(
                                 trajInitToFirstBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
@@ -262,7 +247,8 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
-                        ),
+                        )
+                        /*
                         new ParallelAction(
                                 trajBucketToYellowSampleMiddle,
                                 intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
@@ -314,12 +300,13 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
                         new ParallelAction(
-                                trajBucketToSubmerssiblePark,
+                                trajBucketToSubmersiblePark,
                                 intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                         ),
                         new SleepAction(1)
 
                          */
+
                 )
         );
 
