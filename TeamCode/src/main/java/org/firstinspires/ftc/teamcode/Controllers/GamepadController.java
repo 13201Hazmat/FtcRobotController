@@ -202,18 +202,6 @@ public class GamepadController {
                 }
             }
         }
-        /*intakeArm.senseIntakeSampleColor();
-        if (intakeArm.intakeSampleSensed &&
-                intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP &&
-                intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
-            intakeOuttakeController.moveArm(IntakeArm.ARM_STATE.POST_PICKUP);
-            gp2RumbleFine(200);
-            if (intakeOuttakeController.autoTransferEnabled) {
-                intakeOuttakeController.initiateAutoTransfer = true;
-            } else {
-                intakeOuttakeController.initiateAutoTransfer = false;
-            }
-        }*/
     }
 
     public void runOuttake(){

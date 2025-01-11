@@ -191,6 +191,20 @@ public class IntakeOuttakeController {
         outtake.moveArm(toOuttakeArmState);
     }
 
+    public Action moveOuttakeArmOnlyToAction(Outtake.ARM_STATE toOuttakeArmState) {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                moveOuttakeArm(toOuttakeArmState);
+                return false;
+            }
+        };
+    }
+
     public Action moveOuttakeArmToAction(Outtake.ARM_STATE toOuttakeArmState) {
         return new Action() {
             @Override
@@ -199,7 +213,12 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                outtake.moveArm(toOuttakeArmState);
+                Actions.runBlocking(
+                        new SequentialAction(
+                                moveOuttakeArmOnlyToAction(toOuttakeArmState),
+                                new SleepAction(0.5)
+                        )
+                );
                 return false;
             }
         };
@@ -314,7 +333,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                outtake.moveArm(Outtake.ARM_STATE.DROP);
+                //outtake.moveArm(Outtake.ARM_STATE.DROP);
                 moveOuttakeSlidesTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
                 return false;
             }
@@ -330,6 +349,22 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 outtake.resetOuttakeMotorMode();
+                return false;
+            }
+        };
+    }
+
+    public Action resetOuttakeSlidesTouchAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                if (outtake.outtakeTouch.getState() == false) {
+                outtake.resetOuttakeMotorMode();
+                }
                 return false;
             }
         };
@@ -398,16 +433,17 @@ public class IntakeOuttakeController {
                 Actions.runBlocking(
                         new SequentialAction(
                                 moveOuttakeArmToAction(Outtake.ARM_STATE.PRE_TRANFER),
+                                moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
                                 moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
                                 new SleepAction(0.200+ 0.100* intakeSlides.slideExtensionFactor()),
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                new SleepAction(0.2),
+                                //moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
+                                new SleepAction(0.4),
                                 moveOuttakeToAction(Outtake.ARM_STATE.TRANSFER),
                                 new SleepAction(0.1),
                                 closeOuttakeGripAction(),//TODO : Fix same as teleop
-                                new SleepAction(0.8),
+                                new SleepAction(0.2),
                                 openIntakeGripAction(),
-                                new SleepAction(0.4),
+                                new SleepAction(0.1),
                                 moveIntakeArmToAction(IntakeArm.ARM_STATE.POST_TRANSFER),
                                 new SleepAction(0.2)
                         )
