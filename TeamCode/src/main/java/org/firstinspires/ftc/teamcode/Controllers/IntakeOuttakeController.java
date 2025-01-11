@@ -27,7 +27,7 @@ public class IntakeOuttakeController {
     public Vision vision;
     LinearOpMode currentOpMode;
 
-    public boolean autoTransferEnabled = true;
+    public boolean autoTransferEnabled = false;
     public boolean initiateAutoTransfer = false;
 
     public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, Vision vision, LinearOpMode currentOpMode) {
@@ -321,6 +321,20 @@ public class IntakeOuttakeController {
         };
     }
 
+    public Action resetOuttakeSlidesAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                outtake.resetOuttakeMotorMode();
+                return false;
+            }
+        };
+    }
+
     public void pickupSequence(){
         moveIntakeArm(IntakeArm.ARM_STATE.PICKUP);
         safeWaitMilliSeconds(200);
@@ -362,7 +376,7 @@ public class IntakeOuttakeController {
         //moveArm(IntakeArm.ARM_STATE.TRANSFER);
         outtake.senseOuttakeSampleColor();
         //safeWaitMilliSeconds(700);//500
-        safeWaitTillOuttakeSensorSensedMilliSeconds(200);
+        safeWaitTillOuttakeSensorSensedMilliSeconds(400);
         moveOuttakeArm(Outtake.ARM_STATE.TRANSFER);//Added
         safeWaitMilliSeconds(100);
         outtake.closeGrip();

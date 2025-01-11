@@ -13,7 +13,7 @@ public class IntakeSlides {
     public enum SLIDES_STATE {
         TRANSFER_MIN_RETRACTED (0.15, 0.195),
         IN_BETWEEN(0.3,0.345),
-        MAX_EXTENSION(0.595, 0.64);
+        MAX_EXTENSION(0.450, 0.495); //0.595,0.64
 
         public double leftSlidePos;
         public double rightSlidePos;

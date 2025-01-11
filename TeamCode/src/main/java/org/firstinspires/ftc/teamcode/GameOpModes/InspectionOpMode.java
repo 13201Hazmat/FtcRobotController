@@ -79,13 +79,14 @@ public class InspectionOpMode extends LinearOpMode {
             if (opModeIsActive()) {
                 //Move subsystems to maximum extended position
                 intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
-                intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+                intakeArm.moveArm(IntakeArm.ARM_STATE.INSPECTION);
+                intakeArm.moveWristAndSwivel(IntakeArm.ARM_STATE.INSPECTION);
                 intakeArm.closeGrip();
                 gamepadController.safeWaitMilliSeconds(1000);
-                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_BUCKET);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.LOW_BUCKET);
                 outtake.moveArm(Outtake.ARM_STATE.DROP);
                 //outtake.moveWristDrop();
-                outtake.openGrip();
+                outtake.closeGrip();
             }
 
             while (opModeIsActive()) {

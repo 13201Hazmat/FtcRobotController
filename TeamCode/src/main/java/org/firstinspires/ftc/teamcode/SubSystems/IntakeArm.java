@@ -44,9 +44,10 @@ public class IntakeArm {
         PRE_PICKUP(0.38), //0.42
         PICKUP(0.27),//0.32
         POST_PICKUP(0.35),//0.34
+        INSPECTION(0.35),
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
-        INIT(0.57), //vertically up
+        INIT(0.60), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
         DYNAMIC(0.68);
@@ -64,6 +65,7 @@ public class IntakeArm {
         //Go to pick up position and wrist should be vertically down
         PICKUP(0.88),//0.94
         EJECT(0.56),//0.66
+        INSPECTION(0.56),
         POST_PICKUP(0.56),//0.66
         POST_TRANSFER(0.38),//0.39
         PRE_TRANSFER(0.38),//0.39
@@ -125,7 +127,7 @@ public class IntakeArm {
     }
 
     public void moveArm(ARM_STATE toIntakeArmState){
-        //moveWristAndSwivel(toIntakeArmState);
+        moveWristAndSwivel(toIntakeArmState);
         intakeArmServo.setPosition(toIntakeArmState.armPos);
         intakeArmState = toIntakeArmState;
     }
@@ -137,6 +139,11 @@ public class IntakeArm {
             case LOWEST:
                 intakeWristServo.setPosition(WRIST_STATE.PRE_TRANSFER.wristPosition);
                 intakeWristState = WRIST_STATE.PRE_TRANSFER;
+                moveSwivelCentered();
+                break;
+            case INSPECTION:
+                intakeWristServo.setPosition(WRIST_STATE.INSPECTION.wristPosition);
+                intakeWristState = WRIST_STATE.INSPECTION;
                 moveSwivelCentered();
                 break;
             case EJECT_OR_PRE_TRANSFER:

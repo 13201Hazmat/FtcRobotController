@@ -6,6 +6,7 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -29,6 +30,7 @@ public class Outtake {
     //public DcMotorEx outtakeSlideLeftClimb;
     public DcMotorEx outtakeSlideRight;
     //public DcMotorEx outtakeSlideRightClimb;
+    public DigitalChannel outtakeTouch;
 
     public enum GRIP_STATE {
         OPEN(0.52), //0.59 max
@@ -65,7 +67,7 @@ public class Outtake {
         PRE_TRANSFER(0.21),
         TRANSFER(0.21),//0.240.55
         //PRE_DROP(0.73),
-        HIGH_CHAMBER(0.64),
+        HIGH_CHAMBER(0.66),
         DROP(0.68),//0.96
         MAX(0.68);
 
@@ -83,10 +85,10 @@ public class Outtake {
     public enum SLIDE_STATE {
         TRANSFER(0),
         LOW_BUCKET(700), //710 for 223, 508 for 312 (350 for 435rpm motor)
-        HIGH_BUCKET(2500), //2340 for 223, 1673 for 312 (1200 for 435rpm motor)
+        HIGH_BUCKET(2400), //2340 for 223, 1673 for 312 (1200 for 435rpm motor)
         HIGH_CHAMBER(125),
-        CLIMBER2(1400), //1400 for 223, 1000 for 312 ( for 435rpm motor)
-        MAX_EXTENDED(2925); //2925 for 223, 2091 for 312 (1500 for 435rpm motor)
+        CLIMBER2(1200), //1400 for 223, 1000 for 312 ( for 435rpm motor)
+        MAX_EXTENDED(2800); //2925 for 223, 2091 for 312 (1500 for 435rpm motor)
 
         public final double motorPosition;
         SLIDE_STATE(double motorPosition) {
@@ -122,6 +124,8 @@ public class Outtake {
         outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
         //outtakeSlideLeftClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_left");
         //outtakeSlideRightClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_right");
+        outtakeTouch = hardwareMap.get(DigitalChannel .class, "outtakeTouch");
+
         initOuttake();
     }
 
@@ -351,6 +355,37 @@ public class Outtake {
         return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 50);
     }
 
+    public double isOuttakeSlidesLeftInStateError = 0;
+    public double isOuttakeSlidesRightInStateError = 0;
+    public boolean isOuttakeSlidesInTransfer() {
+        //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
+        isOuttakeSlidesLeftInStateError = outtakeSlideLeft.getCurrentPosition();
+        isOuttakeSlidesRightInStateError = outtakeSlideRight.getCurrentPosition();
+        return (isOuttakeSlidesLeftInStateError < 50 || isOuttakeSlidesRightInStateError < 20);
+    }
+
+    public void safetyReset(){
+        if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
+            if (outtakeTouch.getState() == false) {//PRESSED
+                resetOuttakeMotorMode();
+                outtakeStallTimingFlag = false;
+            } else {
+                if (!outtakeStallTimingFlag) {
+                    outtakeStallTimingFlag = true;
+                    outtakeStallTimer.reset();
+                } else {
+                    if (outtakeStallTimer.time() > STALL_TIME) {
+                        resetOuttakeMotorMode();
+                        outtakeStallTimingFlag = false;
+                    }
+                }
+            }
+        } else {
+            outtakeStallTimingFlag = false;
+        }
+    }
+
+
     public boolean isOuttakeInTransfer(){
         return (isOuttakeSlidesInState(SLIDE_STATE.TRANSFER) &&
                         outtakeArmState == ARM_STATE.TRANSFER &&
@@ -365,10 +400,10 @@ public class Outtake {
     public boolean outtakeSensingActivated = true;
     public boolean outtakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
-    public double SENSE_DISTANCE = 20;
+    public double SENSE_DISTANCE = 10;
     public float[] sensedSampleHsvValues = new float[3];
     public NormalizedRGBA sensedColor;
-    public double outtakeSensingDistance = 70;
+    public double outtakeSensingDistance = 500;
 
     public void senseOuttakeSampleColor(){
         if (outtakeSensingActivated) {
@@ -399,6 +434,7 @@ public class Outtake {
         telemetry.addData("    isOuttakeSlidesInTransfer", isOuttakeSlidesInState(SLIDE_STATE.TRANSFER));
         telemetry.addData("    outtakeStallTimingFlag", outtakeStallTimingFlag);
         telemetry.addData("    outtakeStallTimer.time", outtakeStallTimer.time());
+        telemetry.addData("    outtakeTouch.getState", outtakeTouch.getState());
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
         //telemetry.addData("    Left Climb Motor Position", outtakeSlideLeftClimb.getCurrentPosition());

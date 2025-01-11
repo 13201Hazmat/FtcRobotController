@@ -113,6 +113,7 @@ public class GamepadController {
         if (gp1GetRightBumperPress()) {
             switch (intakeArm.intakeArmState) {
                 case INIT:
+                case INSPECTION:
                 case EJECT_OR_PRE_TRANSFER:
                 case LOWEST:
                 case DYNAMIC:
@@ -190,7 +191,7 @@ public class GamepadController {
 
         if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP &&
                 intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
-            safeWaitMilliSeconds(200);
+            //safeWaitMilliSeconds(200);
             intakeArm.senseIntakeSampleColor();
             if (intakeArm.intakeSampleSensed) {
                 gp2RumbleFine(200);
@@ -348,19 +349,7 @@ public class GamepadController {
             }
         }
 
-        if (outtake.outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
-            if (!outtake.outtakeStallTimingFlag) {
-                outtake.outtakeStallTimingFlag = true;
-                outtake.outtakeStallTimer.reset();
-            } else {
-                if (outtake.outtakeStallTimer.time() > outtake.STALL_TIME) {
-                    outtake.resetOuttakeMotorMode();
-                    outtake.outtakeStallTimingFlag = false;
-                }
-            }
-        } else {
-            outtake.outtakeStallTimingFlag = false;
-        }
+        outtake.safetyReset();
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********
