@@ -157,15 +157,15 @@ public class AutonomousRightSpecimen1 extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
 
-        submersibleSpecimenPreload = new Pose2d(-31, -1.2, Math.toRadians(0));
+        submersibleSpecimenPreload = new Pose2d(-31.5, -1.2, Math.toRadians(0));
         //postSpecimenPreload = new Pose2d(-20, 28, Math.toRadians(121));
-        colorSampleNear = new Pose2d(-17, 26.7, Math.toRadians(160.5));//-26
+        colorSampleNear = new Pose2d(-17, 26.7, Math.toRadians(162.5));//-26
         colorSampleMiddle = new Pose2d(-17, 26.7, Math.toRadians(145));//121
         colorSampleFar = new Pose2d(-17, 26.7, Math.toRadians(140));
-        observationDrop = new Pose2d(-17, 26.7, Math.toRadians(34));
+        observationDrop = new Pose2d(-17, 26.7, Math.toRadians(45));
         //prePickupSpecimenOne = new Pose2d(4, -28, Math.toRadians(-175)); //-180
         pickupSpecimenOne = new Pose2d(-17, 26.7, Math.toRadians(10)); //-180
-        submersibleSpecimenOne = new Pose2d(-30.7, -4.8, Math.toRadians(0));
+        submersibleSpecimenOne = new Pose2d(-29.7, -4.8, Math.toRadians(0));
         //prePickupSpecimenTwo = new Pose2d(8, -28, Math.toRadians(-175)); //-180
         pickupSpecimenTwo = new Pose2d(-7.3, 10.3, Math.toRadians(75)); //-180
         submersibleSpecimenTwo = new Pose2d(-30.7, -9, Math.toRadians(0));
@@ -174,7 +174,7 @@ public class AutonomousRightSpecimen1 extends LinearOpMode {
         submersibleSpecimenThree = new Pose2d(-26.7, -11, Math.toRadians(0));
         pickupSpecimenFour = new Pose2d(-7.3, 23.3, Math.toRadians(60)); //-180
         submersibleSpecimenFour = new Pose2d(-26.7, -13, Math.toRadians(0));
-        observationPark = new Pose2d(-7.3, 25.4, Math.toRadians(75));
+        observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -309,14 +309,14 @@ public class AutonomousRightSpecimen1 extends LinearOpMode {
                         //Move Color Sample Near to Observation Zone
                         trajSubmersiblePreloadToColorSampleNear,
                         intakeOuttakeController.moveOuttakeToTransferAction(),
-                        new SleepAction(0.1),
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.7, 20),
-                        new SleepAction(0.4),
-                        intakeOuttakeController.pickupSequenceAction(),
                         new SleepAction(0.2),
+                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.67, 30),
+                        new SleepAction(0.6),
+                        intakeOuttakeController.pickupSequenceAction(),
+                        new SleepAction(0.3),
                         trajColorSampleNearToObservationDrop,
-                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1, 20),
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1, 90),
                         new SleepAction(0.4),
                         intakeOuttakeController.openIntakeGripAction(),
 
