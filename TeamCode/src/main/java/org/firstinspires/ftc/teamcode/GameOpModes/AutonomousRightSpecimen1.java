@@ -301,8 +301,9 @@ public class AutonomousRightSpecimen1 extends LinearOpMode {
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
                         //Drop Prelaod specimen
-                        intakeOuttakeController.moveOuttakeToHighChamberAction(),
+                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER),
                         trajInitToSubmersiblePreload,
+                        intakeOuttakeController.moveOuttakeToHighChamberAction(),
                         new SleepAction(0.3),
                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
 

@@ -156,11 +156,11 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         preBucket = new Pose2d(7, 0, Math.toRadians(0));
         firstBucket = new Pose2d(11, 14, Math.toRadians(-45)); //6,20.5,-45//7.6,17.5
         bucket = new Pose2d(8, 16, Math.toRadians(-45)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(16.7, 13.5, Math.toRadians(10.6));//11.3.17.2,-18.7
-        yellowSampleMiddle = new Pose2d(15.7, 16.75, Math.toRadians(33));//23
+        yellowSampleNear = new Pose2d(16.7, 13.5, Math.toRadians(13));//12
+        yellowSampleMiddle = new Pose2d(15.7, 16.75, Math.toRadians(32));//31.5
         yellowSampleFar = new Pose2d(14.7, 19, Math.toRadians(45));//41.5
-        submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
-        submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
+        submersiblePrePark = new Pose2d(55, 6.5, Math.toRadians(90)); //60,6.5,90
+        submersiblePark = new Pose2d(55, -16, Math.toRadians(90));//60,-16,90
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();

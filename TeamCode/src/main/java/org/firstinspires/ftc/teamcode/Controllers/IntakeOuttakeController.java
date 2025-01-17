@@ -261,7 +261,6 @@ public class IntakeOuttakeController {
             @Override
             public void preview(Canvas canvas) {
             }
-
             @Override
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
@@ -409,7 +408,7 @@ public class IntakeOuttakeController {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitMilliSeconds(200+ 200* intakeSlides.slideExtensionFactor());//100
         //moveArm(IntakeArm.ARM_STATE.TRANSFER);
-        outtake.senseOuttakeSampleColor();
+        //outtake.senseOuttakeSampleColor();
         //safeWaitMilliSeconds(700);//500
         safeWaitTillOuttakeSensorSensedMilliSeconds(400);
         moveOuttakeArm(Outtake.ARM_STATE.TRANSFER);//Added

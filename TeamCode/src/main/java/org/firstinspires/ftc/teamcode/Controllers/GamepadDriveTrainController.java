@@ -85,9 +85,9 @@ public class GamepadDriveTrainController extends Thread{
      */
     public double limitStick(double stickInput) {
         if (GameField.turboFactor) {
-            return (stickInput * stickInput * stickInput * 0.50); //0.50
+            return (stickInput * stickInput * stickInput * 0.6); //0.50
         } else {
-            return (stickInput * stickInput * stickInput * 0.8);
+            return (stickInput * stickInput * stickInput * 0.9);
         }
     }
 

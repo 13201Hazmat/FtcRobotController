@@ -47,7 +47,7 @@ public class IntakeArm {
         INSPECTION(0.35),
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
-        INIT(0.60), //vertically up
+        INIT(0.64), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
         DYNAMIC(0.68);
@@ -71,7 +71,7 @@ public class IntakeArm {
         PRE_TRANSFER(0.38),//0.39
         TRANSFER(0.1), //0.070.13
         SWEEP(0.61),
-        INIT(0.32),//0.22
+        INIT(0.16),//0.22
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -137,8 +137,8 @@ public class IntakeArm {
         switch (intakeArmState){
             case INIT:
             case LOWEST:
-                intakeWristServo.setPosition(WRIST_STATE.PRE_TRANSFER.wristPosition);
-                intakeWristState = WRIST_STATE.PRE_TRANSFER;
+                intakeWristServo.setPosition(WRIST_STATE.INIT.wristPosition);
+                intakeWristState = WRIST_STATE.INIT;
                 moveSwivelCentered();
                 break;
             case INSPECTION:
