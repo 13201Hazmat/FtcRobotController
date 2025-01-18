@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -27,9 +28,9 @@ public class Outtake {
     public Servo outtakeGripServo;
     public NormalizedColorSensor outtakeSensor;
     public DcMotorEx outtakeSlideLeft;
-    //public DcMotorEx outtakeSlideLeftClimb;
+    public DcMotorEx outtakeSlideLeftClimb;
     public DcMotorEx outtakeSlideRight;
-    //public DcMotorEx outtakeSlideRightClimb;
+    public DcMotorEx outtakeSlideRightClimb;
     public DigitalChannel outtakeTouch;
 
     public enum GRIP_STATE {
@@ -122,8 +123,8 @@ public class Outtake {
         outtakeSensor = hardwareMap.get(NormalizedColorSensor.class, "outtake_sensor");
         outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
         outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
-        //outtakeSlideLeftClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_left");
-        //outtakeSlideRightClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_right");
+        outtakeSlideLeftClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_left");
+        outtakeSlideRightClimb = hardwareMap.get(DcMotorEx.class, "outtake_climb_right");
         outtakeTouch = hardwareMap.get(DigitalChannel .class, "outtakeTouch");
 
         initOuttake();
@@ -256,25 +257,31 @@ public class Outtake {
     public void turnOuttakeBrakeModeOn(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         outtakeSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        //outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        //outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOff(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         outtakeSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        //outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        //outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
+    public int outtakeMotorDirection = 1;
     //Sets outtake slides to Transfer position
     public void moveOuttakeSlides(SLIDE_STATE toOuttakeMotorState){
         turnOuttakeBrakeModeOn();
+        if (toOuttakeMotorState.motorPosition - outtakeSlideLeft.getTargetPosition() >= 0) {
+            outtakeMotorDirection = 1;
+        } else {
+            outtakeMotorDirection = -1;
+        }
         outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        //outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        //outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
@@ -298,39 +305,39 @@ public class Outtake {
         if (runOuttakeMotorToLevelState == true){
             outtakeSlideLeft.setPower(power);
             outtakeSlideRight.setPower(power);
-            //outtakeSlideLeftClimb.setPower(power);
-            //outtakeSlideRightClimb.setPower(power);
+            outtakeSlideLeftClimb.setPower(outtakeMotorDirection * power);
+            outtakeSlideRightClimb.setPower(outtakeMotorDirection * power);
             runOuttakeMotorToLevelState = false;
         } else{
             outtakeSlideLeft.setPower(0.0);
             outtakeSlideRight.setPower(0.0);
-            //outtakeSlideLeftClimb.setPower(0.0);
-            //outtakeSlideRightClimb.setPower(0.0);
+            outtakeSlideLeftClimb.setPower(0.0);
+            outtakeSlideRightClimb.setPower(0.0);
         }
     }
 
     //Resets the arm
     public void resetOuttakeMotorMode(){
-        DcMotorEx.RunMode runModeOuttakeSlideLeft = outtakeSlideLeft.getMode();
-        DcMotorEx.RunMode runModeOuttakeSlideRight = outtakeSlideRight.getMode();
-        //DcMotorEx.RunMode runModeOuttakeSlideLeftClimb = outtakeSlideLeftClimb.getMode();
-        //DcMotorEx.RunMode runModeOuttakeSlideRightClimb = outtakeSlideRightClimb.getMode();
+        DcMotorEx.RunMode runModeOuttakeSlideLeft = DcMotorEx.RunMode.RUN_USING_ENCODER;
+        DcMotorEx.RunMode runModeOuttakeSlideRight = DcMotorEx.RunMode.RUN_USING_ENCODER;
+        DcMotorEx.RunMode runModeOuttakeSlideLeftClimb = DcMotorEx.RunMode.RUN_WITHOUT_ENCODER;
+        DcMotorEx.RunMode runModeOuttakeSlideRightClimb = DcMotorEx.RunMode.RUN_WITHOUT_ENCODER;
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        //outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        //outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         outtakeSlideLeft.setMode(runModeOuttakeSlideLeft);
         outtakeSlideRight.setMode(runModeOuttakeSlideRight);
-        //outtakeSlideLeftClimb.setMode(runModeOuttakeSlideLeftClimb);
-        //outtakeSlideRightClimb.setMode(runModeOuttakeSlideRightClimb);
+        outtakeSlideLeftClimb.setMode(runModeOuttakeSlideLeftClimb);
+        outtakeSlideRightClimb.setMode(runModeOuttakeSlideRightClimb);
         outtakeSlideLeft.setPositionPIDFCoefficients(10.0);
         outtakeSlideRight.setPositionPIDFCoefficients(10.0);
-        //outtakeSlideLeftClimb.setPositionPIDFCoefficients(10.0);
-        //outtakeSlideRightClimb.setPositionPIDFCoefficients(10.0);
+        outtakeSlideLeftClimb.setPositionPIDFCoefficients(10.0);
+        outtakeSlideRightClimb.setPositionPIDFCoefficients(10.0);
         outtakeSlideLeft.setDirection(DcMotorEx.Direction.REVERSE);
         outtakeSlideRight.setDirection(DcMotorEx.Direction.FORWARD);
-        //outtakeSlideLeftClimb.setDirection(DcMotorEx.Direction.FORWARD);
-        //outtakeSlideRightClimb.setDirection(DcMotorEx.Direction.REVERSE);
+        outtakeSlideLeftClimb.setDirection(DcMotorEx.Direction.FORWARD);
+        outtakeSlideRightClimb.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     //TODO : Add logic to use Voltage Sensor to measure motor stalling and reset.
