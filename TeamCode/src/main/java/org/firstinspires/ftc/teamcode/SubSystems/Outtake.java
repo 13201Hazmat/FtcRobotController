@@ -84,11 +84,11 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(700), //710 for 223, 508 for 312 (350 for 435rpm motor)
-        HIGH_BUCKET(2400), //2340 for 223, 1673 for 312 (1200 for 435rpm motor)
-        HIGH_CHAMBER(125),
-        CLIMBER2(1200), //1400 for 223, 1000 for 312 ( for 435rpm motor)
-        MAX_EXTENDED(2800); //2925 for 223, 2091 for 312 (1500 for 435rpm motor)
+        LOW_BUCKET(350), //700 for 223, 508 for 312 (350 for 435rpm motor)
+        HIGH_BUCKET(2900), //2400 for 223, 1673 for 312 (2100 for 435rpm motor)
+        HIGH_CHAMBER(50), //125 for 223
+        CLIMBER2(1800), //1200 for 223, 1000 for 312 ( 1200 for 435rpm motor)
+        MAX_EXTENDED(3100); //2800 for 223, 2091 for 312 (2400 for 435rpm motor)
 
         public final double motorPosition;
         SLIDE_STATE(double motorPosition) {
@@ -109,7 +109,7 @@ public class Outtake {
 
     public ElapsedTime outtakeStallTimer = new ElapsedTime(MILLISECONDS);
     public boolean outtakeStallTimingFlag = false;
-    public double STALL_TIME = 1500;
+    public double STALL_TIME = 5000;
 
     public boolean runOuttakeMotorToLevelState = false;
 
@@ -368,7 +368,7 @@ public class Outtake {
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
             if (outtakeTouch.getState() == false) {//PRESSED
                 resetOuttakeMotorMode();
-                outtakeStallTimingFlag = false;
+                //outtakeStallTimingFlag = false;
             } else {
                 if (!outtakeStallTimingFlag) {
                     outtakeStallTimingFlag = true;

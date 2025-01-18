@@ -337,7 +337,7 @@ public class GamepadController {
             }
         }
 
-        outtake.safetyReset();
+        //outtake.safetyReset();
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********
