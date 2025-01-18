@@ -51,6 +51,7 @@ public class Outtake {
         TRANSFER(0.1),
         DROP(0.66),
         HIGH_CHAMBER(0.66),
+        HIGH_CHAMBER_LATCH(0.66),
         MAX(0.66);
 
         private double armPos;
@@ -68,6 +69,7 @@ public class Outtake {
         TRANSFER(0.21),//0.240.55
         //PRE_DROP(0.73),
         HIGH_CHAMBER(0.66),
+        HIGH_CHAMBER_LATCH(0.66),
         DROP(0.68),//0.96
         MAX(0.68);
 
@@ -84,11 +86,12 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(350), //700 for 223, 508 for 312 (350 for 435rpm motor)
-        HIGH_BUCKET(2900), //2400 for 223, 1673 for 312 (2100 for 435rpm motor)
-        HIGH_CHAMBER(50), //125 for 223
-        CLIMBER2(1800), //1200 for 223, 1000 for 312 ( 1200 for 435rpm motor)
-        MAX_EXTENDED(3100); //2800 for 223, 2091 for 312 (2400 for 435rpm motor)
+        LOW_BUCKET(508), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350 for 435rpm motor gobilda pulley)
+        HIGH_BUCKET(1673), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100 for 435rpm motor gobilda pulley)
+        HIGH_CHAMBER(0), //125 for 223 large pulley
+        HIGH_CHAMBER_LATCH(100),
+        CLIMBER2(1000), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200 for 435rpm motor gobilda pulley)
+        MAX_EXTENDED(2100); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400 for 435rpm motor gobilda pulley)
 
         public final double motorPosition;
         SLIDE_STATE(double motorPosition) {
@@ -187,6 +190,10 @@ public class Outtake {
             case HIGH_CHAMBER:
                 outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER.wristPos);
                 outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
+                break;
+            case HIGH_CHAMBER_LATCH:
+                outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER_LATCH.wristPos);
+                outtakeWristState = WRIST_STATE.HIGH_CHAMBER_LATCH;
                 break;
             case MAX:
                 outtakeWristServo.setPosition(WRIST_STATE.MAX.wristPos);

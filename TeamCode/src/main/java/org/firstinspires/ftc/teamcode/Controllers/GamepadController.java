@@ -137,14 +137,26 @@ public class GamepadController {
                         intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                     }
                     break;
+                case SPECIMEN_PICKUP:
+                    intakeArm.toggleGrip();
+                    if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
+                        intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_PRE_TRANSFER);
+                    }
             }
         }
+
+        if (gp1GetLeftTriggerPress()) {;
+            intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
+        }
+
 
         if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.PRE_PICKUP || intakeArm.intakeArmState == IntakeArm.ARM_STATE.PICKUP) {
             GameField.turboFactor = true;
         } else {
             GameField.turboFactor = false;
         }
+
+
 
         if (gp1DpadEnabled) {
             if (!gp1GetStart() && gp1GetSquarePress()) {
