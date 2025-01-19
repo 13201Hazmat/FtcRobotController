@@ -215,8 +215,8 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
                         new SequentialAction(
-                                moveOuttakeArmOnlyToAction(toOuttakeArmState),
-                                new SleepAction(0.5)
+                                moveOuttakeArmOnlyToAction(toOuttakeArmState)//,
+                                //new SleepAction(0.5) TODO : PICKUP_SPEEDUP Check
                         )
                 );
                 return false;
@@ -362,8 +362,53 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 if (outtake.outtakeTouch.getState() == false) {
-                outtake.resetOuttakeMotorMode();
+                    outtake.stopOuttakeClimbMotors();
+                    outtake.resetOuttakeMotorMode();
                 }
+                return false;
+            }
+        };
+    }
+
+    public Action stopOuttakeClimbMotorsAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                if (outtake.outtakeTouch.getState() == false) {
+                    outtake.stopOuttakeClimbMotors();
+                }
+                return false;
+            }
+        };
+    }
+
+    public void pickupSequenceSpecimen(){
+        intakeArm.closeGrip();
+        safeWaitMilliSeconds(100);
+        moveIntakeArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP);
+        safeWaitMilliSeconds(100);
+
+    }
+
+    public Action pickupSequenceSpecimenAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                Actions.runBlocking(
+                        new SequentialAction(
+                                closeIntakeGripAction(),
+                                new SleepAction(0.1),
+                                moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP)
+                        )
+                );
                 return false;
             }
         };
@@ -375,7 +420,7 @@ public class IntakeOuttakeController {
         intakeArm.closeGrip();
         safeWaitMilliSeconds(100);
         moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-        safeWaitMilliSeconds(100);
+        //safeWaitMilliSeconds(100); TODO: PICKUP_SPEEDUP Check
 
     }
 

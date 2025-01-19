@@ -22,7 +22,7 @@ public class IntakeArm {
     public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
-        OPEN_AUTO(0.42), //0.50 max
+        OPEN_WIDE(0.42), //0.50 max
         OPEN(0.38),
         LOOSENED(0.13),//0.15
         CLOSED(0.07);//0.11
@@ -43,17 +43,17 @@ public class IntakeArm {
 
 
         LOWEST(0.33), // Perpendicular to the ground downwards
-        PRE_PICKUP(0.38), //0.42
+        PRE_PICKUP(0.40), //0.42
         PICKUP(0.27),//0.32
-        POST_PICKUP(0.35),//0.34
+        POST_PICKUP(0.40),//0.34
         INSPECTION(0.35),
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
         INIT(0.64), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
-        SPECIMEN_PICKUP(0.52),
-        SPECIMEN_PICKUP_PRE_TRANSFER(0.52),
+        SPECIMEN_PRE_PICKUP(0.52),
+        SPECIMEN_PICKUP_POST_PICKUP(0.52),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -72,12 +72,11 @@ public class IntakeArm {
         INSPECTION(0.56),
         POST_PICKUP(0.56),//0.66
         POST_TRANSFER(0.38),//0.39
-        PRE_TRANSFER(0.38),//0.39
         TRANSFER(0.1), //0.070.13
         SWEEP(0.61),
         INIT(0.16),//0.22
         SPECIMEN_PICKUP(0.38),
-        SPECIMEN_PICKUP_PRE_TRANSFER(0.2),
+        SPECIMEN_PICKUP_POST_PICKUP(0.2),
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -178,14 +177,14 @@ public class IntakeArm {
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
-            case SPECIMEN_PICKUP:
+            case SPECIMEN_PRE_PICKUP:
                 intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
                 intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
                 moveSwivelCentered();
                 break;
-            case SPECIMEN_PICKUP_PRE_TRANSFER:
-                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP_PRE_TRANSFER.wristPosition);
-                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP_PRE_TRANSFER;
+            case SPECIMEN_PICKUP_POST_PICKUP:
+                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP_POST_PICKUP.wristPosition);
+                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP_POST_PICKUP;
                 moveSwivelCentered();
                 break;
         }
@@ -272,8 +271,9 @@ public class IntakeArm {
      *If state of hand grip is set to open, set position of servo's to specified
      */
     public void openGrip(){
-        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
-            intakeGripServo.setPosition(GRIP_STATE.OPEN_AUTO.gripPosition);
+        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS ||
+                intakeArmState == ARM_STATE.SPECIMEN_PRE_PICKUP) {
+            intakeGripServo.setPosition(GRIP_STATE.OPEN_WIDE.gripPosition);
         } else {
             intakeGripServo.setPosition(GRIP_STATE.OPEN.gripPosition);
         }

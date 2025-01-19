@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 
@@ -63,12 +64,16 @@ public class DriveTrain extends MecanumDrive{
        telemetry.addData("Perpendicular / RF Encoder", rightFront.getCurrentPosition());
        telemetry.addData("RB Encoder", rightBack.getCurrentPosition());
        telemetry.addData("LF motor is busy", leftFront.isBusy());
+       telemetry.addData("LF motor is current", leftFront.getCurrent(CurrentUnit.AMPS));
        telemetry.addData("LF motor is over current", leftFront.isOverCurrent());
        telemetry.addData("LB motor is busy", leftBack.isBusy());
+        telemetry.addData("LB motor is current", leftBack.getCurrent(CurrentUnit.AMPS));
        telemetry.addData("LB motor is over current", leftBack.isOverCurrent());
        telemetry.addData("RF motor is busy", rightFront.isBusy());
+        telemetry.addData("RF motor is current", rightFront.getCurrent(CurrentUnit.AMPS));
        telemetry.addData("RF motor is over current", rightFront.isOverCurrent());
        telemetry.addData("RB motor is busy", rightBack.isBusy());
+        telemetry.addData("RB motor is current", rightBack.getCurrent(CurrentUnit.AMPS));
        telemetry.addData("RB motor is over current", rightBack.isOverCurrent());
 
        telemetry.addLine("=============");

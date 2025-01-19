@@ -213,8 +213,9 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
-                        trajInitToFirstBucket,
+                        //trajInitToFirstBucket,
                         new ParallelAction(
+                                trajInitToFirstBucket,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 10),
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
@@ -225,26 +226,23 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
                         ),
                         new ParallelAction(
+                                trajFirstBucketToYellowSampleNear,
                                 intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
                         ),
-                        new SleepAction(0.3),
-                        //intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER),
+                        //new SleepAction(0.3),
+                        //trajFirstBucketToYellowSampleNear,
                         //intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        trajFirstBucketToYellowSampleNear,
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         new SleepAction(0.13),
-                        //Try new SleepAction(0.5),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        //Try intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        trajYellowSampleNearToBucket,
-                        new SleepAction(0.2),
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
                         new ParallelAction(
+                                //new SleepAction(0.2),
+                                intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
+                        ),
+                        new ParallelAction(
+                                trajYellowSampleNearToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
                         ),
@@ -254,56 +252,63 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
                         ),
                         new ParallelAction(
+                                trajBucketToYellowSampleMiddle,
                                 intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)//,
                         ),
-                        new SleepAction(0.3),
-                        trajBucketToYellowSampleMiddle,
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
+                        //new SleepAction(0.3),
+                        //trajBucketToYellowSampleMiddle,
+                        //intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         new SleepAction(0.13),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        //intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        //intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.closeIntakeGripAction(),
-                        trajYellowSampleMiddleToBucket,
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
                         new ParallelAction(
+                                //new SleepAction(0.2),
+                                intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
+                        ),
+                        new ParallelAction(
+                                trajYellowSampleMiddleToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
                         ),
                         intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.DROP),
                         new ParallelAction(
-                                //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -30),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
                         ),
                         new ParallelAction(
+                                trajBucketToYellowSampleFar,
                                 intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
+                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)//,
                         ),
-                        new SleepAction(0.3),
-                        /*trajBucketToYellowSampleFar,
+                        //new SleepAction(0.3),
+                        //trajBucketToYellowSampleFar,
+                        //intakeOuttakeController.resetOuttakeSlidesTouchAction(),
+                        new SleepAction(0.13),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        intakeOuttakeController.resetOuttakeSlidesTouchAction(),
-                        intakeOuttakeController.closeIntakeGripAction(),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
-                        trajYellowSampleFarToBucket,
                         new ParallelAction(
+                                //new SleepAction(0.2),
+                                intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
+                        ),
+                        new ParallelAction(
+                                trajYellowSampleFarToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
                         ),
                         intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.DROP),
-                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                         new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
+                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
+                        ),
+                        new ParallelAction(
+                                trajBucketToSubmersiblePark,
                                 intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                                //intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
-                        ),*/
-                        trajBucketToSubmersiblePark,
+                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)//,
+                        ),
+                        //trajBucketToSubmersiblePark,
                         intakeOuttakeController.resetOuttakeSlidesAction(),
                         intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction(),
                         new SleepAction(1)

@@ -50,8 +50,10 @@ public class Outtake {
         INIT(0.04),
         PRE_TRANFER(0.06),
         TRANSFER(0.1),
+        AUTO_PRE_DROP(0.5),
         DROP(0.66),
         HIGH_CHAMBER(0.66),
+        HIGH_CHAMBER_LATCH(0.66),
         MAX(0.66);
 
         private double armPos;
@@ -67,8 +69,9 @@ public class Outtake {
         INIT(0.20),
         PRE_TRANSFER(0.21),
         TRANSFER(0.21),//0.240.55
-        //PRE_DROP(0.73),
+        AUTO_PRE_DROP(0.68),
         HIGH_CHAMBER(0.66),
+        HIGH_CHAMBER_LATCH(0.66),
         DROP(0.68),//0.96
         MAX(0.68);
 
@@ -183,12 +186,20 @@ public class Outtake {
                 outtakeWristState = WRIST_STATE.TRANSFER;
                 openGrip();
                 break;
+            case AUTO_PRE_DROP:
+                outtakeWristServo.setPosition(WRIST_STATE.AUTO_PRE_DROP.wristPos);
+                outtakeWristState = WRIST_STATE.AUTO_PRE_DROP;
+                break;
             case DROP:
                 outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
                 outtakeWristState = WRIST_STATE.DROP;
                 break;
             case HIGH_CHAMBER:
                 outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER.wristPos);
+                outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
+                break;
+            case HIGH_CHAMBER_LATCH:
+                outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER_LATCH.wristPos);
                 outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
                 break;
             case MAX:
@@ -461,12 +472,14 @@ public class Outtake {
         telemetry.addData("    outtakeTouch.getState", outtakeTouch.getState());
         telemetry.addData("    Left Motor Position", outtakeSlideLeft.getCurrentPosition());
         telemetry.addData("    Right Motor Position", outtakeSlideRight.getCurrentPosition());
-        //telemetry.addData("    Left Climb Motor Position", outtakeSlideLeftClimb.getCurrentPosition());
-        //telemetry.addData("    Right Climb Motor Position", outtakeSlideRightClimb.getCurrentPosition());
+        telemetry.addData("    Left Motor isBusy", outtakeSlideLeft.isBusy());
+        telemetry.addData("    Right Motor isBusy", outtakeSlideRight.isBusy());
+        telemetry.addData("    Left Climb Motor isBusy", outtakeSlideLeftClimb.isBusy());
+        telemetry.addData("    Right Climb Motor isBusy", outtakeSlideRightClimb.isBusy());
         telemetry.addData("    Outtake Slides Left Current", outtakeSlideLeft.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("    Outtake Slides Right Current", outtakeSlideRight.getCurrent(CurrentUnit.AMPS));
-        //telemetry.addData("    Outtake Slides Left Climb Current", outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
-        //telemetry.addData("    Outtake Slides Right Climb Current", outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("    Outtake Slides Left Climb Current", outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("    Outtake Slides Right Climb Current", outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
 
         telemetry.addLine("=============");
         telemetry.addLine("Outtake Arm");
