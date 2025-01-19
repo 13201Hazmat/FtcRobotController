@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class IntakeArm {
@@ -21,9 +22,10 @@ public class IntakeArm {
     public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
-        OPEN(0.42), //0.50 max
-        LOOSENED(0.04),//0.15
-        CLOSED(0.0);//0.11
+        OPEN_AUTO(0.42), //0.50 max
+        OPEN(0.38),
+        LOOSENED(0.13),//0.15
+        CLOSED(0.07);//0.11
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -256,7 +258,11 @@ public class IntakeArm {
      *If state of hand grip is set to open, set position of servo's to specified
      */
     public void openGrip(){
-        intakeGripServo.setPosition(GRIP_STATE.OPEN.gripPosition);
+        if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
+            intakeGripServo.setPosition(GRIP_STATE.OPEN_AUTO.gripPosition);
+        } else {
+            intakeGripServo.setPosition(GRIP_STATE.OPEN.gripPosition);
+        }
         intakeGripState = GRIP_STATE.OPEN;
     }
 

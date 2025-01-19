@@ -85,11 +85,13 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(700), //710 for 223, 508 for 312 (350 for 435rpm motor)
-        HIGH_BUCKET(2400), //2340 for 223, 1673 for 312 (1200 for 435rpm motor)
-        HIGH_CHAMBER(125),
-        CLIMBER2(1200), //1400 for 223, 1000 for 312 ( for 435rpm motor)
-        MAX_EXTENDED(2800); //2925 for 223, 2091 for 312 (1500 for 435rpm motor)
+        LOW_BUCKET(508), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350 for 435rpm motor gobilda pulley)
+        HIGH_BUCKET(1673), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100 for 435rpm motor gobilda pulley)
+        HIGH_CHAMBER(0), //125 for 223 large pulley
+        HIGH_CHAMBER_LATCH(100),
+        CLIMBER2(1000), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200 for 435rpm motor gobilda pulley)
+        MAX_EXTENDED(2100); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400 for 435rpm motor gobilda pulley)
+
 
         public final double motorPosition;
         SLIDE_STATE(double motorPosition) {
@@ -257,8 +259,8 @@ public class Outtake {
     public void turnOuttakeBrakeModeOn(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         outtakeSlideRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
     //Turns on the brake for Outtake motor
@@ -280,8 +282,8 @@ public class Outtake {
         }
         outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        //outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
+        //outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
@@ -309,11 +311,19 @@ public class Outtake {
             outtakeSlideRightClimb.setPower(outtakeMotorDirection * power);
             runOuttakeMotorToLevelState = false;
         } else{
-            outtakeSlideLeft.setPower(0.0);
-            outtakeSlideRight.setPower(0.0);
-            outtakeSlideLeftClimb.setPower(0.0);
-            outtakeSlideRightClimb.setPower(0.0);
+            stopOuttakeMotors();
         }
+    }
+    
+    public void stopOuttakeMotors(){
+        outtakeSlideLeft.setPower(0.0);
+        outtakeSlideRight.setPower(0.0);
+        stopOuttakeClimbMotors();
+    }
+
+    public void stopOuttakeClimbMotors(){
+        outtakeSlideLeftClimb.setPower(0.0);
+        outtakeSlideRightClimb.setPower(0.0);
     }
 
     //Resets the arm
@@ -374,9 +384,10 @@ public class Outtake {
     public void safetyReset(){
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
             if (outtakeTouch.getState() == false) {//PRESSED
+                stopOuttakeMotors();
                 resetOuttakeMotorMode();
-                outtakeStallTimingFlag = false;
-            } else {
+                //outtakeStallTimingFlag = false;
+            } /*else {
                 if (!outtakeStallTimingFlag) {
                     outtakeStallTimingFlag = true;
                     outtakeStallTimer.reset();
@@ -389,7 +400,13 @@ public class Outtake {
             }
         } else {
             outtakeStallTimingFlag = false;
+        }*/
+        } else {
+            if (isOuttakeSlidesInState(outtakeSlidesState)){
+                stopOuttakeClimbMotors();
+            }
         }
+
     }
 
 
