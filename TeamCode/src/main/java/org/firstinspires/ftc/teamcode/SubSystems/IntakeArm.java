@@ -52,6 +52,8 @@ public class IntakeArm {
         INIT(0.64), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
+        SPECIMEN_PICKUP(0.52),
+        SPECIMEN_PICKUP_PRE_TRANSFER(0.52),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -74,6 +76,8 @@ public class IntakeArm {
         TRANSFER(0.1), //0.070.13
         SWEEP(0.61),
         INIT(0.16),//0.22
+        SPECIMEN_PICKUP(0.38),
+        SPECIMEN_PICKUP_PRE_TRANSFER(0.2),
         DYNAMIC(0.16);
 
         private final double wristPosition;
@@ -172,6 +176,16 @@ public class IntakeArm {
             case POST_TRANSFER:
                 intakeWristServo.setPosition(WRIST_STATE.POST_TRANSFER.wristPosition);
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
+                moveSwivelCentered();
+                break;
+            case SPECIMEN_PICKUP:
+                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
+                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
+                moveSwivelCentered();
+                break;
+            case SPECIMEN_PICKUP_PRE_TRANSFER:
+                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP_PRE_TRANSFER.wristPosition);
+                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP_PRE_TRANSFER;
                 moveSwivelCentered();
                 break;
         }
