@@ -70,10 +70,10 @@ public class GamepadController {
     public GamepadController(Gamepad hzGamepad1,
                              Gamepad hzGamepad2,
                              //Lights lights,
-                             IntakeArm intakeArm,
-                             IntakeSlides intakeSlides,
-                             IntakeOuttakeController intakeOuttakeController,
-                             Outtake outtake,
+                             //IntakeArm intakeArm,
+                             //IntakeSlides intakeSlides,
+                             //IntakeOuttakeController intakeOuttakeController,
+                             //Outtake outtake,
                              Telemetry telemetry,
                              LinearOpMode currentOpMode
     ) {

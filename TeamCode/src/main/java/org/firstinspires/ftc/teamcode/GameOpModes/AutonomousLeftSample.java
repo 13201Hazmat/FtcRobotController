@@ -39,7 +39,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -66,11 +65,11 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 public class AutonomousLeftSample extends LinearOpMode {
 
     public GamepadController gamepadController;
-    public IntakeOuttakeController intakeOuttakeController;
+    //public IntakeOuttakeController intakeOuttakeController;
     public DriveTrain driveTrain;
-    public IntakeArm intakeArm;
-    public IntakeSlides intakeSlides;
-    public Outtake outtake;
+    //public IntakeArm intakeArm;
+    //public IntakeSlides intakeSlides;
+    //public Outtake outtake;
     public Vision vision;
     //public Lights lights;
 
@@ -119,23 +118,18 @@ public class AutonomousLeftSample extends LinearOpMode {
 
     //List All Poses
     Pose2d initPose = new Pose2d(0, 0, Math.toRadians(0)); // Starting Pose
-    Pose2d preBucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d firstBucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d bucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleNear = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d finalBucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
 
     double intialWaitTime = 0;
 
     //List all Trajectories
-    Action trajInitToFirstBucket,
-            trajFirstBucketToYellowSampleNear, trajYellowSampleNearToBucket,
-            trajBucketToYellowSampleMiddle, trajYellowSampleMiddleToBucket,
-            trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
-            trajBucketToSubmerssiblePark;
+    Action trajInitToBucket,
+            trajNearToMiddle, trajMiddleToFar,
+            trajFartoDrop, trajBucketToSubmersiblePark;
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
@@ -153,156 +147,56 @@ public class AutonomousLeftSample extends LinearOpMode {
 
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(6, 20.5, Math.toRadians(-45)); //6,20.5,-45
-        bucket = new Pose2d(6, 16.5, Math.toRadians(-60)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(13.5, 19.5, Math.toRadians(9));//-9
-        yellowSampleMiddle = new Pose2d(13.5, 19.5, Math.toRadians(-9));//23
-        yellowSampleFar = new Pose2d(11.5, 16.5, Math.toRadians(24.5));//41.5
-        submersiblePrePark = new Pose2d(60, 6.5, Math.toRadians(90)); //60,6.5,90
-        submersiblePark = new Pose2d(60, -16, Math.toRadians(90));//60,-16,90
+        yellowSampleNear = new Pose2d(11.8, 43.9, Math.toRadians(-18));//12
+        yellowSampleMiddle = new Pose2d(11.8, 43.9, Math.toRadians(0));//31.5
+        yellowSampleFar = new Pose2d(14.7, 19, Math.toRadians(18));//41.5
+        finalBucket = new Pose2d(11.8, 43.9, Math.toRadians(-18));
+        submersiblePark = new Pose2d(55, -16, Math.toRadians(90));//60,-16,90
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
 
-        trajInitToFirstBucket = drive.actionBuilder(initPose)
-                //.strafeToLinearHeading(preBucket.position, preBucket.heading)
-                //.strafeToLinearHeading(firstBucket.position, firstBucket.heading)
+        trajInitToBucket = drive.actionBuilder(initPose)
                 .setTangent(Math.toRadians(45))
-                .splineToLinearHeading(firstBucket, Math.toRadians(90))
+                .splineToLinearHeading(yellowSampleNear, Math.toRadians(120))
                 .build();
 
-        //move to yellow sample one
-        trajFirstBucketToYellowSampleNear = drive.actionBuilder(firstBucket)
-                .strafeToLinearHeading(yellowSampleNear.position, yellowSampleNear.heading)
-                .build();
-
-        trajYellowSampleNearToBucket = drive.actionBuilder(yellowSampleNear)
-                .strafeToLinearHeading(bucket.position, bucket.heading)
-                .build();
-
-        trajBucketToYellowSampleMiddle = drive.actionBuilder(bucket)
-                .strafeToLinearHeading(yellowSampleMiddle.position, yellowSampleMiddle.heading)
-                .build();
-
-        trajYellowSampleMiddleToBucket = drive.actionBuilder(yellowSampleMiddle)
-                .strafeToLinearHeading(bucket.position, bucket.heading,
+        trajNearToMiddle = drive.actionBuilder(yellowSampleNear)
+                .strafeToLinearHeading(yellowSampleMiddle.position, yellowSampleMiddle.heading,
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToYellowSampleFar = drive.actionBuilder(bucket)
+        trajMiddleToFar = drive.actionBuilder(yellowSampleMiddle)
                 .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
+                        new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
-                .strafeToLinearHeading(bucket.position, bucket.heading)
+        trajFartoDrop = drive.actionBuilder(yellowSampleFar)
+                .strafeToLinearHeading(finalBucket.position, finalBucket.heading,
+                        new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToSubmerssiblePark = drive.actionBuilder(bucket)
+        trajBucketToSubmersiblePark = drive.actionBuilder(yellowSampleFar)
                 .setTangent(0)
                 .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
                 .build();
 
     }
 
+
     public void runAutonomousMode() {
         Actions.runBlocking(
                 new SequentialAction(
                         new SleepAction(intialWaitTime),
-                        new ParallelAction(
-                                trajInitToFirstBucket,
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
-                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
-                        ),
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
-                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
-                        ),
-                        new ParallelAction(
-                                trajFirstBucketToYellowSampleNear,
-                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                        ),
-                        new SleepAction(0.13),
-                        intakeOuttakeController.pickupSequenceAction1(),
-                        //intakeOuttakeController.closeIntakeGripAction(),
-                        //trajYellowSampleNearToBucket,
+                        trajInitToBucket,
                         new SleepAction(0.2),
-                        new ParallelAction(
-                                trajYellowSampleNearToBucket,
-                                new SequentialAction(
-                                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
-                                        new ParallelAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
-                                        )
-                                )
-                        ),
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
-                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
-                        ),
-                        new ParallelAction(
-                                trajBucketToYellowSampleMiddle,
-                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                        ),
-                        new SleepAction(0.13),
-                        //intakeOuttakeController.pickSampleToOuttakePreDropAction(),
-                        intakeOuttakeController.pickupSequenceAction1(),
-                        intakeOuttakeController.closeIntakeGripAction(),
-                        //trajYellowSampleMiddleToBucket,
-                        new ParallelAction(
-                                trajYellowSampleMiddleToBucket,
-                                new SequentialAction(
-                                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
-                                        new ParallelAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
-                                        )
-                                )
-                        ),
-                        new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -30),
-                                intakeOuttakeController.dropSamplefromOuttakeOnlyAction()
-                        ),
-                        new ParallelAction(
-                                trajBucketToYellowSampleFar,
-                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                        ),
-                        intakeOuttakeController.pickupSequenceAction1(),
-                        intakeOuttakeController.closeIntakeGripAction(),
-                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
-                        new ParallelAction(
-                                trajYellowSampleFarToBucket,
-                                new SequentialAction(
-                                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakePreDropAction(),
-                                        new ParallelAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction()
-                                        )
-                                )
-                        ),
-                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
-                        new ParallelAction(
-                                intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                        ),
-                        new ParallelAction(
-                                trajBucketToSubmerssiblePark,
-                                intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
-                        ),
-                        new SleepAction(1)
+                        trajNearToMiddle,
+                        new SleepAction(0.2),
+                        trajMiddleToFar,
+                        new SleepAction(0.2),
+                        trajBucketToSubmersiblePark
                 )
         );
-
     }
 
     //method to wait safely with stop button working if needed. Use this instead of sleep
@@ -312,6 +206,7 @@ public class AutonomousLeftSample extends LinearOpMode {
         while (!isStopRequested() && timer.time() < time) {
         }
     }
+
 
     public void initSubsystems(){
 
@@ -328,17 +223,17 @@ public class AutonomousLeftSample extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        outtake = new Outtake(hardwareMap, telemetry);
+        //outtake = new Outtake(hardwareMap, telemetry);
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
         safeWaitSeconds(1);
 
-        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        //intakeArm = new IntakeArm(hardwareMap, telemetry);
         telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
 
-        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        //intakeSlides = new IntakeSlides(hardwareMap, telemetry);
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
@@ -357,12 +252,11 @@ public class AutonomousLeftSample extends LinearOpMode {
         //telemetry.addLine("Gamepad DriveTrain Initialized");
         //telemetry.update();
 
-        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
+        //intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
-                outtake, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -408,9 +302,9 @@ public class AutonomousLeftSample extends LinearOpMode {
             telemetry.addData("Position", position);
 
             driveTrain.printDebugMessages();
-            intakeArm.printDebugMessages();
-            intakeSlides.printDebugMessages();
-            outtake.printDebugMessages();
+            //intakeArm.printDebugMessages();
+            //intakeSlides.printDebugMessages();
+            //outtake.printDebugMessages();
             //lights.printDebugMessages();
         }
         telemetry.update();

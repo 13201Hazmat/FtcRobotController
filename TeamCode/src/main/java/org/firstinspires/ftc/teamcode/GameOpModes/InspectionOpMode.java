@@ -148,8 +148,7 @@ public class InspectionOpMode extends LinearOpMode {
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
-                outtake, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 

@@ -37,7 +37,7 @@ public class TeleOpModeThread extends LinearOpMode {
     public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
     public Vision vision;
-    public Lights lights;
+    //public Lights lights;
 
     //Static Class for knowing system state
 
@@ -78,7 +78,7 @@ public class TeleOpModeThread extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
-                gamepadController.runByGamepadControl();
+                //gamepadController.runByGamepadControl();
                 //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
 
 
@@ -111,17 +111,17 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
         telemetry.update();
 
-        outtake = new Outtake(hardwareMap, telemetry);
+        //outtake = new Outtake(hardwareMap, telemetry);
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
         safeWaitSeconds(0.2);
 
-        intakeArm = new IntakeArm(hardwareMap, telemetry);
+       // intakeArm = new IntakeArm(hardwareMap, telemetry);
         telemetry.addLine("IntakeArm Initialized");
         telemetry.update();
 
-        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        //intakeSlides = new IntakeSlides(hardwareMap, telemetry);
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
@@ -130,16 +130,15 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.update();
 
         /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
+        //lights = new Lights(hardwareMap, telemetry);
         telemetry.addLine("Lights Initialized");
         telemetry.update();
 
-        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
+        //intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 
-        gamepadController = new GamepadController(gamepad1, gamepad2, intakeArm, intakeSlides, intakeOuttakeController,
-                outtake, telemetry, this);
+        gamepadController = new GamepadController(gamepad1, gamepad2, telemetry, this);
         telemetry.addLine("Gamepad Initialized");
         telemetry.update();
 
@@ -187,11 +186,11 @@ public class TeleOpModeThread extends LinearOpMode {
             telemetry.addData("Game Timer : ", gameTimer.time());
 
             driveTrain.printDebugMessages();
-            intakeArm.printDebugMessages();
-            intakeSlides.printDebugMessages();
-            outtake.printDebugMessages();
+            //intakeArm.printDebugMessages();
+            //intakeSlides.printDebugMessages();
+            //outtake.printDebugMessages();
             //vision.printDebugMessages();
-            lights.printDebugMessages();
+            //lights.printDebugMessages();
         }
         telemetry.update();
     }
