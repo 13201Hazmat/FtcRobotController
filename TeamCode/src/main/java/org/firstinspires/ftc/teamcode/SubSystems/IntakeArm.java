@@ -52,8 +52,8 @@ public class IntakeArm {
         INIT(0.64), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
-        SPECIMEN_PRE_PICKUP(0.52),
-        SPECIMEN_PICKUP_POST_PICKUP(0.52),
+        SPECIMEN_PRE_PICKUP(0.60),
+        SPECIMEN_PICKUP_POST_PICKUP(0.40),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -75,7 +75,7 @@ public class IntakeArm {
         TRANSFER(0.1), //0.070.13
         SWEEP(0.61),
         INIT(0.16),//0.22
-        SPECIMEN_PICKUP(0.38),
+        SPECIMEN_PICKUP(0.52),
         SPECIMEN_PICKUP_POST_PICKUP(0.2),
         DYNAMIC(0.16);
 

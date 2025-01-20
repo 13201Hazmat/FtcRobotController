@@ -215,8 +215,8 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
                         new SequentialAction(
-                                moveOuttakeArmOnlyToAction(toOuttakeArmState)//,
-                                //new SleepAction(0.5) TODO : PICKUP_SPEEDUP Check
+                                moveOuttakeArmOnlyToAction(toOuttakeArmState),
+                                new SleepAction(0.5)
                         )
                 );
                 return false;
@@ -334,6 +334,7 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 //outtake.moveArm(Outtake.ARM_STATE.DROP);
                 moveOuttakeSlidesTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
+                outtake.moveArm(Outtake.ARM_STATE.AUTO_PRE_DROP);
                 return false;
             }
         };

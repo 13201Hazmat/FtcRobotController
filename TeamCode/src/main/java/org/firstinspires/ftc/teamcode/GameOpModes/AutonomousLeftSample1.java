@@ -119,13 +119,13 @@ public class AutonomousLeftSample1 extends LinearOpMode {
 
     //List All Poses
     Pose2d initPose = new Pose2d(0, 0, Math.toRadians(0)); // Starting Pose
-    Pose2d preBucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d firstBucket = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d bucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleNear = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d nearBucket = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d middleBucket = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d farBucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
 
     double intialWaitTime = 0;
@@ -153,13 +153,13 @@ public class AutonomousLeftSample1 extends LinearOpMode {
 
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        preBucket = new Pose2d(7, 0, Math.toRadians(0));
-        firstBucket = new Pose2d(11, 14, Math.toRadians(-45)); //6,20.5,-45//7.6,17.5
-        bucket = new Pose2d(8, 16, Math.toRadians(-45)); //6.-16.5.-60
-        yellowSampleNear = new Pose2d(16.7, 13.5, Math.toRadians(13));//12
-        yellowSampleMiddle = new Pose2d(15.7, 16.75, Math.toRadians(32));//31.5
-        yellowSampleFar = new Pose2d(14.7, 19, Math.toRadians(45));//41.5
-        submersiblePrePark = new Pose2d(55, 6.5, Math.toRadians(90)); //60,6.5,90
+        firstBucket = new Pose2d(12.3, 20, Math.toRadians(-29)); //6,20.5,-45//7.6,17.5
+        yellowSampleNear = new Pose2d(15.7, 19.5, Math.toRadians(-26));//12
+        nearBucket = new Pose2d(12.3, 20, Math.toRadians(-26));
+        yellowSampleMiddle = new Pose2d(13.5, 21.6, Math.toRadians(-21));//31.5
+        middleBucket = new Pose2d(10, 23, Math.toRadians(-22));
+        yellowSampleFar = new Pose2d(16.7, 20, Math.toRadians(19));//41.5
+        farBucket = new Pose2d(10.5, 22, Math.toRadians(-25));
         submersiblePark = new Pose2d(55, -16, Math.toRadians(90));//60,-16,90
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
@@ -168,8 +168,8 @@ public class AutonomousLeftSample1 extends LinearOpMode {
         trajInitToFirstBucket = drive.actionBuilder(initPose)
                 //.strafeToLinearHeading(preBucket.position, preBucket.heading)
                 //.strafeToLinearHeading(firstBucket.position, firstBucket.heading)
-                .setTangent(Math.toRadians(45))
-                .splineToLinearHeading(firstBucket, Math.toRadians(120))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(firstBucket, Math.toRadians(90))
                 .build();
 
         //move to yellow sample one
@@ -178,30 +178,30 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                 .build();
 
         trajYellowSampleNearToBucket = drive.actionBuilder(yellowSampleNear)
-                .strafeToLinearHeading(bucket.position, bucket.heading,
+                .strafeToLinearHeading(nearBucket.position, nearBucket.heading,
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToYellowSampleMiddle = drive.actionBuilder(bucket)
+        trajBucketToYellowSampleMiddle = drive.actionBuilder(nearBucket)
                 .strafeToLinearHeading(yellowSampleMiddle.position, yellowSampleMiddle.heading)
                 .build();
 
         trajYellowSampleMiddleToBucket = drive.actionBuilder(yellowSampleMiddle)
-                .strafeToLinearHeading(bucket.position, bucket.heading,
+                .strafeToLinearHeading(middleBucket.position, middleBucket.heading,
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToYellowSampleFar = drive.actionBuilder(bucket)
+        trajBucketToYellowSampleFar = drive.actionBuilder(middleBucket)
                 .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
                         new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
         trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
-                .strafeToLinearHeading(bucket.position, bucket.heading,
+                .strafeToLinearHeading(farBucket.position, farBucket.heading,
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToSubmersiblePark = drive.actionBuilder(bucket)
+        trajBucketToSubmersiblePark = drive.actionBuilder(farBucket)
                 .setTangent(0)
                 .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
                 .build();
@@ -216,7 +216,7 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                         //trajInitToFirstBucket,
                         new ParallelAction(
                                 trajInitToFirstBucket,
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 10),
+                                //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 10),
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
                         ),
@@ -236,11 +236,12 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                         new SleepAction(0.13),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        new ParallelAction(
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
+                        /*new ParallelAction(
                                 //new SleepAction(0.2),
                                 intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
-                        ),
+                        ),*/
                         new ParallelAction(
                                 trajYellowSampleNearToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
@@ -262,11 +263,12 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                         new SleepAction(0.13),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        new ParallelAction(
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
+                        /*new ParallelAction(
                                 //new SleepAction(0.2),
                                 intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
-                        ),
+                        ),*/
                         new ParallelAction(
                                 trajYellowSampleMiddleToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
@@ -288,11 +290,12 @@ public class AutonomousLeftSample1 extends LinearOpMode {
                         new SleepAction(0.13),
                         intakeOuttakeController.resetOuttakeSlidesTouchAction(),
                         intakeOuttakeController.pickupSequenceAction(),
-                        new ParallelAction(
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
+                        /*new ParallelAction(
                                 //new SleepAction(0.2),
                                 intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction()
-                        ),
+                        ),*/
                         new ParallelAction(
                                 trajYellowSampleFarToBucket,
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
