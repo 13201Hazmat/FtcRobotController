@@ -27,7 +27,7 @@ public class TestVision extends LinearOpMode {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
 
-    ColorRange selectedTargetColor = ColorRange.BLUE;
+    ColorRange selectedTargetColor = ColorRange.YELLOW;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,12 +36,12 @@ public class TestVision extends LinearOpMode {
 
         initSubsystems();
 
-        selectColor();
+        //selectColor();
 
         while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            vision.locateNearestSamplefromRobot(selectedTargetColor);
+            vision.locateNearestSamplefromRobot();
 
             if (!gamepadController.gp1GetStart()) {
                 if (gamepadController.gp1GetRightBumperPress()) {

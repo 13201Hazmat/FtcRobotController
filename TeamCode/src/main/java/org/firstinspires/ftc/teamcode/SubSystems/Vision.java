@@ -30,7 +30,7 @@ public class Vision {
     public int Y_AREA_OF_INTEREST_MIN = 25; // Half Extension 0.5
     public double EXTENSION_FACTOR_MIN = 0.5;
 
-    public Vision(HardwareMap hardwareMap, Telemetry telemetry) {/*
+    public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -48,12 +48,13 @@ public class Vision {
                 .setCameraResolution(new Size(X_RANGE, Y_RANGE))
                 .setCamera(camera)
                 .build();
-                */
+
     }
 
     public boolean targetBlobDetected = false;
     public double yExtensionFactor = 0.0;
     public double xExtensionFactor = 0.0;
+    public double angle = 0.0;
 
     public ColorRange targetColor;
     public List<ColorBlobLocatorProcessor.Blob> blobs;
@@ -61,8 +62,7 @@ public class Vision {
     public int blockX = 0, blockY = 0;
     public int numberOfBlobsDetected = 0;
 
-    public void locateNearestSamplefromRobot(ColorRange toTargetColor) {/*
-        targetColor = toTargetColor;
+    public void locateNearestSamplefromRobot() {
         final double pixelToExtensionScale = 0.05;
 
         blobs = colorLocator.getBlobs();
@@ -83,8 +83,9 @@ public class Vision {
             yExtensionFactor = EXTENSION_FACTOR_MIN +
                     ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
                     / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
+            angle =  boxFit.angle;
         }
-        */
+
     }
 
     public void printDebugMessages(){

@@ -316,7 +316,7 @@ public class GamepadController {
 
         if(gp2GetTrianglePress()) {
             outtake.lastOuttakeSlideState = Outtake.SLIDE_STATE.HIGH_CHAMBER;
-            if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.TRANSFER) {
+            /*if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.TRANSFER) {
                 intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
                 safeWaitMilliSeconds(200);
             }
@@ -326,7 +326,7 @@ public class GamepadController {
                     safeWaitMilliSeconds(300);
                 }
                 outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
-            }
+            }*/
         }
 
         if(gp2GetCirclePress()) {

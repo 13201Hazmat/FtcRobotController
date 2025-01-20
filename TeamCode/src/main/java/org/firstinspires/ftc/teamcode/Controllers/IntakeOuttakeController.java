@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 
 public class IntakeOuttakeController {
@@ -102,6 +103,27 @@ public class IntakeOuttakeController {
                 intakeSlides.moveIntakeSlidesToRange(extensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 intakeArm.moveSwivelTo(swivelDegrees);
+                return false;
+            }
+        };
+    }
+
+    public Action extendIntakeArmByVisionAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                vision.locateNearestSamplefromRobot();
+                intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
+                moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                if (vision.angle > 45 && vision.angle < 135) {
+                    intakeArm.moveSwivelCentered();
+                } else {
+                    intakeArm.moveSwivelPerpendicular();
+                }
                 return false;
             }
         };
@@ -279,7 +301,7 @@ public class IntakeOuttakeController {
     public void moveOuttakeToHighChamber(){
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
-        safeWaitMilliSeconds(1000);
+        safeWaitMilliSeconds(500);
     }
 
     public Action moveOuttakeToHighChamberAction() {
@@ -294,6 +316,32 @@ public class IntakeOuttakeController {
                         new SequentialAction(
                                 moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER),
                                 moveOuttakeArmToAction(Outtake.ARM_STATE.HIGH_CHAMBER)//,
+                                //new SleepAction(1)
+                        )
+                );
+                return false;
+            }
+        };
+    }
+
+    public void moveOuttakeToHighChamberLatch(){
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH);
+        outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH);
+        safeWaitMilliSeconds(500);
+    }
+
+    public Action moveOuttakeToHighChamberLatchAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                Actions.runBlocking(
+                        new SequentialAction(
+                                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH),
+                                moveOuttakeArmToAction(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH)//,
                                 //new SleepAction(1)
                         )
                 );
@@ -388,11 +436,12 @@ public class IntakeOuttakeController {
     }
 
     public void pickupSequenceSpecimen(){
+        moveIntakeArm(IntakeArm.ARM_STATE.PICKUP);
+        safeWaitMilliSeconds(200);
         intakeArm.closeGrip();
         safeWaitMilliSeconds(100);
         moveIntakeArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP);
-        safeWaitMilliSeconds(100);
-
+        //moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
     }
 
     public Action pickupSequenceSpecimenAction() {
@@ -405,8 +454,11 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
                         new SequentialAction(
+                                moveIntakeArmToAction(IntakeArm.ARM_STATE.PICKUP),
+                                new SleepAction(0.2),
                                 closeIntakeGripAction(),
                                 new SleepAction(0.1),
+                                //moveIntakeArmToAction(IntakeArm.ARM_STATE.PRE_PICKUP)
                                 moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP)
                         )
                 );

@@ -90,7 +90,7 @@ public class Outtake {
         TRANSFER(0),
         LOW_BUCKET(508), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350 for 435rpm motor gobilda pulley)
         HIGH_BUCKET(1673), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100 for 435rpm motor gobilda pulley)
-        HIGH_CHAMBER(0), //125 for 223 large pulley
+        HIGH_CHAMBER(300), //125 for 223 large pulley
         HIGH_CHAMBER_LATCH(100),
         CLIMBER2(1000), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200 for 435rpm motor gobilda pulley)
         MAX_EXTENDED(2100); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400 for 435rpm motor gobilda pulley)

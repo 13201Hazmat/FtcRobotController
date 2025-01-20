@@ -41,7 +41,6 @@ public class IntakeArm {
         //Zero position - Intake arm vertically downward
         //Vertical up is 0.66
 
-
         LOWEST(0.33), // Perpendicular to the ground downwards
         PRE_PICKUP(0.40), //0.42
         PICKUP(0.27),//0.32
@@ -52,8 +51,8 @@ public class IntakeArm {
         INIT(0.64), //vertically up
         TRANSFER(0.66), //0.665
         SWEEP(0.03),
-        SPECIMEN_PRE_PICKUP(0.60),
-        SPECIMEN_PICKUP_POST_PICKUP(0.40),
+        SPECIMEN_PRE_PICKUP(0.35), //0.6
+        SPECIMEN_PICKUP_POST_PICKUP(0.40),//0.4
         DYNAMIC(0.68);
 
         private double armPos;
