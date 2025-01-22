@@ -38,7 +38,7 @@ public class Vision {
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(0.5, 1, 0.75, -0.25))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(0.5, 0.5, 1, 1))
                 .setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(5)                               // Smooth the transitions between different colors in imag/e
                 .build();
@@ -70,11 +70,12 @@ public class Vision {
 
         targetBlobDetected = !blobs.isEmpty();
 
+        double angle;
         if (targetBlobDetected) {
             numberOfBlobsDetected = blobs.size();
             ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(0);
             boxFit = closestBlob.getBoxFit();
-
+            angle = boxFit.angle;
             blockX = (int) boxFit.center.x;
             blockY = (int) boxFit.center.y;
 
@@ -88,12 +89,8 @@ public class Vision {
     public void printDebugMessages(){
         //******  debug ******
         telemetry.addLine("Vision");
-        telemetry.addData("    ROI range", "(%d, %d)", X_RANGE, Y_RANGE);
-        telemetry.addData("    Target Color", targetColor);
-        telemetry.addData("    Target Blob Detected", targetBlobDetected);
-        telemetry.addData("    Number of Blobs", blobs.size() );
         telemetry.addData("    Closest Block Position", "(%d, %d)", blockX, blockY);
-        //telemetry.addData("    xExtensionFactor", xExtensionFactor);
+        telemetry.addData("    Angle", boxFit.angle);
         telemetry.addData("    yExtensionFactor", yExtensionFactor);
         telemetry.addLine("=============");
     }
