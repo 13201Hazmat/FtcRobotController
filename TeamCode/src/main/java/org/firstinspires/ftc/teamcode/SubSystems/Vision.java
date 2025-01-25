@@ -25,20 +25,19 @@ public class Vision {
     public CameraName camera;
     public int X_RANGE = 320;
     public int Y_RANGE = 240;
-    public int Y_AREA_OF_INTEREST_MAX = 125; // Full Extenstion 1.0
+    public int Y_AREA_OF_INTEREST_MAX = 80; // Full Extenstion 1.0
     public double EXTENSION_FACTOR_MAX = 1.0;
-    public int Y_AREA_OF_INTEREST_MIN = 25; // Half Extension 0.5
+    public int Y_AREA_OF_INTEREST_MIN = 180; // Half Extension 0.5
     public double EXTENSION_FACTOR_MIN = 0.5;
 
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-
+        CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(0.5, 1, 0.75, -0.25))
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.3, 0.7, 0.3, -1.0))
                 .setDrawContours(true)                        // Show contours on the Stream Preview
                 .setBlurSize(5)                               // Smooth the transitions between different colors in imag/e
                 .build();

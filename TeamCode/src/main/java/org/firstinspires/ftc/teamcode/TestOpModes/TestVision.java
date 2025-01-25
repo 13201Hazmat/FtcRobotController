@@ -50,9 +50,6 @@ public class TestVision extends LinearOpMode {
                         case EJECT_OR_PRE_TRANSFER:
                         case LOWEST:
                         case DYNAMIC:
-                            GameField.turboFactor = false;
-                            intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                            break;
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;
@@ -179,6 +176,8 @@ public class TestVision extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TestVision");
             vision.printDebugMessages();
+            intakeSlides.printDebugMessages();
+            intakeArm.printDebugMessages();
 
             for (ColorBlobLocatorProcessor.Blob b : vision.blobs) {
                 RotatedRect boxFit = b.getBoxFit();

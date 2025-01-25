@@ -371,6 +371,7 @@ public class Outtake {
     public void manualResetOuttakeMotor(){
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
+        outtakeSlidesState = SLIDE_STATE.TRANSFER;
         outtakeSlideLeft.setTargetPosition((int) (outtakeSlideLeft.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         outtakeSlideRight.setTargetPosition((int) (outtakeSlideRight.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
         //outtakeSlideLeftClimb.setTargetPosition((int) (outtakeSlideLeftClimb.getCurrentPosition() - OUTTAKE_MOTOR_DELTA_COUNT_RESET));
@@ -380,6 +381,19 @@ public class Outtake {
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
         outtakeSlidesState = SLIDE_STATE.TRANSFER;
+    }
+
+    public void manualResetOuttakeMotor1() {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (timer.time() < 1200 && outtakeTouch.getState()) {
+            outtakeSlideLeft.setPower(-0.7);
+            outtakeSlideRight.setPower(-0.7);
+            outtakeSlideLeftClimb.setPower(-0.7);
+            outtakeSlideRightClimb.setPower(-0.7);
+        }
+        stopOuttakeMotors();
+        resetOuttakeMotorMode();
     }
 
     public double isOuttakeSlidesInStateError = 0;

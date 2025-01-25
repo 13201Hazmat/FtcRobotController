@@ -128,6 +128,7 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
     Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePick = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
 
     double intialWaitTime = 0;
@@ -143,15 +144,16 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(4.5, 18.5, Math.toRadians(-45)); //6,20.5,-45//7.6,17.5 //4, 18.5, -33
-        yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-11));//12
-        nearBucket = new Pose2d(9, 18.5, Math.toRadians(-25));
-        yellowSampleMiddle = new Pose2d(13.5, 20.5, Math.toRadians(17));;//31.5
-        middleBucket = new Pose2d(10, 20.5, Math.toRadians(-35));
-        yellowSampleFar = new Pose2d(14.5, 19.5, Math.toRadians(33));//41.5
-        farBucket = new Pose2d(10, 20.5, Math.toRadians(-35));
+        firstBucket = new Pose2d(5, 18, Math.toRadians(-60));
+        yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-16.25));
+        nearBucket = new Pose2d(8, 16, Math.toRadians(-40));
+        yellowSampleMiddle = new Pose2d(13.5, 20.5, Math.toRadians(3));;
+        middleBucket = new Pose2d(9, 16, Math.toRadians(-40));
+        yellowSampleFar = new Pose2d(15, 19.5, Math.toRadians(27));
+        farBucket = new Pose2d(9, 15, Math.toRadians(-40));
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
-        submersiblePark = new Pose2d(53, -16, Math.toRadians(90));//60,-16,90
+        submersiblePrePark = new Pose2d(47, 14, Math.toRadians(60));
+        submersiblePark = new Pose2d(54, -16, Math.toRadians(100));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -205,6 +207,8 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
 
         trajBucketToSubmersiblePark = drive.actionBuilder(farBucket)
                 .setTangent(0)
+                .splineToLinearHeading(submersiblePrePark, Math.toRadians(-15))
+                //.setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
                 .build();
 
