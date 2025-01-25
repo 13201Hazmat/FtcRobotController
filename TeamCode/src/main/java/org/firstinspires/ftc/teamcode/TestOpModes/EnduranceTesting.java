@@ -147,7 +147,7 @@ public class EnduranceTesting extends LinearOpMode {
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET),
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
-                                intakeOuttakeController.moveOuttakeToTransferAction(),
+                                intakeOuttakeController.moveOuttakeToPreTransferAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER),
                                 intakeOuttakeController.openOuttakeGripAction()
                         )
@@ -192,7 +192,7 @@ public class EnduranceTesting extends LinearOpMode {
                                 intakeOuttakeController.moveOuttakeHighBucketAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET),
                                 intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
-                                intakeOuttakeController.moveOuttakeToTransferAction(),
+                                intakeOuttakeController.moveOuttakeToPreTransferAction(),
                                 intakeOuttakeController.safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
                         )
                 );
@@ -214,7 +214,7 @@ public class EnduranceTesting extends LinearOpMode {
                                 intakeOuttakeController.pickupSequenceAction(),
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction(),
                                 intakeOuttakeController.moveOuttakeToHighChamberDropSpecimenAction(),
-                                intakeOuttakeController.moveOuttakeToTransferAction()
+                                intakeOuttakeController.moveOuttakeToPreTransferAction()
                         )
                 );
                 crossAvgTime = crossTimer.time()/ crossCounter;

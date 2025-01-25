@@ -33,7 +33,7 @@ public class Vision {
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
 
-        CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               CameraName camera = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match

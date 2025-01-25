@@ -4,9 +4,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -34,8 +32,8 @@ public class Outtake {
     public DigitalChannel outtakeTouch;
 
     public enum GRIP_STATE {
-        OPEN(0.52), //0.59 max
-        CLOSED(0.19);
+        OPEN(0.41), //0.52 max
+        CLOSED(0.17);
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -48,7 +46,7 @@ public class Outtake {
     public enum ARM_STATE {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.04),
-        PRE_TRANFER(0.06),
+        PRE_TRANSFER(0.06),
         TRANSFER(0.1),
         AUTO_PRE_DROP(0.5),
         DROP(0.66),
@@ -70,8 +68,8 @@ public class Outtake {
         PRE_TRANSFER(0.21),
         TRANSFER(0.21),//0.240.55
         AUTO_PRE_DROP(0.68),
-        HIGH_CHAMBER(0.66),
-        HIGH_CHAMBER_LATCH(0.66),
+        HIGH_CHAMBER(0.92),
+        HIGH_CHAMBER_LATCH(0.92),
         DROP(0.68),//0.96
         MAX(0.68);
 
@@ -88,12 +86,12 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(508), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350 for 435rpm motor gobilda pulley)
-        HIGH_BUCKET(1673), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100 for 435rpm motor gobilda pulley)
-        HIGH_CHAMBER(300), //125 for 223 large pulley
-        HIGH_CHAMBER_LATCH(100),
-        CLIMBER2(1000), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200 for 435rpm motor gobilda pulley)
-        MAX_EXTENDED(2100); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400 for 435rpm motor gobilda pulley)
+        LOW_BUCKET(550), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350/500 for 435rpm motor gobilda pulley)
+        HIGH_BUCKET(1550), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100/1300 for 435rpm motor gobilda pulley)
+        HIGH_CHAMBER(550), //125 for 223 large pulley
+        HIGH_CHAMBER_LATCH(290),
+        CLIMBER2(600), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200/600 for 435rpm motor gobilda pulley)
+        MAX_EXTENDED(1650); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400/1450 for 435rpm motor gobilda pulley)
 
 
         public final double motorPosition;
@@ -111,11 +109,13 @@ public class Outtake {
     public static final double OUTTAKE_MOTOR_DELTA_COUNT_RESET = 50;//200
 
     //Different constants of arm speed
-    public static final double OUTTAKE_MOTOR_POWER= 1.0;//0.75
+    public double outtakeMotorPower = 1.0;//0.75
 
     public ElapsedTime outtakeStallTimer = new ElapsedTime(MILLISECONDS);
     public boolean outtakeStallTimingFlag = false;
     public double STALL_TIME = 1500;
+
+    public boolean moveForwardFlagActivated = false;
 
     public boolean runOuttakeMotorToLevelState = false;
 
@@ -136,7 +136,7 @@ public class Outtake {
     }
 
     public void initOuttake(){
-        moveArm(ARM_STATE.TRANSFER);
+        moveArm(ARM_STATE.PRE_TRANSFER);
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
         outtakeSlidesState = SLIDE_STATE.TRANSFER;
@@ -154,6 +154,9 @@ public class Outtake {
 
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
             closeGrip();
+            outtakeMotorPower = 1.0;
+        } else {
+            outtakeMotorPower = 0.9; //0.9;
         }
     }
 
@@ -177,7 +180,7 @@ public class Outtake {
                 outtakeWristServo.setPosition(WRIST_STATE.INIT.wristPos);
                 outtakeWristState = WRIST_STATE.INIT;
                 break;
-            case PRE_TRANFER:
+            case PRE_TRANSFER:
                 outtakeWristServo.setPosition(WRIST_STATE.PRE_TRANSFER.wristPos);
                 outtakeWristState = WRIST_STATE.PRE_TRANSFER;
                 openGrip();
@@ -215,6 +218,8 @@ public class Outtake {
     }
 
     public void climb(){
+        outtakeMotorPower = 1.0;
+        turnOuttakeClimbBrakeModeOn();
         moveOuttakeSlides(SLIDE_STATE.CLIMBER2);
     }
 
@@ -225,14 +230,6 @@ public class Outtake {
     public void moveWristBackward(){
         outtakeWristServo.setPosition(outtakeWristServo.getPosition() - WRIST_DELTA);
     }
-
-    /*public void moveWristDrop(){
-        if (outtakeWristState == WRIST_STATE.PRE_DROP) {
-            outtakeWristServo.setPosition(WRIST_STATE.DROP.wristPos);
-            outtakeWristState = WRIST_STATE.DROP;
-        }
-        openGrip();
-    }*/
 
     /**
      *If state of hand grip is set to open, set position of servo's to specified
@@ -274,6 +271,11 @@ public class Outtake {
         outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
     }
 
+    public void turnOuttakeClimbBrakeModeOn(){
+        outtakeSlideLeftClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        outtakeSlideRightClimb.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    }
+
     //Turns on the brake for Outtake motor
     public void turnOuttakeBrakeModeOff(){
         outtakeSlideLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
@@ -293,8 +295,6 @@ public class Outtake {
         }
         outtakeSlideLeft.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlideRight.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        //outtakeSlideLeftClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
-        //outtakeSlideRightClimb.setTargetPosition((int)toOuttakeMotorState.motorPosition);
         outtakeSlidesState = toOuttakeMotorState;
         runOuttakeMotorToLevelState = true;
         runOuttakeMotorToLevel();
@@ -308,12 +308,10 @@ public class Outtake {
         } else {
             turnOuttakeBrakeModeOn();
         }
-        power = OUTTAKE_MOTOR_POWER;
+        power = outtakeMotorPower;
 
         outtakeSlideLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         outtakeSlideRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        //outtakeSlideLeftClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        //outtakeSlideRightClimb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         if (runOuttakeMotorToLevelState == true){
             outtakeSlideLeft.setPower(power);
@@ -323,6 +321,14 @@ public class Outtake {
             runOuttakeMotorToLevelState = false;
         } else{
             stopOuttakeMotors();
+        }
+    }
+
+    public void moveOuttakeSlidesToTransfer() {
+        if (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5) {
+            resetOuttakeMotorMode();
+        } else {
+            moveOuttakeSlides(SLIDE_STATE.TRANSFER);
         }
     }
     
@@ -378,40 +384,22 @@ public class Outtake {
 
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
-        //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 50);
-    }
-
-    public double isOuttakeSlidesLeftInStateError = 0;
-    public double isOuttakeSlidesRightInStateError = 0;
-    public boolean isOuttakeSlidesInTransfer() {
-        //isOuttakeSlidesInStateError = Math.abs(outtakeMotorLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
-        isOuttakeSlidesLeftInStateError = outtakeSlideLeft.getCurrentPosition();
-        isOuttakeSlidesRightInStateError = outtakeSlideRight.getCurrentPosition();
-        return (isOuttakeSlidesLeftInStateError < 50 || isOuttakeSlidesRightInStateError < 20);
+        if (toOuttakeSlideState != SLIDE_STATE.TRANSFER) {
+            isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
+            return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 15);
+        } else {
+            return ((outtakeTouch.getState() == false /*||
+                     (outtakeSlideLeft.getCurrentPosition() < 15 || outtakeSlideRight.getCurrentPosition() < 15)*/));
+        }
     }
 
     public void safetyReset(){
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
-            if (outtakeTouch.getState() == false) {//PRESSED
+            if (outtakeTouch.getState() == false /*||
+                     (outtakeSlideLeft.getCurrentPosition() < 15 || outtakeSlideRight.getCurrentPosition() < 15)*/) {//PRESSED
                 stopOuttakeMotors();
                 resetOuttakeMotorMode();
-                //outtakeStallTimingFlag = false;
-            } /*else {
-                if (!outtakeStallTimingFlag) {
-                    outtakeStallTimingFlag = true;
-                    outtakeStallTimer.reset();
-                } else {
-                    if (outtakeStallTimer.time() > STALL_TIME) {
-                        resetOuttakeMotorMode();
-                        outtakeStallTimingFlag = false;
-                    }
-                }
             }
-        } else {
-            outtakeStallTimingFlag = false;
-        }*/
         } else {
             if (isOuttakeSlidesInState(outtakeSlidesState)){
                 stopOuttakeClimbMotors();
@@ -421,15 +409,15 @@ public class Outtake {
     }
 
 
-    public boolean isOuttakeInTransfer(){
+    public boolean isOuttakeInPreTransfer(){
         return (isOuttakeSlidesInState(SLIDE_STATE.TRANSFER) &&
-                        outtakeArmState == ARM_STATE.TRANSFER &&
+                        outtakeArmState == ARM_STATE.PRE_TRANSFER &&
                         outtakeWristState == WRIST_STATE.TRANSFER);
     }
 
     public boolean isOuttakeReadyToDrop(){
         return ((outtakeArmState == ARM_STATE.DROP || outtakeArmState == ARM_STATE.HIGH_CHAMBER) &&
-                outtakeWristState == WRIST_STATE.DROP);
+                outtakeWristState == WRIST_STATE.DROP && outtakeGripState == GRIP_STATE.CLOSED);
     }
 
     public boolean outtakeSensingActivated = true;

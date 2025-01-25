@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 
 public class IntakeOuttakeController {
@@ -101,7 +100,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeSlides.moveIntakeSlidesToRange(extensionFactor);
-                moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                moveIntakeArm(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP);
                 intakeArm.moveSwivelTo(swivelDegrees);
                 return false;
             }
@@ -238,7 +237,7 @@ public class IntakeOuttakeController {
                 Actions.runBlocking(
                         new SequentialAction(
                                 moveOuttakeArmOnlyToAction(toOuttakeArmState),
-                                new SleepAction(0.5)
+                                new SleepAction(0.3)
                         )
                 );
                 return false;
@@ -269,16 +268,17 @@ public class IntakeOuttakeController {
     }
 
 
-    public void moveOuttakeToTransfer(){
-        if (!outtake.isOuttakeInTransfer()) {
-            outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
-            outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
+    public void moveOuttakeToPreTransfer(){
+        if (!outtake.isOuttakeInPreTransfer()) {
+            //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER); // TODO: TRY TRANSFERING FREELY
+            outtake.moveOuttakeSlidesToTransfer();
+            outtake.moveArm(Outtake.ARM_STATE.PRE_TRANSFER);
             outtake.openGrip();
             safeWaitMilliSeconds(500);
         }
     }
 
-    public Action moveOuttakeToTransferAction() {
+    public Action moveOuttakeToPreTransferAction() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -287,8 +287,11 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
                         new ParallelAction(
-                                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER),
+                                new SequentialAction(
+                                    moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                    safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
+                                ),
+                                moveOuttakeArmToAction(Outtake.ARM_STATE.PRE_TRANSFER),
                                 openOuttakeGripAction()
                         )
                 );
@@ -300,6 +303,7 @@ public class IntakeOuttakeController {
 
     public void moveOuttakeToHighChamber(){
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
+        safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.HIGH_CHAMBER);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
         safeWaitMilliSeconds(500);
     }
@@ -313,8 +317,11 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
-                        new SequentialAction(
-                                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER),
+                        new ParallelAction(
+                                new SequentialAction(
+                                        moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER),
+                                        safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_CHAMBER)
+                                ),
                                 moveOuttakeArmToAction(Outtake.ARM_STATE.HIGH_CHAMBER)//,
                                 //new SleepAction(1)
                         )
@@ -326,6 +333,7 @@ public class IntakeOuttakeController {
 
     public void moveOuttakeToHighChamberLatch(){
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH);
+        safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH);
         safeWaitMilliSeconds(500);
     }
@@ -339,10 +347,12 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
-                        new SequentialAction(
-                                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH),
-                                moveOuttakeArmToAction(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH)//,
-                                //new SleepAction(1)
+                        new ParallelAction(
+                                new SequentialAction(
+                                        moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH),
+                                        safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH)
+                                ),
+                                moveOuttakeArmToAction(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH)
                         )
                 );
                 return false;
@@ -361,10 +371,10 @@ public class IntakeOuttakeController {
                 Actions.runBlocking(
                         new SequentialAction(
                                 moveOuttakeToHighChamberAction(),
-                                new SleepAction(0.2),
+                                //new SleepAction(0.2),
                                 dropSamplefromOuttakeAction(),
-                                new SleepAction(0.2),
-                                moveOuttakeToTransferAction()
+                                //new SleepAction(0.2),
+                                moveOuttakeToPreTransferAction()
                         )
                 );
                 return false;
@@ -380,15 +390,21 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                //outtake.moveArm(Outtake.ARM_STATE.DROP);
-                moveOuttakeSlidesTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
-                outtake.moveArm(Outtake.ARM_STATE.AUTO_PRE_DROP);
+                Actions.runBlocking(
+                        new ParallelAction(
+                                new SequentialAction(
+                                        moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.HIGH_BUCKET),
+                                        safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.HIGH_BUCKET)
+                                ),
+                                moveOuttakeArmToAction(Outtake.ARM_STATE.AUTO_PRE_DROP)
+                        )
+                );
                 return false;
             }
         };
     }
 
-    public Action resetOuttakeSlidesAction() {
+    public Action moveOuttakeHighBucketAction1() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -396,7 +412,24 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                outtake.resetOuttakeMotorMode();
+                outtake.moveArm(Outtake.ARM_STATE.AUTO_PRE_DROP);
+                moveOuttakeSlidesTo(Outtake.SLIDE_STATE.HIGH_BUCKET);
+                safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.HIGH_BUCKET);
+                //dropSamplefromOuttake();
+                return false;
+            }
+        };
+    }
+
+    public Action safetyResetOuttakeSlidesAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                outtake.safetyReset();
                 return false;
             }
         };
@@ -411,7 +444,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 if (outtake.outtakeTouch.getState() == false) {
-                    outtake.stopOuttakeClimbMotors();
+                    outtake.stopOuttakeMotors();
                     outtake.resetOuttakeMotorMode();
                 }
                 return false;
@@ -419,32 +452,16 @@ public class IntakeOuttakeController {
         };
     }
 
-    public Action stopOuttakeClimbMotorsAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                if (outtake.outtakeTouch.getState() == false) {
-                    outtake.stopOuttakeClimbMotors();
-                }
-                return false;
-            }
-        };
-    }
-
-    public void pickupSequenceSpecimen(){
+    public void pickupLowerSequence(){
         moveIntakeArm(IntakeArm.ARM_STATE.PICKUP);
         safeWaitMilliSeconds(200);
         intakeArm.closeGrip();
         safeWaitMilliSeconds(100);
-        moveIntakeArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP);
+        moveIntakeArm(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP);
         //moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
     }
 
-    public Action pickupSequenceSpecimenAction() {
+    public Action pickupLowerSequenceAction() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -459,7 +476,7 @@ public class IntakeOuttakeController {
                                 closeIntakeGripAction(),
                                 new SleepAction(0.1),
                                 //moveIntakeArmToAction(IntakeArm.ARM_STATE.PRE_PICKUP)
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP_POST_PICKUP)
+                                moveIntakeArmToAction(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP)
                         )
                 );
                 return false;
@@ -475,6 +492,20 @@ public class IntakeOuttakeController {
         moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
         //safeWaitMilliSeconds(100); TODO: PICKUP_SPEEDUP Check
 
+    }
+
+    public Action pickupSequenceAction1() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                pickupSequence();
+                return false;
+            }
+        };
     }
 
     public Action pickupSequenceAction() {
@@ -499,15 +530,32 @@ public class IntakeOuttakeController {
         };
     }
 
+    public Action pickSampleToOuttakePreDropAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                pickupSequence();
+                closeGripAndMoveIntakeArmToPreTransfer();
+                transferSampleFromIntakePreTransferToOuttakePreDrop();
+                return false;
+            }
+        };
+    }
+
+    public void closeGripAndMoveIntakeArmToPreTransfer(){
+        intakeArm.closeGrip();
+        intakeArm.moveArm(IntakeArm.ARM_STATE.EJECT_OR_PRE_TRANSFER);
+    }
 
     public void transferSampleFromIntakePreTransferToOuttakeTransfer(){
-        moveOuttakeArm(Outtake.ARM_STATE.PRE_TRANFER);//Added
+        moveOuttakeArm(Outtake.ARM_STATE.PRE_TRANSFER);//Added
         moveIntakeArm(IntakeArm.ARM_STATE.TRANSFER);
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         safeWaitMilliSeconds(200+ 200* intakeSlides.slideExtensionFactor());//100
-        //moveArm(IntakeArm.ARM_STATE.TRANSFER);
-        //outtake.senseOuttakeSampleColor();
-        //safeWaitMilliSeconds(700);//500
         safeWaitTillOuttakeSensorSensedMilliSeconds(400);
         moveOuttakeArm(Outtake.ARM_STATE.TRANSFER);//Added
         safeWaitMilliSeconds(100);
@@ -517,6 +565,20 @@ public class IntakeOuttakeController {
         safeWaitMilliSeconds(100);//400
         moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
         safeWaitMilliSeconds(200);
+    }
+
+    public Action transferSampleFromIntakePreTransferToOuttakeTransferAction1() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                transferSampleFromIntakePreTransferToOuttakeTransfer();
+                return false;
+            }
+        };
     }
 
     public Action transferSampleFromIntakePreTransferToOuttakeTransferAction() {
@@ -529,12 +591,13 @@ public class IntakeOuttakeController {
             public boolean run(TelemetryPacket packet) {
                 Actions.runBlocking(
                         new SequentialAction(
-                                moveOuttakeArmToAction(Outtake.ARM_STATE.PRE_TRANFER),
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
+                                new ParallelAction(
+                                    moveOuttakeArmToAction(Outtake.ARM_STATE.PRE_TRANSFER),
+                                    moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
+                                    moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED)
+                                ),
                                 new SleepAction(0.200+ 0.100* intakeSlides.slideExtensionFactor()),
-                                //moveIntakeArmToAction(IntakeArm.ARM_STATE.TRANSFER),
-                                new SleepAction(0.4),
+                                new SleepAction(0.2),
                                 moveOuttakeToAction(Outtake.ARM_STATE.TRANSFER),
                                 new SleepAction(0.1),
                                 closeOuttakeGripAction(),//TODO : Fix same as teleop
@@ -577,11 +640,14 @@ public class IntakeOuttakeController {
     }
 
     public void dropSamplefromOuttake() {
+        outtake.moveArm(Outtake.ARM_STATE.DROP);
+        safeWaitMilliSeconds(200);
         outtake.openGrip();
-        safeWaitMilliSeconds(500);
-        outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
-        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
-        safeWaitTillOuttakeSlideStateMilliSeconds(500, Outtake.SLIDE_STATE.TRANSFER);
+        safeWaitMilliSeconds(200);
+        outtake.moveArm(Outtake.ARM_STATE.PRE_TRANSFER);
+        //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER); // TODO: TRY TRANSFERING FREELY
+        //outtake.moveOuttakeSlidesToTransfer();
+        //safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.TRANSFER);
     }
 
     public Action dropSamplefromOuttakeAction() {
@@ -607,6 +673,36 @@ public class IntakeOuttakeController {
         };
     }
 
+    public Action dropSamplefromOuttakeAction1() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                dropSamplefromOuttake();
+                return false;
+            }
+        };
+    }
+
+    public Action moveOuttakeToTransferAction1() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                outtake.moveOuttakeSlidesToTransfer();
+                safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.TRANSFER);
+                return false;
+            }
+        };
+    }
+
+
     public Action dropSamplefromOuttakeOnlyAction() {
         return new Action() {
             @Override
@@ -618,7 +714,7 @@ public class IntakeOuttakeController {
                 Actions.runBlocking(
                         new SequentialAction(
                                 openOuttakeGripAction(),
-                                new SleepAction(0.5)
+                                new SleepAction(0.3)
                         )
                 );
                 return false;
@@ -632,7 +728,7 @@ public class IntakeOuttakeController {
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
         outtake.moveArm(Outtake.ARM_STATE.DROP);
-        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+        //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }
 
     public Action setToAutoEndStateSubmerssibleParkAction() {
@@ -656,6 +752,7 @@ public class IntakeOuttakeController {
         while (!currentOpMode.isStopRequested() && timer.time() < timeoutTime &&
                 !(outtake.outtakeSampleSensed)) {
             outtake.senseOuttakeSampleColor();
+            intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         }
     }
 
@@ -665,6 +762,7 @@ public class IntakeOuttakeController {
         while (!currentOpMode.isStopRequested() && timer.time() < timeoutTime &&
                 !(outtake.isOuttakeSlidesInState(toSlideState))) {
         }
+        outtake.safetyReset();
     }
 
     public Action safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE toOuttakeSlideState) {
@@ -675,15 +773,8 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                /*ElapsedTime timer = new ElapsedTime(MILLISECONDS);
-                timer.reset();
-                while (!currentOpMode.isStopRequested() && timer.time() < 800 &&
-                        !(outtake.isOuttakeSlidesInState(Outtake.SLIDE_STATE.HIGH_BUCKET))) {
-                    safeWaitMilliSeconds(25);
-                }
-                return false;
-                 */
                 if (outtake.isOuttakeSlidesInState(toOuttakeSlideState)) {
+                    outtake.safetyReset();
                     return false;
                 } else {
                     safeWaitMilliSeconds(25);

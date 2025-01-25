@@ -23,7 +23,7 @@ public class IntakeArm {
 
     public enum GRIP_STATE {
         OPEN_WIDE(0.42), //0.50 max
-        OPEN(0.38),
+        OPEN(0.36),
         LOOSENED(0.13),//0.15
         CLOSED(0.07);//0.11
 
@@ -48,11 +48,9 @@ public class IntakeArm {
         INSPECTION(0.35),
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
-        INIT(0.64), //vertically up
+        INIT(0.60), //vertically up
         TRANSFER(0.66), //0.665
-        SWEEP(0.03),
-        SPECIMEN_PRE_PICKUP(0.35), //0.6
-        SPECIMEN_PICKUP_POST_PICKUP(0.40),//0.4
+        LOWER_PRE_PICKUP(0.36), //0.6
         DYNAMIC(0.68);
 
         private double armPos;
@@ -74,7 +72,7 @@ public class IntakeArm {
         TRANSFER(0.1), //0.070.13
         SWEEP(0.61),
         INIT(0.16),//0.22
-        SPECIMEN_PICKUP(0.52),
+        SPECIMEN_PICKUP(0.88),
         SPECIMEN_PICKUP_POST_PICKUP(0.2),
         DYNAMIC(0.16);
 
@@ -176,15 +174,10 @@ public class IntakeArm {
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
-            case SPECIMEN_PRE_PICKUP:
+            case LOWER_PRE_PICKUP:
                 intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
                 intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
-                moveSwivelCentered();
-                break;
-            case SPECIMEN_PICKUP_POST_PICKUP:
-                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP_POST_PICKUP.wristPosition);
-                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP_POST_PICKUP;
-                moveSwivelCentered();
+                //moveSwivelCentered();
                 break;
         }
     }
@@ -271,7 +264,7 @@ public class IntakeArm {
      */
     public void openGrip(){
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS ||
-                intakeArmState == ARM_STATE.SPECIMEN_PRE_PICKUP) {
+                intakeArmState == ARM_STATE.LOWER_PRE_PICKUP) {
             intakeGripServo.setPosition(GRIP_STATE.OPEN_WIDE.gripPosition);
         } else {
             intakeGripServo.setPosition(GRIP_STATE.OPEN.gripPosition);

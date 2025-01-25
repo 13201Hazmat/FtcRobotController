@@ -44,6 +44,7 @@ public class TeleOpModeThread extends LinearOpMode {
     public Pose2d startPose = GameField.ORIGINPOSE;
 
     public ElapsedTime gameTimer = new ElapsedTime(MILLISECONDS);
+    public ElapsedTime cycleTimer = new ElapsedTime(MILLISECONDS);
 
     @Override
     /*
@@ -78,6 +79,7 @@ public class TeleOpModeThread extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
+                cycleTimer.reset();
                 gamepadController.runByGamepadControl();
                 //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
 
@@ -125,9 +127,9 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
+        /*vision = new Vision(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
-        telemetry.update();
+        telemetry.update();*/
 
         /* Create Lights */
         lights = new Lights(hardwareMap, telemetry);
@@ -185,6 +187,7 @@ public class TeleOpModeThread extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TeleOpMode");
             telemetry.addData("Game Timer : ", gameTimer.time());
+            telemetry.addData("Cycle Timer : ", cycleTimer.time());
 
             driveTrain.printDebugMessages();
             intakeArm.printDebugMessages();
