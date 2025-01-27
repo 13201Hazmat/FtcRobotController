@@ -152,7 +152,7 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
         yellowSampleFar = new Pose2d(15, 19.5, Math.toRadians(27.25));
         farBucket = new Pose2d(9, 15, Math.toRadians(-40));
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
-        submersiblePrePark = new Pose2d(47, 14, Math.toRadians(60));
+        submersiblePrePark = new Pose2d(47, 11, Math.toRadians(60));
         submersiblePark = new Pose2d(54, -16, Math.toRadians(100));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");

@@ -351,14 +351,14 @@ public class GamepadController {
         }
 
         if(gp2GetCirclePress()) {
-            /*if(intakeSlides.intakeSlidesState != IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED){
+            if(intakeSlides.intakeSlidesState != IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED){
                 intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
                 safeWaitMilliSeconds(300);
             }
             if (intakeArm.intakeArmState != IntakeArm.ARM_STATE.POST_TRANSFER) {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
                 safeWaitMilliSeconds(200);
-            }*/
+            }
             outtake.ascendToClimb();
         }
 

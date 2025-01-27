@@ -615,7 +615,11 @@ public class IntakeOuttakeController {
 
     public void transferSampleFromIntakePreTransferToOuttakePreDrop(){
         transferSampleFromIntakePreTransferToOuttakeTransfer();
-        outtake.moveArm(Outtake.ARM_STATE.DROP);
+        if (outtake.lastOuttakeSlideState != Outtake.SLIDE_STATE.HIGH_CHAMBER) {
+            outtake.moveArm(Outtake.ARM_STATE.DROP);
+        } else {
+            outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+        };
         safeWaitMilliSeconds(200);
     }
 

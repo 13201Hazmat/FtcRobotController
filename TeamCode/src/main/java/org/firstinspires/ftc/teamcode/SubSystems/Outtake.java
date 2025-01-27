@@ -67,10 +67,10 @@ public class Outtake {
         INIT(0.20),
         PRE_TRANSFER(0.21),
         TRANSFER(0.20),//0.240.55
-        AUTO_PRE_DROP(0.68),
+        AUTO_PRE_DROP(0.68),//0.68
         HIGH_CHAMBER(0.92),
         HIGH_CHAMBER_LATCH(0.92),
-        DROP(0.68),//0.96
+        DROP(0.89),//0.68
         MAX(0.68);
 
         private double wristPos;
@@ -86,12 +86,12 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(800), //550 fo4 4 435//700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350/500 for 435rpm motor gobilda pulley)
-        HIGH_BUCKET(2300), //1550 for 4 435//2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100/1300 for 435rpm motor gobilda pulley)
+        LOW_BUCKET(600), //550 fo4 4 435//700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350/500 for 435rpm motor gobilda pulley)
+        HIGH_BUCKET(2000), //1550 for 4 435//2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100/1300 for 435rpm motor gobilda pulley)
         HIGH_CHAMBER(550), //550 for 4 435 //125 for 223 large pulley
         HIGH_CHAMBER_LATCH(290), //290 for 4 455
         CLIMBER2(1000), //600 for 4 435//1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200/600 for 435rpm motor gobilda pulley)
-        MAX_EXTENDED(2400); //1650 for 4 435//2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400/1450 for 435rpm motor gobilda pulley)
+        MAX_EXTENDED(2000); //1650 for 4 435//2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400/1450 for 435rpm motor gobilda pulley)
 
 
         public final double motorPosition;
@@ -156,7 +156,7 @@ public class Outtake {
             closeGrip();
             outtakeMotorPower = 1.0;
         } else {
-            outtakeMotorPower = 1.0; //0.9;
+            outtakeMotorPower = 0.9; //0.9;
         }
     }
 
