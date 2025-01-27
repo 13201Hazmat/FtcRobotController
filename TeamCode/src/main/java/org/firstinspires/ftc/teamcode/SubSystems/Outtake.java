@@ -70,7 +70,7 @@ public class Outtake {
         AUTO_PRE_DROP(0.68),//0.68
         HIGH_CHAMBER(0.92),
         HIGH_CHAMBER_LATCH(0.92),
-        DROP(0.89),//0.68
+        DROP(0.72),//0.68
         MAX(0.68);
 
         private double wristPos;
