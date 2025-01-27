@@ -66,7 +66,7 @@ public class Outtake {
         //Calib Position : Fully in mechanical limit inwards is One
         INIT(0.20),
         PRE_TRANSFER(0.21),
-        TRANSFER(0.21),//0.240.55
+        TRANSFER(0.20),//0.240.55
         AUTO_PRE_DROP(0.68),
         HIGH_CHAMBER(0.92),
         HIGH_CHAMBER_LATCH(0.92),
@@ -86,12 +86,12 @@ public class Outtake {
     //Outtake Motor states
     public enum SLIDE_STATE {
         TRANSFER(0),
-        LOW_BUCKET(550), //700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350/500 for 435rpm motor gobilda pulley)
-        HIGH_BUCKET(1550), //2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100/1300 for 435rpm motor gobilda pulley)
-        HIGH_CHAMBER(550), //125 for 223 large pulley
-        HIGH_CHAMBER_LATCH(290),
-        CLIMBER2(600), //1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200/600 for 435rpm motor gobilda pulley)
-        MAX_EXTENDED(1650); //2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400/1450 for 435rpm motor gobilda pulley)
+        LOW_BUCKET(800), //550 fo4 4 435//700 for 223 large pulley, 350/508 for 312 (normal/large pulley) ,350/500 for 435rpm motor gobilda pulley)
+        HIGH_BUCKET(2300), //1550 for 4 435//2400 for 223 large pulley, 2900/1673 for 312(normal/large pulley),  2100/1300 for 435rpm motor gobilda pulley)
+        HIGH_CHAMBER(550), //550 for 4 435 //125 for 223 large pulley
+        HIGH_CHAMBER_LATCH(290), //290 for 4 455
+        CLIMBER2(1000), //600 for 4 435//1200 for 223 large pulley, 1800/1000 for 312 (normal/large pulley). 1200/600 for 435rpm motor gobilda pulley)
+        MAX_EXTENDED(2400); //1650 for 4 435//2800 for 223 large pulley, 3100/2091 for 312, (normal/large pulley), 2400/1450 for 435rpm motor gobilda pulley)
 
 
         public final double motorPosition;
@@ -156,7 +156,7 @@ public class Outtake {
             closeGrip();
             outtakeMotorPower = 1.0;
         } else {
-            outtakeMotorPower = 0.9; //0.9;
+            outtakeMotorPower = 1.0; //0.9;
         }
     }
 
@@ -403,14 +403,14 @@ public class Outtake {
             return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 15);
         } else {
             return ((outtakeTouch.getState() == false /*||
-                     (outtakeSlideLeft.getCurrentPosition() < 15 || outtakeSlideRight.getCurrentPosition() < 15)*/));
+                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)*/));
         }
     }
 
     public void safetyReset(){
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
             if (outtakeTouch.getState() == false /*||
-                     (outtakeSlideLeft.getCurrentPosition() < 15 || outtakeSlideRight.getCurrentPosition() < 15)*/) {//PRESSED
+                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)*/) {//PRESSED
                 stopOuttakeMotors();
                 resetOuttakeMotorMode();
             }

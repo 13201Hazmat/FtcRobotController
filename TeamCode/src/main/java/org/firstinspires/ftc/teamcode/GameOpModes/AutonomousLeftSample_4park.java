@@ -145,11 +145,11 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
         firstBucket = new Pose2d(5, 18, Math.toRadians(-60));
-        yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-16.25));
+        yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-17));
         nearBucket = new Pose2d(8, 16, Math.toRadians(-40));
-        yellowSampleMiddle = new Pose2d(13.5, 20.5, Math.toRadians(3));;
+        yellowSampleMiddle = new Pose2d(14, 20.5, Math.toRadians(3.75));;
         middleBucket = new Pose2d(9, 16, Math.toRadians(-40));
-        yellowSampleFar = new Pose2d(15, 19.5, Math.toRadians(27));
+        yellowSampleFar = new Pose2d(15, 19.5, Math.toRadians(27.25));
         farBucket = new Pose2d(9, 15, Math.toRadians(-40));
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(47, 14, Math.toRadians(60));
@@ -172,7 +172,7 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
 
         trajYellowSampleNearToBucket = drive.actionBuilder(yellowSampleNear)
                 .strafeToLinearHeading(nearBucket.position, nearBucket.heading,
-                        new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
+                        new TranslationalVelConstraint(24.0), new ProfileAccelConstraint(-15.0, 15.0))
                 .build();
 
         trajBucketToYellowSampleMiddle = drive.actionBuilder(nearBucket)
