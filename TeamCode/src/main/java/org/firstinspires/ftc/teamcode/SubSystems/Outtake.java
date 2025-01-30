@@ -184,6 +184,7 @@ public class Outtake {
                 outtakeWristServo.setPosition(WRIST_STATE.PRE_TRANSFER.wristPos);
                 outtakeWristState = WRIST_STATE.PRE_TRANSFER;
                 openGrip();
+                break;
             case TRANSFER:
                 outtakeWristServo.setPosition(WRIST_STATE.TRANSFER.wristPos);
                 outtakeWristState = WRIST_STATE.TRANSFER;
@@ -398,19 +399,19 @@ public class Outtake {
 
     public double isOuttakeSlidesInStateError = 0;
     public boolean isOuttakeSlidesInState(SLIDE_STATE toOuttakeSlideState) {
-        if (toOuttakeSlideState != SLIDE_STATE.TRANSFER) {
+        //if (toOuttakeSlideState != SLIDE_STATE.TRANSFER) {
             isOuttakeSlidesInStateError = Math.abs(outtakeSlideLeft.getCurrentPosition() - toOuttakeSlideState.motorPosition);
             return (outtakeSlidesState == toOuttakeSlideState && isOuttakeSlidesInStateError <= 15);
-        } else {
-            return ((outtakeTouch.getState() == false /*||
-                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)*/));
-        }
+        //} else {
+        //      return ((/*outtakeTouch.getState() == false ||*/
+        //             (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)));
+        //}
     }
 
     public void safetyReset(){
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
-            if (outtakeTouch.getState() == false /*||
-                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)*/) {//PRESSED
+            if (/*outtakeTouch.getState() == false ||*/
+                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)) {//PRESSED
                 stopOuttakeMotors();
                 resetOuttakeMotorMode();
             }
@@ -426,7 +427,7 @@ public class Outtake {
     public boolean isOuttakeInPreTransfer(){
         return (isOuttakeSlidesInState(SLIDE_STATE.TRANSFER) &&
                         outtakeArmState == ARM_STATE.PRE_TRANSFER &&
-                        outtakeWristState == WRIST_STATE.TRANSFER);
+                        outtakeWristState == WRIST_STATE.PRE_TRANSFER);
     }
 
     public boolean isOuttakeReadyToDrop(){

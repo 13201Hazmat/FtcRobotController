@@ -273,6 +273,7 @@ public class IntakeOuttakeController {
             //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER); // TODO: TRY TRANSFERING FREELY
             outtake.moveOuttakeSlidesToTransfer();
             outtake.moveArm(Outtake.ARM_STATE.PRE_TRANSFER);
+            outtake.moveWrist(Outtake.ARM_STATE.PRE_TRANSFER);
             outtake.openGrip();
             safeWaitMilliSeconds(500);
         }
