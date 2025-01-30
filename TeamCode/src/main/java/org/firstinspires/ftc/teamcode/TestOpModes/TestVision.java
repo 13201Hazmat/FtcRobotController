@@ -55,6 +55,15 @@ public class TestVision extends LinearOpMode {
                             //GameField.turboFactor = false;
                             intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                            intakeArm.moveSwivelCentered();
+                            if(vision.angle <= 45.0){
+                                //near horizontal case
+                                intakeArm.moveSwivelPerpendicular();
+                            }
+                            else{
+                                //near vertical
+                                intakeArm.moveSwivelCentered();
+                            }
                             break;
                         case PRE_PICKUP:
                             //GameField.turboFactor = true;

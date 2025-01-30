@@ -144,7 +144,7 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(5, 18, Math.toRadians(-60));
+        firstBucket = new Pose2d(9.5, 17, Math.toRadians(-60));//5, 18
         yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-17));
         nearBucket = new Pose2d(8, 16, Math.toRadians(-40));
         yellowSampleMiddle = new Pose2d(14, 20.5, Math.toRadians(3.75));;

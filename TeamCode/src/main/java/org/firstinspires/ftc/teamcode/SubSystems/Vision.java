@@ -52,7 +52,6 @@ public class Vision {
 
     public boolean targetBlobDetected = false;
     public double yExtensionFactor = 0.0;
-    public double xExtensionFactor = 0.0;
     public double angle = 0.0;
 
     public ColorRange targetColor;
@@ -75,14 +74,24 @@ public class Vision {
             ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(0);
             boxFit = closestBlob.getBoxFit();
 
+            double rawAngle = boxFit.angle;
+            double width = boxFit.size.width;
+            double height = boxFit.size.height;
+
+            if (width > height) {
+                // Near horizontal case
+                angle = Math.min(rawAngle, 90.0 - rawAngle);
+            } else {
+                // Near vertical case
+                angle = Math.max(rawAngle, 90.0 - rawAngle);
+            }
+
             blockX = (int) boxFit.center.x;
             blockY = (int) boxFit.center.y;
 
-            //xExtensionFactor = 1.0 - (double) blockX / (double) X_RANGE;
             yExtensionFactor = EXTENSION_FACTOR_MIN +
                     ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
                     / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
-            angle =  boxFit.angle;
         }
 
     }
@@ -95,7 +104,7 @@ public class Vision {
         telemetry.addData("    Target Blob Detected", targetBlobDetected);
         telemetry.addData("    Number of Blobs", blobs.size() );
         telemetry.addData("    Closest Block Position", "(%d, %d)", blockX, blockY);
-        //telemetry.addData("    xExtensionFactor", xExtensionFactor);
+        telemetry.addData("    Angle", angle);
         telemetry.addData("    yExtensionFactor", yExtensionFactor);
         telemetry.addLine("=============");
     }
