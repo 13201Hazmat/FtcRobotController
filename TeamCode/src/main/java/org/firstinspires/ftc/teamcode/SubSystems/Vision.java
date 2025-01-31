@@ -64,7 +64,7 @@ public class Vision {
         final double pixelToExtensionScale = 0.05;
 
         blobs = colorLocator.getBlobs();
-        ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);
+        ColorBlobLocatorProcessor.Util.filterByArea(500, 20000, blobs);
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
         targetBlobDetected = !blobs.isEmpty();
