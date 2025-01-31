@@ -56,7 +56,7 @@ public class TestVision extends LinearOpMode {
                             intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                             intakeArm.moveSwivelCentered();
-                            if(vision.angle <= 45.0){
+                            if(vision.angle < 45.0){
                                 //near horizontal case
                                 intakeArm.moveSwivelPerpendicular();
                             }
