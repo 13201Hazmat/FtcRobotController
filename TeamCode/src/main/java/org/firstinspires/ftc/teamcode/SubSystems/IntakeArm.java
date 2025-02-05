@@ -22,10 +22,10 @@ public class IntakeArm {
     public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
-        OPEN_WIDE(0.42), //0.50 max
-        OPEN(0.36),
-        LOOSENED(0.13),//0.15
-        CLOSED(0.07);//0.11
+        OPEN_WIDE(0.82), //0.50 max
+        OPEN(0.71),//0.36
+        LOOSENED(0.45),//0.15
+        CLOSED(0.42);//0.11
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -49,8 +49,9 @@ public class IntakeArm {
         EJECT_OR_PRE_TRANSFER(0.35),//0.38
         POST_TRANSFER (0.52),
         INIT(0.60), //vertically up
-        TRANSFER(0.66), //0.665
+        TRANSFER(0.59), //0.66
         LOWER_PRE_PICKUP(0.36), //0.6
+        SPECIMEN_PICKUP(0.73),
         DYNAMIC(0.68);
 
         private double armPos;
@@ -69,11 +70,10 @@ public class IntakeArm {
         INSPECTION(0.56),
         POST_PICKUP(0.56),//0.66
         POST_TRANSFER(0.38),//0.39
-        TRANSFER(0.1), //0.070.13
+        TRANSFER(0.21), //0.1
         SWEEP(0.61),
         INIT(0.16),//0.22
-        SPECIMEN_PICKUP(0.88),
-        SPECIMEN_PICKUP_POST_PICKUP(0.2),
+        SPECIMEN_PICKUP(0.01),//0.88
         DYNAMIC(0.16);
 
         private final double wristPosition;

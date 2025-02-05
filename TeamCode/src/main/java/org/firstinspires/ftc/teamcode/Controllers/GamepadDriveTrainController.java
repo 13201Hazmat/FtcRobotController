@@ -37,51 +37,63 @@ public class GamepadDriveTrainController extends Thread{
 
     public void runDriveControl_byRRDriveModes() {
 
-        if (!GameField.moveForwardFlag) {
+        if (!GameField.ptoOnFlag) {
+            if (!GameField.moveForwardFlag) {
+                driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetRightStickX())*0.75;
+                //driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetLeftStickX());
 
-            driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetRightStickX());
-            //driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetLeftStickX());
-
-            if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC) {
-                driveTrain.gamepadInput = new Vector2d(
-                        -gp1TurboMode(gp1GetLeftStickY()),
-                        -gp1TurboMode(gp1GetLeftStickX()));
-                //-gp1TurboMode(gp1GetRightStickY()),
-                //-gp1TurboMode(gp1GetRightStickX()));
-            }
-
-            if (driveTrain.driveType == DriveTrain.DriveType.FIELD_CENTRIC) {
-
-                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
-                    driveTrain.gamepadInput = driveTrain.rotateFieldCentric(
-                            gp1TurboMode(gp1GetLeftStickY()),
-                            gp1TurboMode(gp1GetLeftStickX()),
-                            -driveTrain.pose.heading.log()
-                    );
-                    driveTrain.gamepadInput = driveTrain.pose.heading.inverse().times(
-                            new Vector2d(-driveTrain.gamepadInput.x, driveTrain.gamepadInput.y));
+                if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC) {
+                    driveTrain.gamepadInput = new Vector2d(
+                            -gp1TurboMode(gp1GetLeftStickY()),
+                            -gp1TurboMode(gp1GetLeftStickX()));
+                    //-gp1TurboMode(gp1GetRightStickY()),
+                    //-gp1TurboMode(gp1GetRightStickX()));
                 }
-                ;
 
-                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
-                    driveTrain.gamepadInput = driveTrain.pose.heading.plus(Math.PI).inverse().times(
-                            new Vector2d(-driveTrain.gamepadInput.x, driveTrain.gamepadInput.y));
+                if (driveTrain.driveType == DriveTrain.DriveType.FIELD_CENTRIC) {
+
+                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+                        driveTrain.gamepadInput = driveTrain.rotateFieldCentric(
+                                gp1TurboMode(gp1GetLeftStickY()),
+                                gp1TurboMode(gp1GetLeftStickX()),
+                                -driveTrain.pose.heading.log()
+                        );
+                        driveTrain.gamepadInput = driveTrain.pose.heading.inverse().times(
+                                new Vector2d(-driveTrain.gamepadInput.x, driveTrain.gamepadInput.y));
+                    }
+                    ;
+
+                    if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+                        driveTrain.gamepadInput = driveTrain.pose.heading.plus(Math.PI).inverse().times(
+                                new Vector2d(-driveTrain.gamepadInput.x, driveTrain.gamepadInput.y));
+                    }
                 }
-            }
 
-            driveTrain.driveNormal();
-            safeWaitMilliSeconds(10);
-        } else {
-            moveForwardTimer.reset();
-            while (!teleOpMode.isStopRequested() && moveForwardTimer.time() < MOVE_FORWARD_TIME) {
-                driveTrain.gamepadInput = new Vector2d(0.5, 0);
                 driveTrain.driveNormal();
                 safeWaitMilliSeconds(10);
+            } else {
+                moveForwardTimer.reset();
+                while (!teleOpMode.isStopRequested() && moveForwardTimer.time() < MOVE_FORWARD_TIME) {
+                    driveTrain.gamepadInput = new Vector2d(0.5, 0);
+                    driveTrain.driveNormal();
+                    safeWaitMilliSeconds(10);
+                }
+                GameField.moveForwardFlag = false;
             }
-            GameField.moveForwardFlag = false;
+        } else {
+            driveTrain.leftBack.setPower(-312.0/435.0);
+            driveTrain.rightBack.setPower(-312.0/435.0);
         }
+    }
+
+    public void turnPTOMotorsOn(){
 
     }
+
+    public void turnPTOMotorsOff(){
+
+    }
+
 
     public void safeWaitMilliSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);

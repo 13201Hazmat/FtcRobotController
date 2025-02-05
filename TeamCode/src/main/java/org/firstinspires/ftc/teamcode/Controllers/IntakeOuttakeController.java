@@ -556,16 +556,16 @@ public class IntakeOuttakeController {
         moveOuttakeArm(Outtake.ARM_STATE.PRE_TRANSFER);//Added
         moveIntakeArm(IntakeArm.ARM_STATE.TRANSFER);
         intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
-        safeWaitMilliSeconds(200+ 200* intakeSlides.slideExtensionFactor());//100
+        safeWaitMilliSeconds(100+ 150* intakeSlides.slideExtensionFactor());//100
         safeWaitTillOuttakeSensorSensedMilliSeconds(400);
         moveOuttakeArm(Outtake.ARM_STATE.TRANSFER);//Added
         safeWaitMilliSeconds(100);
         outtake.closeGrip();
-        safeWaitMilliSeconds(200);
+        safeWaitMilliSeconds(100);
         intakeArm.openGrip();
         safeWaitMilliSeconds(100);//400
-        moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
-        safeWaitMilliSeconds(200);
+        //moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
+        //safeWaitMilliSeconds(200);
     }
 
     public Action transferSampleFromIntakePreTransferToOuttakeTransferAction1() {
@@ -621,7 +621,7 @@ public class IntakeOuttakeController {
         } else {
             outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
         };
-        safeWaitMilliSeconds(200);
+        //safeWaitMilliSeconds(200);
     }
 
     public Action transferSampleFromIntakePreTransferToOuttakePreDropAction() {

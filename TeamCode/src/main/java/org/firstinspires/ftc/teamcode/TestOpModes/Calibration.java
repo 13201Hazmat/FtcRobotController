@@ -129,8 +129,15 @@ public class Calibration extends LinearOpMode {
                 intakeSlides.moveIntakeSlideRightBackward();
             }
 
+            if (gamepadController.gp2GetLeftTriggerPress()){
+                outtake.leftPTOServo.setPosition(outtake.leftPTOServo.getPosition() - 0.01);
+                outtake.rightPTOServo.setPosition(outtake.rightPTOServo.getPosition() + 0.01);
+            }
 
-
+            if (gamepadController.gp2GetRightTriggerPress()){
+                outtake.leftPTOServo.setPosition(outtake.leftPTOServo.getPosition() + 0.01);
+                outtake.rightPTOServo.setPosition(outtake.rightPTOServo.getPosition() - 0.01);
+            }
 
             if (gamepadController.gp2GetDpad_rightPress()) {
                 outtake.moveGripForward();
@@ -320,6 +327,11 @@ public class Calibration extends LinearOpMode {
             telemetry.addLine("Outtake Arm: GP2 + Right Bumper, - Left Bumper");
             telemetry.addLine("    Zero when outtake arm is fully in mechanical limit");
             telemetry.addData("      Arm Position", outtake.outtakeArmServo.getPosition());
+            telemetry.addLine("----------");
+
+            telemetry.addLine("Outtake PTO Left + Right : GP2 + Right Trigger, - LeftTrigger");
+            telemetry.addData("     Left PTO Position", outtake.leftPTOServo.getPosition());
+            telemetry.addData("     Right PTO Position", outtake.rightPTOServo.getPosition());
             telemetry.addLine("----------");
 
             telemetry.addLine("Outtake Slides: GP2 + Triangle, - Cross");

@@ -75,6 +75,7 @@ public class DriveTrain extends MecanumDrive{
        telemetry.addData("RB motor is busy", rightBack.isBusy());
         telemetry.addData("RB motor is current", rightBack.getCurrent(CurrentUnit.AMPS));
        telemetry.addData("RB motor is over current", rightBack.isOverCurrent());
+       telemetry.addData("Gamefield.ptoOnFlag", GameField.ptoOnFlag);
 
        telemetry.addLine("=============");
     }
