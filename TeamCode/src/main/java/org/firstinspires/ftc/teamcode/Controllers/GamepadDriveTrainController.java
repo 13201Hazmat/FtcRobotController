@@ -40,14 +40,11 @@ public class GamepadDriveTrainController extends Thread{
         if (!GameField.ptoOnFlag) {
             if (!GameField.moveForwardFlag) {
                 driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetRightStickX())*0.75;
-                //driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetLeftStickX());
 
                 if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC) {
                     driveTrain.gamepadInput = new Vector2d(
                             -gp1TurboMode(gp1GetLeftStickY()),
                             -gp1TurboMode(gp1GetLeftStickX()));
-                    //-gp1TurboMode(gp1GetRightStickY()),
-                    //-gp1TurboMode(gp1GetRightStickX()));
                 }
 
                 if (driveTrain.driveType == DriveTrain.DriveType.FIELD_CENTRIC) {
@@ -81,17 +78,9 @@ public class GamepadDriveTrainController extends Thread{
                 GameField.moveForwardFlag = false;
             }
         } else {
-            driveTrain.leftBack.setPower(-312.0/435.0);
-            driveTrain.rightBack.setPower(-312.0/435.0);
+            driveTrain.leftBack.setPower(-1.0);
+            driveTrain.rightBack.setPower(-1.0);
         }
-    }
-
-    public void turnPTOMotorsOn(){
-
-    }
-
-    public void turnPTOMotorsOff(){
-
     }
 
 

@@ -53,6 +53,7 @@ public class Outtake {
         AUTO_PRE_DROP(0.5),
         DROP(0.54),//0.66
         SPECIMEN_PICKUP(0.1),
+        SPECIMEN_MAKE_DROP(0.44),
         HIGH_CHAMBER(0.38),//0.66
         HIGH_CHAMBER_LATCH(0.38),
         MAX(0.66);
@@ -72,8 +73,9 @@ public class Outtake {
         TRANSFER(0.01),//0.2
         AUTO_PRE_DROP(0.68),//0.68
         SPECIMEN_PICKUP(0.20),
-        HIGH_CHAMBER(0.60),//0.92
-        HIGH_CHAMBER_LATCH(0.45),
+        SPECIMEN_MAKE_DROP(0.75),
+        HIGH_CHAMBER(0.62),//0.92
+        HIGH_CHAMBER_LATCH(0.5),
         DROP(0.58),//0.72
         MAX(0.68);
 
@@ -91,7 +93,10 @@ public class Outtake {
     public enum SLIDE_STATE {
         TRANSFER(0),
         LOW_BUCKET(200),
-        HIGH_BUCKET(1400),
+        SPECIMEN_PICKUP(0),
+        SPECIMEN_MAKE_DROP(0),
+        HIGH_BUCKET(1300),
+        HIGHER_BUCKET(1400),
         HIGH_CHAMBER(0),
         HIGH_CHAMBER_LATCH(0),
         LEVEL2_ASCEND(700),
@@ -229,6 +234,10 @@ public class Outtake {
                 outtakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPos);
                 outtakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
                 break;
+            case SPECIMEN_MAKE_DROP:
+                outtakeWristServo.setPosition(WRIST_STATE.SPECIMEN_MAKE_DROP.wristPos);
+                outtakeWristState = WRIST_STATE.SPECIMEN_MAKE_DROP;
+                break;
             case HIGH_CHAMBER:
                 outtakeWristServo.setPosition(WRIST_STATE.HIGH_CHAMBER.wristPos);
                 outtakeWristState = WRIST_STATE.HIGH_CHAMBER;
@@ -244,7 +253,7 @@ public class Outtake {
         }
     }
 
-    public void ascendToClimb(){
+    public void ascendToClimbLevel2(){
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_ASCEND);
         //moveOuttakeSlides(SLIDE_STATE.MAX_EXTENDED);
         climberAscended = true;
@@ -256,11 +265,12 @@ public class Outtake {
         this.ptoState = toPTOState;
     }
 
-    public void climb(){
+    public void climbLevel2(){
         outtakeMotorPower = 1.0;
-        movePTO(PTO_STATE.PTO_ON);
-        //turnOuttakeClimbBrakeModeOn();
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_CLIMB);
+        safeWaitMilliSeconds(300);
+        movePTO(PTO_STATE.PTO_ON);
+        safeWaitMilliSeconds(100);
         while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL2_CLIMB)) {
             if ( outtakeSlideLeft.getCurrentPosition() < SLIDE_STATE.LEVEL2_CLIMB_ENGAGED.motorPosition) {
                 GameField.ptoOnFlag = true;
@@ -269,6 +279,15 @@ public class Outtake {
         movePTO(PTO_STATE.PTO_OFF);
         GameField.ptoOnFlag = false;
     }
+
+    public void safeWaitMilliSeconds(double time) {
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while ( timer.time() < time) {
+        }
+    }
+
+
 
     public void moveWristForward(){
         outtakeWristServo.setPosition(outtakeWristServo.getPosition() + WRIST_DELTA);

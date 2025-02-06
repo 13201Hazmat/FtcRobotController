@@ -23,7 +23,7 @@ public class IntakeArm {
 
     public enum GRIP_STATE {
         OPEN_WIDE(0.82), //0.50 max
-        OPEN(0.71),//0.36
+        OPEN(0.67),//0.36
         LOOSENED(0.45),//0.15
         CLOSED(0.42);//0.11
 

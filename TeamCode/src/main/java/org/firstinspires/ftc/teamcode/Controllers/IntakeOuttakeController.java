@@ -189,7 +189,6 @@ public class IntakeOuttakeController {
     public void moveOuttakeSlidesTo(Outtake.SLIDE_STATE toOuttakeState) {
         outtake.moveOuttakeSlides(toOuttakeState);
         safeWaitTillOuttakeSlideStateMilliSecondsAction(toOuttakeState);
-        //safeWaitMilliSeconds(300);
     }
 
     public Action moveOuttakeSlidesToAction(Outtake.SLIDE_STATE toOuttakeState) {
@@ -303,10 +302,8 @@ public class IntakeOuttakeController {
     }
 
     public void moveOuttakeToHighChamber(){
-        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
-        safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.HIGH_CHAMBER);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
-        safeWaitMilliSeconds(500);
+        safeWaitMilliSeconds(300);
     }
 
     public Action moveOuttakeToHighChamberAction() {
@@ -616,10 +613,11 @@ public class IntakeOuttakeController {
 
     public void transferSampleFromIntakePreTransferToOuttakePreDrop(){
         transferSampleFromIntakePreTransferToOuttakeTransfer();
-        if (outtake.lastOuttakeSlideState != Outtake.SLIDE_STATE.HIGH_CHAMBER) {
-            outtake.moveArm(Outtake.ARM_STATE.DROP);
-        } else {
+
+        if (outtake.lastOuttakeSlideState == Outtake.SLIDE_STATE.HIGH_CHAMBER) {
             outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
+        } else {
+            outtake.moveArm(Outtake.ARM_STATE.DROP);
         };
         //safeWaitMilliSeconds(200);
     }
