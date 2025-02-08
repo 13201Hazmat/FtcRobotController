@@ -78,8 +78,11 @@ public class GamepadDriveTrainController extends Thread{
                 GameField.moveForwardFlag = false;
             }
         } else {
+            //Back Motors
             driveTrain.leftBack.setPower(-312.0/435.0);
             driveTrain.rightBack.setPower(-312.0/435.0);
+
+            //Front Motors
             driveTrain.leftFront.setPower(-312.0/435.0);
             driveTrain.rightFront.setPower(-312.0/435.0);
         }
