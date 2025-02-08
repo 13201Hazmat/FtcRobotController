@@ -7,6 +7,12 @@ EH Motor 3:        rightBack = hardwareMap.get(DcMotorEx.class, "rightBack_perp"
 RC Motor 1:        outtakeSlideLeft = hardwareMap.get(DcMotorEx.class, "outtake_slides_left");
 EH Motor 2:        outtakeSlideRight = hardwareMap.get(DcMotorEx.class, "outtake_slides_right");
 
+RC Servo 4:        leftPTOServo = hardwareMap.get(Servo.class, "left_pto");
+EH Servo 0:        rightPTOServo = hardwareMap.get(Servo.class, "right_pto");
+
+RC Motor 2:        outtakeClimbLeft = hardwareMap.get(DcMotorEx.class, "outtake_climb_left");
+EH Motor 1:        outtakeClimbRight = hardwareMap.get(DcMotorEx.class, "outtake_climb_right");
+
 RC Servo 1: (SP1)  intakeSlideServoLeft = hardwareMap.get(Servo.class, "intake_slide_left");
 EH Servo 5: (SP5)  intakeSlideServoRight = hardwareMap.get(Servo.class, "intake_slide_right");
 RC Servo 3: (SP3)  intakeArmServo = hardwareMap.get(Servo.class, "intake_arm");
@@ -22,7 +28,7 @@ EH Servo 3:        outtakeGripServo = hardwareMap.get(Servo.class, "outtake_grip
 
 EH I2C Bus 1:      outtakeSensor = hardwareMap.get(NormalizedColorSensor.class, "outtake_sensor");
 
-
+RC Servo 0:        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 ...
 
 

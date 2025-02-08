@@ -116,8 +116,8 @@ public class Outtake {
     public SLIDE_STATE lastOuttakeSlideState = SLIDE_STATE.TRANSFER;
 
     public enum PTO_STATE {
-        PTO_OFF(0.67, 0.46),
-        PTO_ON(0.47,0.26);
+        PTO_OFF(0.67, 0.47),
+        PTO_ON(0.47,0.27);
 
         public double leftPTOPos;
         public double rightPTOPos;
@@ -164,6 +164,7 @@ public class Outtake {
     public void initOuttake(){
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
             moveArm(ARM_STATE.INIT);
+
         } else {
             moveArm(ARM_STATE.PRE_TRANSFER);
         }
@@ -190,6 +191,7 @@ public class Outtake {
         }
 
         movePTO(PTO_STATE.PTO_OFF);
+        GameField.ptoOnFlag = false;
     }
 
     public void moveArm(ARM_STATE toOuttakeArmState){
@@ -268,7 +270,7 @@ public class Outtake {
     public void climbLevel2(){
         outtakeMotorPower = 1.0;
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_CLIMB);
-        safeWaitMilliSeconds(300);
+        //safeWaitMilliSeconds(300);
         movePTO(PTO_STATE.PTO_ON);
         safeWaitMilliSeconds(100);
         while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL2_CLIMB)) {
