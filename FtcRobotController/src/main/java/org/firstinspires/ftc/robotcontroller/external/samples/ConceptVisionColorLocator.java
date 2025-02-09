@@ -62,7 +62,6 @@ import java.util.List;
  */
 
 @Autonomous(name = "Concept: Vision Color-Locator", group = "Concept")
-@Disabled
 public class ConceptVisionColorLocator extends LinearOpMode
 {
     @Override
