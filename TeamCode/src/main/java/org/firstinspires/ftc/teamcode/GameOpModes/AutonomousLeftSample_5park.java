@@ -225,7 +225,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                 )
                         ),
                         //First Bucket to Sample Near
@@ -233,7 +233,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         new SleepAction(0.13),
                         new ParallelAction(
                                 intakeOuttakeController.pickupSequenceAction1(),
-                                intakeOuttakeController.moveOuttakeToTransferAction1()
+                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Near to Bucket
                         new ParallelAction(
@@ -244,7 +244,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                 )
                         ),
                         //Bucket to Sample Middle
@@ -252,7 +252,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         new SleepAction(0.13),
                         new ParallelAction(
                                 intakeOuttakeController.pickupSequenceAction1(),
-                                 intakeOuttakeController.moveOuttakeToTransferAction1()
+                                 intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Middle to Bucket
                         new ParallelAction(
@@ -263,7 +263,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                 )
                         ),
                         //Bucket to Sample Far
@@ -271,7 +271,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         new SleepAction(0.13),
                         new ParallelAction(
                                 intakeOuttakeController.pickupSequenceAction1(),
-                                intakeOuttakeController.moveOuttakeToTransferAction1()
+                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Far to Bucket
                         new ParallelAction(
@@ -279,8 +279,8 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                                 trajYellowSampleFarToBucket
                         ),
                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
-                        intakeOuttakeController.moveOuttakeToTransferAction1(),
+                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
 
                         //*****************************
                         //Bucket to Submersible Pick
@@ -296,7 +296,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                                 trajSubmersiblePickToBucket
                         ),
                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
+                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
 
 
                         //*****************************

@@ -144,16 +144,16 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(9.5, 17, Math.toRadians(-60));//5, 18
-        yellowSampleNear = new Pose2d(15.5, 18, Math.toRadians(-17));
-        nearBucket = new Pose2d(8, 16, Math.toRadians(-40));
-        yellowSampleMiddle = new Pose2d(14, 20.5, Math.toRadians(3.75));;
-        middleBucket = new Pose2d(9, 16, Math.toRadians(-40));
-        yellowSampleFar = new Pose2d(15, 19.5, Math.toRadians(27.25));
-        farBucket = new Pose2d(9, 15, Math.toRadians(-40));
+        firstBucket = new Pose2d(15.28, 34.16, Math.toRadians(-23.5));//14.5, 36
+        yellowSampleNear = new Pose2d(17.24, 29.56, Math.toRadians(-23.5));
+        nearBucket = new Pose2d(14.5, 36, Math.toRadians(-23.5));
+        yellowSampleMiddle = new Pose2d(12.8, 20.5, Math.toRadians(-8));;
+        middleBucket = new Pose2d(10, 21, Math.toRadians(-11));
+        yellowSampleFar = new Pose2d(14.3, 20.7, Math.toRadians(13.7));
+        farBucket = new Pose2d(10.5, 20.1, Math.toRadians(-23));
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(47, 11, Math.toRadians(60));
-        submersiblePark = new Pose2d(54, -16, Math.toRadians(100));
+        submersiblePark = new Pose2d(50, -18.5, Math.toRadians(-90));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -207,9 +207,9 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
 
         trajBucketToSubmersiblePark = drive.actionBuilder(farBucket)
                 .setTangent(0)
-                .splineToLinearHeading(submersiblePrePark, Math.toRadians(-15))
+                //.splineToLinearHeading(submersiblePrePark, Math.toRadians(-15))
                 //.setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
+                .splineToLinearHeading(submersiblePark, Math.toRadians(-110))
                 .build();
 
     }
@@ -223,15 +223,17 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                         new SleepAction(intialWaitTime),
                         //Init to First Bucket
                         trajInitToFirstBucket,
+                        new SleepAction(1),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
-                                        intakeOuttakeController.moveOuttakeToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
                         //First Bucket to Sample Near
+
                         trajFirstBucketToYellowSampleNear,
                         new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction1(),
@@ -239,7 +241,8 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                         new ParallelAction(
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                                 trajYellowSampleNearToBucket
-                        ),
+                        )
+                        /*
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
@@ -286,6 +289,9 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                                 intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                         ),
                         new SleepAction(1)
+
+
+                        */
                     )
                 )
         );

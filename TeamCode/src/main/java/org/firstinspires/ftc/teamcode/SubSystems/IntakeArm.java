@@ -152,6 +152,7 @@ public class IntakeArm {
                 intakeWristServo.setPosition(WRIST_STATE.EJECT.wristPosition);
                 intakeWristState = WRIST_STATE.EJECT;
                 break;
+            case LOWER_PRE_PICKUP:
             case PRE_PICKUP:
             case PICKUP:
                 intakeWristServo.setPosition(WRIST_STATE.PICKUP.wristPosition);
@@ -173,11 +174,6 @@ public class IntakeArm {
                 intakeWristServo.setPosition(WRIST_STATE.POST_TRANSFER.wristPosition);
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
-                break;
-            case LOWER_PRE_PICKUP:
-                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
-                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
-                //moveSwivelCentered();
                 break;
         }
     }

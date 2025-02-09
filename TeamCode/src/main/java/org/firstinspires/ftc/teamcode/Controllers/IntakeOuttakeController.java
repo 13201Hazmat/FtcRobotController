@@ -100,7 +100,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeSlides.moveIntakeSlidesToRange(extensionFactor);
-                moveIntakeArm(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP);
+                moveIntakeArm(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP); //LOWER_PRE_PICKUP
                 intakeArm.moveSwivelTo(swivelDegrees);
                 return false;
             }
@@ -474,7 +474,8 @@ public class IntakeOuttakeController {
                                 closeIntakeGripAction(),
                                 new SleepAction(0.1),
                                 //moveIntakeArmToAction(IntakeArm.ARM_STATE.PRE_PICKUP)
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP)
+                                moveIntakeArmToAction(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP),
+                                new SleepAction(0.1)
                         )
                 );
                 return false;
@@ -642,7 +643,7 @@ public class IntakeOuttakeController {
         };
     }
 
-    public void dropSamplefromOuttake() {
+    public void dropSamplefromOuttakeAndMoveArmToPreTransfer() {
         outtake.moveArm(Outtake.ARM_STATE.DROP);
         safeWaitMilliSeconds(200);
         outtake.openGrip();
@@ -661,7 +662,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                dropSamplefromOuttake();
+                dropSamplefromOuttakeAndMoveArmToPreTransfer();
                 Actions.runBlocking(
                         new SequentialAction(
                                 openOuttakeGripAction(),
@@ -676,7 +677,7 @@ public class IntakeOuttakeController {
         };
     }
 
-    public Action dropSamplefromOuttakeAction1() {
+    public Action dropSamplefromOuttakeAndMoveArmToPreTransferAction1() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -684,13 +685,13 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                dropSamplefromOuttake();
+                dropSamplefromOuttakeAndMoveArmToPreTransfer();
                 return false;
             }
         };
     }
 
-    public Action moveOuttakeToTransferAction1() {
+    public Action moveOuttakeSlidesToTransferAction1() {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {

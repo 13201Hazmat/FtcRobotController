@@ -224,7 +224,7 @@ public class AutonomousLeftSample2 extends LinearOpMode {
                                     intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                     new SequentialAction(
                                             intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                            intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                            intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                     )
                             ),
                             trajFirstBucketToYellowSampleNear,
@@ -236,7 +236,7 @@ public class AutonomousLeftSample2 extends LinearOpMode {
                                     intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                     new SequentialAction(
                                             intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                            intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                            intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                     )
                             ),
                             trajBucketToYellowSampleMiddle,
@@ -247,14 +247,14 @@ public class AutonomousLeftSample2 extends LinearOpMode {
                                     intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -30),
                                     new SequentialAction(
                                             intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                            intakeOuttakeController.dropSamplefromOuttakeAction1()
+                                            intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
                                     )
                             ),
                             trajBucketToYellowSampleFar,
                             intakeOuttakeController.pickSampleToOuttakePreDropAction(),
                             trajYellowSampleFarToBucket,
                             intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                            intakeOuttakeController.dropSamplefromOuttakeAction1(),
+                            intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
                             new ParallelAction(
                                     intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()//,
                                     //trajBucketToSubmerssiblePark
