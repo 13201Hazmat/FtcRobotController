@@ -42,7 +42,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.List;
 @TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
-@Disabled
 public class LimelightTest extends LinearOpMode {
 
     private Limelight3A limelight;
@@ -95,7 +94,7 @@ public class LimelightTest extends LinearOpMode {
 
                     double[] pythonOutputs = result.getPythonOutput();
                     if (pythonOutputs != null && pythonOutputs.length > 0) {
-                        double sampleOrientation = pythonOutputs[0];
+                        double sampleOrientation = pythonOutputs[3];
                         telemetry.addData("Sample Angle:", sampleOrientation);
                     }
                     /*
@@ -142,3 +141,5 @@ public class LimelightTest extends LinearOpMode {
         limelight.stop();
     }
 }
+
+
