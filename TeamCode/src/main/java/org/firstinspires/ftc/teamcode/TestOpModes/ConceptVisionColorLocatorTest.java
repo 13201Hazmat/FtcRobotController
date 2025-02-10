@@ -1,30 +1,10 @@
-/*
- * Copyright (c) 2024 Phil Malone
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.SortOrder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -35,32 +15,19 @@ import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
-
-/*
- * This OpMode illustrates how to use a video source (camera) to locate specifically colored regions
- *
- * Unlike a "color sensor" which determines the color of an object in the field of view, this "color locator"
- * will search the Region Of Interest (ROI) in a camera image, and find any "blobs" of color that match the requested color range.
- * These blobs can be further filtered and sorted to find the one most likely to be the item the user is looking for.
- *
- * To perform this function, a VisionPortal runs a ColorBlobLocatorProcessor process.
- *   The ColorBlobLocatorProcessor process is created first, and then the VisionPortal is built to use this process.
- *   The ColorBlobLocatorProcessor analyses the ROI and locates pixels that match the ColorRange to form a "mask".
- *   The matching pixels are then collected into contiguous "blobs" of pixels.  The outer boundaries of these blobs are called its "contour".
- *   For each blob, the process then creates the smallest possible rectangle "boxFit" that will fully encase the contour.
- *   The user can then call getBlobs() to retrieve the list of Blobs, where each Blob contains the contour and the boxFit data.
- *   Note: The default sort order for Blobs is ContourArea, in descending order, so the biggest contours are listed first.
- *
- * To aid the user, a colored boxFit rectangle is drawn on the camera preview to show the location of each Blob
- * The original Blob contour can also be added to the preview.  This is helpful when configuring the ColorBlobLocatorProcessor parameters.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
-@TeleOp(name = "Concept: Vision Color-Locator Test", group = "Concept")
+@TeleOp(name = "Opencv", group = "Concept")
 public class ConceptVisionColorLocatorTest extends LinearOpMode
 {
+    public RotatedRect boxFit;
+    public List<ColorBlobLocatorProcessor.Blob> blobs;
+    public double angle = 0.0;
+    public double yExtensionFactor = 0.0;
+    public int blockX = 0, blockY = 0;
+    public int Y_AREA_OF_INTEREST_MAX = 80; // Full Extenstion 1.0
+    public double EXTENSION_FACTOR_MAX = 1.0;
+    public int Y_AREA_OF_INTEREST_MIN = 180; // Half Extension 0.5
+    public double EXTENSION_FACTOR_MIN = 0.5;
+
     @Override
     public void runOpMode()
     {
@@ -106,25 +73,16 @@ public class ConceptVisionColorLocatorTest extends LinearOpMode
          */
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
-                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(0.5, 1, 0.75, -0.3))  // search central 1/4 of camera view
-                //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5))  // search central 1/4 of camera view
-                .setDrawContours(true)                        // Show contours on the Stream Preview
-                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
+                //.setRoi(ImageRegion.asImageCoordinates(130, 0,  190, 180))
+                .setRoi(ImageRegion.entireFrame())
+                .setDrawContours(true)
+                .setBlurSize(2)
+                .setErodeSize(7)
+                .setDilateSize(4)
                 .build();
 
-        /*
-         * Build a vision portal to run the Color Locator process.
-         *
-         *  - Add the colorLocator process created above.
-         *  - Set the desired video resolution.
-         *      Since a high resolution will not improve this process, choose a lower resolution that is
-         *      supported by your camera.  This will improve overall performance and reduce latency.
-         *  - Choose your video source.  This may be
-         *      .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))  .....   for a webcam
-         *  or
-         *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
-         */
+
         VisionPortal portal = new VisionPortal.Builder()
                 .addProcessor(colorLocator)
                 .setCameraResolution(new Size(320, 240))
@@ -139,8 +97,7 @@ public class ConceptVisionColorLocatorTest extends LinearOpMode
         {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            // Read the current list
-            List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+            blobs = colorLocator.getBlobs();
 
             /*
              * The list of Blobs can be filtered to remove unwanted Blobs.
@@ -162,7 +119,8 @@ public class ConceptVisionColorLocatorTest extends LinearOpMode
              *   A blob's Aspect ratio is the ratio of boxFit long side to short side.
              *   A perfect Square has an aspect ratio of 1.  All others are > 1
              */
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.filterByArea(500, 10000, blobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
             /*
              * The list of Blobs can be sorted using the same Blob attributes as listed above.
@@ -174,12 +132,53 @@ public class ConceptVisionColorLocatorTest extends LinearOpMode
 
             telemetry.addLine(" Area Density Aspect  Center");
 
-            // Display the size (area) and center location for each Blob.
-            for(ColorBlobLocatorProcessor.Blob b : blobs)
-            {
-                RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                          b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+            /*
+            if (!blobs.isEmpty()) {
+                ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(0);
+                boxFit = closestBlob.getBoxFit();
+                double rawAngle = boxFit.angle;
+                double width = boxFit.size.width;
+                double height = boxFit.size.height;
+
+                if (width > height) {
+                    // Near horizontal case
+                    angle = Math.min(rawAngle, 90.0 - rawAngle);
+                } else {
+                    // Near vertical case
+                    angle = Math.max(rawAngle, 90.0 - rawAngle);
+                }
+
+                blockX = (int) boxFit.center.x;
+                blockY = (int) boxFit.center.y;
+
+                yExtensionFactor = EXTENSION_FACTOR_MIN +
+                        ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
+                                / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
+            } else {
+                telemetry.addLine("No blobs detected!");
+            }
+
+             */
+
+            if (!blobs.isEmpty()) {
+                for (int i = 0; i < blobs.size(); i++) {
+                    ColorBlobLocatorProcessor.Blob blob = blobs.get(i);
+                    boxFit = blob.getBoxFit();
+                    double rawAngle = boxFit.angle;
+                    double width = boxFit.size.width;
+                    double height = boxFit.size.height;
+
+                    double blobAngle;
+                    if (width > height) {
+                        blobAngle = Math.min(rawAngle, 90.0 - rawAngle);
+                    } else {
+                        blobAngle = Math.max(rawAngle, 90.0 - rawAngle);
+                    }
+
+                    telemetry.addData("Blob " + i + " Angle", blobAngle);
+                }
+            } else {
+                telemetry.addLine("No blobs detected!");
             }
 
             telemetry.update();

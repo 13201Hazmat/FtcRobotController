@@ -143,7 +143,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                vision.locateNearestSamplefromRobot();
+                vision.locateNearestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 if (vision.angle > 45 && vision.angle < 135) {

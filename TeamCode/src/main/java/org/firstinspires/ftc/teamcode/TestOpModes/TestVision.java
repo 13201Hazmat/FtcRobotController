@@ -41,7 +41,7 @@ public class TestVision extends LinearOpMode {
         while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            vision.locateNearestSamplefromRobot();
+            vision.locateNearestSampleFromRobot();
 
             if (!gamepadController.gp1GetStart()) {
                 if (gamepadController.gp1GetRightBumperPress()) {

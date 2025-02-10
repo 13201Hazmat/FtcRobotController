@@ -150,17 +150,17 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(15.28, 34.16, Math.toRadians(-23.5));//14.5, 36
+        firstBucket = new Pose2d(18.28, 35.16, Math.toRadians(-26.5));//14.5, 36
         yellowSampleNear = firstBucket;
         //yellowSampleNear = new Pose2d(15.28 + 5.0*Math.cos(Math.toRadians(90-23.5)),
         //        34.16 - Math.cos(Math.toRadians(90-23.5)), Math.toRadians(-23.5));
         //yellowSampleNear = new Pose2d(17.24, 29.56, Math.toRadians(-23.5));
         nearBucket = firstBucket;
         // nearBucket = new Pose2d(14.5, 36, Math.toRadians(-23.5));
-        yellowSampleMiddle = new Pose2d(12.8, 20.5, Math.toRadians(-8));;
+        yellowSampleMiddle = new Pose2d(10, 27.5, Math.toRadians(-6.5));;
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
-        yellowSampleFar = new Pose2d(14.3, 20.7, Math.toRadians(13.7));
-        farBucket = firstBucket; //new Pose2d(10.5, 20.1, Math.toRadians(-23));
+        yellowSampleFar = new Pose2d(10.3, 20.7, Math.toRadians(21.7));
+        farBucket = new Pose2d(10.5, 20.1, Math.toRadians(-25));
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(47, 11, Math.toRadians(60));
         submersiblePark = new Pose2d(50, -18.5, Math.toRadians(-90));
@@ -211,7 +211,7 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
 
         trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
                 .setTangent(0)
-                .splineToLinearHeading(submersiblePick, Math.toRadians(90))
+                .splineToLinearHeading(submersiblePick, Math.toRadians(-110))
                 .build();
 
         trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
@@ -224,7 +224,7 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
                 .setTangent(0)
                 //.splineToLinearHeading(submersiblePrePark, Math.toRadians(-15))
                 //.setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(submersiblePark, Math.toRadians(-110))
+                .splineToLinearHeading(submersiblePark, Math.toRadians(-170))
                 .build();
 
     }
@@ -238,7 +238,7 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
                         new SleepAction(intialWaitTime),
                         //Init to First Bucket
                         trajInitToFirstBucket,
-                        new SleepAction(1),
+                        new SleepAction(0.1),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
@@ -319,8 +319,8 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(0.13),
-                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
+                                    new SleepAction(2),
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     //intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     //Submersible Pick to Bucket
