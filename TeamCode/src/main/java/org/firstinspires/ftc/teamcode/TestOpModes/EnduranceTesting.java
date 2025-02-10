@@ -262,9 +262,9 @@ public class EnduranceTesting extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
+        /*vision = new Vision(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
-        telemetry.update();
+        telemetry.update();*/
 
         /*
         lights = new Lights(hardwareMap, telemetry);

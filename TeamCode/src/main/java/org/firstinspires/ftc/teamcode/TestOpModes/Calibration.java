@@ -60,8 +60,7 @@ public class Calibration extends LinearOpMode {
         telemetry.addLine("Start Pressed");
         telemetry.update();
 
-        intakeSlides.intakeSlideServoLeft.setPosition(0.0);
-        intakeSlides.intakeSlideServoRight.setPosition(0.045);
+        intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
 
         /* If Stop is pressed, exit OpMode */
         if (isStopRequested()) return;

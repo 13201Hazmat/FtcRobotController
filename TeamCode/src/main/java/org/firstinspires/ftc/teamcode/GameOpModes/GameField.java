@@ -52,9 +52,10 @@ public class GameField {
 
     public static boolean turboFactor = false;
     public static boolean moveForwardFlag = false;
-    public static boolean ptoOnFlag = false;
+    //public static boolean ptoOnFlag = false;
 
     //Static fields to pass Pos from Autonomous to TeleOp
+    public static boolean outtakeInParkPositionInAutonomous = false;
     public static boolean poseSetInAutonomous = false;
     public static Pose2d currentPose = new Pose2d(0,0,0);
 

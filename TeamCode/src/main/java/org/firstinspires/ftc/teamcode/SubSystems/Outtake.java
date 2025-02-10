@@ -21,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
+import java.net.SocketPermission;
+
 public class Outtake {
     public Servo outtakeArmServo;
     public Servo outtakeWristServo;
@@ -140,9 +142,6 @@ public class Outtake {
 
     public ElapsedTime outtakeStallTimer = new ElapsedTime(MILLISECONDS);
     public boolean outtakeStallTimingFlag = false;
-    public double STALL_TIME = 1500;
-
-    public boolean moveForwardFlagActivated = false;
 
     public boolean runOuttakeMotorToLevelState = false;
 
@@ -167,9 +166,13 @@ public class Outtake {
     public void initOuttake(){
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
             moveArm(ARM_STATE.INIT);
-
         } else {
-            moveArm(ARM_STATE.PRE_TRANSFER);
+            if (GameField.outtakeInParkPositionInAutonomous == true) {
+                moveArm(ARM_STATE.AUTO_PRE_DROP);
+                GameField.outtakeInParkPositionInAutonomous = false;
+            } else {
+                moveArm(ARM_STATE.PRE_TRANSFER);
+            }
         }
         resetOuttakeMotorMode();
         turnOuttakeBrakeModeOff();
@@ -187,14 +190,13 @@ public class Outtake {
         }
 
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
-            closeGrip();
+            openGrip();
             outtakeMotorPower = 1.0;
         } else {
             outtakeMotorPower = 1.0; //0.9;
         }
         turnOuttakeClimbBrakeModeOn();
         movePTO(PTO_STATE.PTO_OFF);
-        GameField.ptoOnFlag = false;
     }
 
     public void moveArm(ARM_STATE toOuttakeArmState){
@@ -265,7 +267,6 @@ public class Outtake {
     public void ascendToClimbLevel2(){
         movePTO(PTO_STATE.PTO_OFF);
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_ASCEND);
-        //moveOuttakeSlides(SLIDE_STATE.MAX_EXTENDED);
         climberAscended = true;
     }
 
@@ -276,22 +277,17 @@ public class Outtake {
     }
 
     public void climbLevel2(){
-        outtakeMotorPower = 117.0/312.0; //1.0;
+        outtakeMotorPower = 223.0/312.0; //1.0;
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_CLIMB);
-        //safeWaitMilliSeconds(300);
         movePTO(PTO_STATE.PTO_ON);
         safeWaitMilliSeconds(100);
         startOuttakeClimbMotors();
         while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL2_CLIMB)) {
             if ( outtakeSlideLeft.getCurrentPosition() < SLIDE_STATE.LEVEL2_CLIMB_ENGAGED.motorPosition) {
-                GameField.ptoOnFlag = true;
                 printDebugMessages();
             }
         }
-        //stopOuttakeMotors();
         stopOuttakeClimbMotors();
-        GameField.ptoOnFlag = false;
-        //movePTO(PTO_STATE.PTO_OFF);
     }
 
     public void safeWaitMilliSeconds(double time) {
@@ -300,8 +296,6 @@ public class Outtake {
         while ( timer.time() < time) {
         }
     }
-
-
 
     public void moveWristForward(){
         outtakeWristServo.setPosition(outtakeWristServo.getPosition() + WRIST_DELTA);
@@ -487,19 +481,12 @@ public class Outtake {
 
     public void safetyReset(){
         if (outtakeSlidesState == Outtake.SLIDE_STATE.TRANSFER) {
-            if (/*outtakeTouch.getState() == false ||*/
-                     (outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)) {//PRESSED
+            if ((outtakeSlideLeft.getCurrentPosition() < 5 || outtakeSlideRight.getCurrentPosition() < 5)) {//PRESSED
                 stopOuttakeMotors();
                 resetOuttakeMotorMode();
             }
-        } /*else {
-            if (isOuttakeSlidesInState(outtakeSlidesState)){
-                stopOuttakeClimbMotors();
-            }
-        }*/
-
+        }
     }
-
 
     public boolean isOuttakeInPreTransfer(){
         return (isOuttakeSlidesInState(SLIDE_STATE.TRANSFER) &&
@@ -529,6 +516,7 @@ public class Outtake {
                 outtakeSampleSensed = true;
                 sensedColor = outtakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
+                //TODO: IMPLEMENT COLOR SELECTION
             } else {
                 outtakeSampleSensed = false;
             }

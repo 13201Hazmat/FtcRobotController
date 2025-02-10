@@ -22,10 +22,10 @@ public class IntakeArm {
     public NormalizedColorSensor intakeSensor;
 
     public enum GRIP_STATE {
-        OPEN_WIDE(0.82), //0.50 max
-        OPEN(0.67),//0.36
-        LOOSENED(0.45),//0.15
-        CLOSED(0.42);//0.11
+        OPEN_WIDE(0.72), //0.50 max
+        OPEN(0.57),//0.36
+        LOOSENED(0.35),//0.15
+        CLOSED(0.32);//0.11
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -175,6 +175,11 @@ public class IntakeArm {
                 intakeWristState = WRIST_STATE.POST_TRANSFER;
                 moveSwivelCentered();
                 break;
+            case SPECIMEN_PICKUP:
+                intakeWristServo.setPosition(WRIST_STATE.SPECIMEN_PICKUP.wristPosition);
+                intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
+                moveSwivelCentered();
+                closeGrip();
         }
     }
 

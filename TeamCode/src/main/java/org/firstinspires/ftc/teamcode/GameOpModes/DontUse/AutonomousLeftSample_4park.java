@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.GameOpModes.DontUse;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
@@ -48,11 +48,13 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
@@ -63,6 +65,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
+@Disabled
 @Autonomous(name = "Hazmat Auto LEFT 4+Park", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousLeftSample_4park extends LinearOpMode {
 
@@ -145,8 +148,11 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
         firstBucket = new Pose2d(15.28, 34.16, Math.toRadians(-23.5));//14.5, 36
-        yellowSampleNear = new Pose2d(17.24, 29.56, Math.toRadians(-23.5));
-        nearBucket = new Pose2d(14.5, 36, Math.toRadians(-23.5));
+        yellowSampleNear = new Pose2d(15.28 + 5.0*Math.cos(Math.toRadians(90-23.5)),
+                34.16 - Math.cos(Math.toRadians(90-23.5)), Math.toRadians(-23.5));
+        //yellowSampleNear = new Pose2d(17.24, 29.56, Math.toRadians(-23.5));
+        nearBucket = firstBucket;
+        // nearBucket = new Pose2d(14.5, 36, Math.toRadians(-23.5));
         yellowSampleMiddle = new Pose2d(12.8, 20.5, Math.toRadians(-8));;
         middleBucket = new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(14.3, 20.7, Math.toRadians(13.7));
@@ -233,7 +239,6 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                                 )
                         ),
                         //First Bucket to Sample Near
-
                         trajFirstBucketToYellowSampleNear,
                         new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction1(),
@@ -241,16 +246,15 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                         new ParallelAction(
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                                 trajYellowSampleNearToBucket
-                        )
-                        /*
+                        ),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
-                                        intakeOuttakeController.moveOuttakeToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
-                        ),
+                        )/*,
 
                         //Bucket to Sample Middle
                         trajBucketToYellowSampleMiddle,
@@ -265,8 +269,8 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
-                                        intakeOuttakeController.moveOuttakeToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
                         //Bucket to Sample Far
@@ -279,8 +283,8 @@ public class AutonomousLeftSample_4park extends LinearOpMode {
                                 trajYellowSampleFarToBucket
                         ),
                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                        intakeOuttakeController.dropSamplefromOuttakeAction1(),
-                        intakeOuttakeController.moveOuttakeToTransferAction1(),
+                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
 
 
                         //Bucket to Submersible Park
