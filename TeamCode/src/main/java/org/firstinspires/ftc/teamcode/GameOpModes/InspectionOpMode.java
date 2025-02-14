@@ -88,12 +88,6 @@ public class InspectionOpMode extends LinearOpMode {
 
             while (opModeIsActive()) {
                 gamepadController.runByGamepadControl();
-                //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
-
-
-                /*if (gameTimer.time() > 85000 && gameTimer.time() < 90000) {
-                    //lights.setPattern(Lights.REV_BLINKIN_PATTERN.END_GAME);
-                }*/
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();

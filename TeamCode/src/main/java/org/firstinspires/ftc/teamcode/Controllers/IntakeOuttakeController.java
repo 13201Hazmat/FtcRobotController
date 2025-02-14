@@ -786,12 +786,13 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                Actions.runBlocking(
+                outtake.openGrip();
+                /*Actions.runBlocking(
                         new SequentialAction(
                                 openOuttakeGripAction(),
                                 new SleepAction(0.3)
                         )
-                );
+                );*/
                 return false;
             }
         };

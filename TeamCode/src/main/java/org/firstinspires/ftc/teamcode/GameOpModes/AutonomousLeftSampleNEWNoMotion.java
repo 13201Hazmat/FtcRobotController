@@ -63,8 +63,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT NEW", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeftSampleNEW extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT NEW No motion", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeftSampleNEWNoMotion extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -256,7 +256,7 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         //trajYellowSampleNearToBucket
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
+                                //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -266,13 +266,14 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
 
                         //Bucket to Sample Middle
                         trajBucketToYellowSampleMiddle,
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                         new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction1(),
                         //Sample Middle to Bucket
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         //trajYellowSampleMiddleToBucket
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
+
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -281,6 +282,7 @@ public class AutonomousLeftSampleNEW extends LinearOpMode {
                         ),
                         //Bucket to Sample Far
                         trajBucketToYellowSampleFar,
+                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
                         new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction1(),
                         //Sample Far to Bucket
