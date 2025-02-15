@@ -22,7 +22,6 @@ public class Vision {
     private ColorBlobLocatorProcessor colorLocator;
     private CameraName camera;
     private VisionPortal portal;
-    private Limelight3A limelight;
 
     private static final int X_RANGE = 320;
     private static final int Y_RANGE = 240;
@@ -43,9 +42,6 @@ public class Vision {
     public Vision(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         camera = hardwareMap.get(WebcamName.class, "Webcam 1");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
-
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)

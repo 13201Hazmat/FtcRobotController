@@ -316,7 +316,7 @@ public class Outtake {
         startOuttakeClimbMotors();
         safeWaitMilliSeconds(1000);
         reverseOuttakeClimbMotors();
-        safeWaitMilliSeconds(4000);
+        safeWaitMilliSeconds(8000);
         stopOuttakeClimbMotors();
     }
 

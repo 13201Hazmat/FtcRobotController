@@ -64,14 +64,14 @@ public class MecanumDrive {
 
 
         // drive model parameters
-        public double inPerTick = 0; //0.00290849297; //0.00295470884;
-        public double lateralInPerTick = 1; //0.011878384613728086; //0.001391317271321756;
-        public double trackWidthTicks = 0;//4581.683233881135; //4265.67390841566;
+        public double inPerTick = 0.00294669489079; //0.00290849297; //0.00295470884;
+        public double lateralInPerTick = 0.0011743254151067271; //0.011878384613728086; //0.001391317271321756;
+        public double trackWidthTicks = 4257.439026763907;//4581.683233881135; //4265.67390841566;
 
         // feedforward parameters (in tick units)
-        public double kS = 0; //2.3671425127531696; //3.3245070276142092;
-        public double kV = 0; //0.00025990175372303287; //0.00026557763247210244;
-        public double kA = 0; //0.00014; //0.0002;
+        public double kS = 2.6339425678132455; //2.3671425127531696; //3.3245070276142092;
+        public double kV = 0.0003004332985007051; //0.00025990175372303287; //0.00026557763247210244;
+        public double kA = 0.00015; //0.00014; //0.0002;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 65;//65; //50;
@@ -83,13 +83,13 @@ public class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0; //14; //4, 9
-        public double lateralGain = 0; //9; //4.5, 25
-        public double headingGain = 0; //15; //21, 5, 12
+        public double axialGain = 7; //14; //4, 9
+        public double lateralGain = 2; //9; //4.5, 25
+        public double headingGain = 11; //15; //21, 5, 12
 
-        public double axialVelGain = 0; //3.0;//0.5
-        public double lateralVelGain = 0; //6.0;//2.0
-        public double headingVelGain = 0; //2.5; //0.5shared with turn
+        public double axialVelGain = 1.5; //3.0;//0.5
+        public double lateralVelGain = 0.5; //6.0;//2.0
+        public double headingVelGain = 3.5; //2.5; //0.5shared with turn
     }
 
     public static Params PARAMS = new Params();
