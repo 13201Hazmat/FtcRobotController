@@ -4,7 +4,6 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -20,8 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
-
-import java.net.SocketPermission;
 
 public class Outtake {
     public Servo outtakeArmServo;
@@ -107,6 +104,9 @@ public class Outtake {
         LEVEL2_ASCEND(1900),//700 for lower bar
         LEVEL2_CLIMB_ENGAGED(1750), //600 for lower bar
         LEVEL2_CLIMB(1200), //0 for lower bar
+        LEVEL3_ASCEND(700),//700 for lower bar
+        LEVEL3_CLIMB_ENGAGED(600), //600 for lower bar
+        LEVEL3_CLIMB(0), //0 for lower bar
         MAX_EXTENDED(2000);
 
         public final double motorPosition;
@@ -270,6 +270,12 @@ public class Outtake {
         climberAscended = true;
     }
 
+    public void ascendToClimbLevel3(){
+        movePTO(PTO_STATE.PTO_OFF);
+        moveOuttakeSlides(SLIDE_STATE.LEVEL3_ASCEND);
+        climberAscended = true;
+    }
+
     public void movePTO(PTO_STATE toPTOState) {
         leftPTOServo.setPosition(toPTOState.leftPTOPos);
         rightPTOServo.setPosition(toPTOState.rightPTOPos);
@@ -277,7 +283,7 @@ public class Outtake {
     }
 
     public void climbLevel2(){
-        outtakeMotorPower = 223.0/312.0; //1.0;
+        outtakeMotorPower = 117.0/312.0; //1.0;
         moveOuttakeSlides(SLIDE_STATE.LEVEL2_CLIMB);
         movePTO(PTO_STATE.PTO_ON);
         safeWaitMilliSeconds(100);
@@ -289,6 +295,32 @@ public class Outtake {
         }
         stopOuttakeClimbMotors();
     }
+
+    public void climbLevel3Part1(){
+        outtakeMotorPower = 117.0/312.0; //1.0;
+        moveOuttakeSlides(SLIDE_STATE.LEVEL3_CLIMB);
+        movePTO(PTO_STATE.PTO_ON);
+        safeWaitMilliSeconds(100);
+        startOuttakeClimbMotors();
+        while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL3_CLIMB)) {
+            if ( outtakeSlideLeft.getCurrentPosition() < SLIDE_STATE.LEVEL2_CLIMB_ENGAGED.motorPosition) {
+                printDebugMessages();
+            }
+        }
+        stopOuttakeClimbMotors();
+    }
+
+    public void climbLevel3Part2(){
+        movePTO(PTO_STATE.PTO_OFF);
+        safeWaitMilliSeconds(100);
+        startOuttakeClimbMotors();
+        safeWaitMilliSeconds(1000);
+        reverseOuttakeClimbMotors();
+        safeWaitMilliSeconds(4000);
+        stopOuttakeClimbMotors();
+    }
+
+
 
     public void safeWaitMilliSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);

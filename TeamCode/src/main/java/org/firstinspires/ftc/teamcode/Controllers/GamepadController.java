@@ -367,14 +367,18 @@ public class GamepadController {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
                 safeWaitMilliSeconds(200);
             }
-            outtake.ascendToClimbLevel2();
+            //outtake.ascendToClimbLevel2();
+            outtake.ascendToClimbLevel3();
         }
 
 
         if(gp2GetRightBumperPress()){
             if(outtake.climberAscended){
-                outtake.climbLevel2();
+                //outtake.climbLevel2();
+                outtake.climbLevel3Part1();
             }
+            safeWaitMilliSeconds(1000);
+            outtake.climbLevel3Part2();
         }
 
         if (!gp2GetStart()) {
