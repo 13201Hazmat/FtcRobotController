@@ -185,14 +185,13 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                 .build();
 
         trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
-                .setTangent(0)
-                .splineToLinearHeading(submersiblePick, Math.toRadians(-110))
+                .setTangent(Math.toRadians(15))
+                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
                 .build();
 
         trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
-                .setReversed(true)
-                .setTangent(0)
-                .splineToLinearHeading(farBucket, Math.toRadians(90))
+                .setTangent(90)
+                .splineToLinearHeading(farBucket, Math.toRadians(-165))
                 .build();
 
         trajBucketToSubmersiblePark = drive.actionBuilder(farBucket)
@@ -220,12 +219,13 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                                         intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
-                        new SleepAction(0.13),
+                        //new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction(),
                         //Sample Near to Bucket
                         new ParallelAction(
-                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
-                                trajBucketToYellowSampleMiddle
+                                trajBucketToYellowSampleMiddle,
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()
+
                         ),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
@@ -238,7 +238,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
 
                         //Bucket to Sample Middle
                         //trajBucketToYellowSampleMiddle,
-                        new SleepAction(0.13),
+                        //new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction(),
 
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
@@ -284,7 +284,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(2),
+                                    new SleepAction(1), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     new SleepAction(0.5),
@@ -329,6 +329,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
                                             new SleepAction(3),
@@ -339,6 +340,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                     );
                 } else { // retry twice
                     if (counter < 2) {
+                        intakeArm.openGrip();
                         intakeArm.toggleSwivel();
                         safeWaitMilliSeconds(200);
                         intakeOuttakeController.pickupSequence();

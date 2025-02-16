@@ -320,6 +320,10 @@ public class IntakeArm {
                 intakeSampleSensed = true;
                 sensedColor = intakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
+
+                //TODO MUST VINAYAK
+                //Write code to check if picked color is in Yellow Range or the color of thealliance, else
+                //openGrip and intakeSampleSensed = false;
             } else {
                 intakeSampleSensed = false;
             }

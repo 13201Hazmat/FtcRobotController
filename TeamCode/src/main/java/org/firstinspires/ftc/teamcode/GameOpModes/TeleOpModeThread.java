@@ -81,12 +81,6 @@ public class TeleOpModeThread extends LinearOpMode {
             while (opModeIsActive()) {
                 cycleTimer.reset();
                 gamepadController.runByGamepadControl();
-                //lights.setPattern(Lights.REV_BLINKIN_PATTERN.D);
-
-
-                /*if (gameTimer.time() > 85000 && gameTimer.time() < 90000) {
-                    //lights.setPattern(Lights.REV_BLINKIN_PATTERN.END_GAME);
-                }*/
 
                 if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
                     printDebugMessages();
@@ -117,7 +111,9 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        safeWaitSeconds(0.3);
+        if (!GameField.poseSetInAutonomous) {
+            safeWaitSeconds(1);
+        }
 
         intakeArm = new IntakeArm(hardwareMap, telemetry);
         telemetry.addLine("IntakeArm Initialized");

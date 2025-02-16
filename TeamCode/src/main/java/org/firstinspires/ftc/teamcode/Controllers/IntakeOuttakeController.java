@@ -787,9 +787,9 @@ public class IntakeOuttakeController {
         //intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);
         //outtake.moveArm(Outtake.ARM_STATE.DROP);
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
         outtake.moveArm(Outtake.ARM_STATE.AUTO_PARK);
         GameField.outtakeInParkPositionInAutonomous = true;
-        //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
     }
 
     public Action setToAutoEndStateSubmerssibleParkAction() {
