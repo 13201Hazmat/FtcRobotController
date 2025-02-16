@@ -261,10 +261,7 @@ public class GamepadController {
                     intakeOuttakeController.initiateAutoTransfer = false;
                 } else if (intakeArm.intakeArmState == IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
                     outtake.lastOuttakeSlideState = Outtake.SLIDE_STATE.HIGH_CHAMBER;
-                    if (outtake.outtakeSlidesState != Outtake.SLIDE_STATE.HIGH_CHAMBER ) {
-                        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
-                        safeWaitMilliSeconds(300);
-                    }
+                    outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
                     outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
                 }
             }
@@ -332,6 +329,7 @@ public class GamepadController {
         if(gp2GetLeftBumperPress()){
             if (outtake.outtakeArmState == Outtake.ARM_STATE.HIGH_CHAMBER) {
                 outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH);
                 safeWaitMilliSeconds(50);
                 GameField.moveForwardFlag = true;
             } else {
@@ -341,14 +339,7 @@ public class GamepadController {
                     safeWaitMilliSeconds(500);//500
                 }
                 if (outtake.outtakeArmState == Outtake.ARM_STATE.HIGH_CHAMBER_LATCH) {
-                    if (intakeSlides.intakeSlidesState != IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED) {
-                        intakeOuttakeController.moveIntakeArmAndSlidesToTransfer();
-                    }
-                    if (intakeArm.intakeArmState != IntakeArm.ARM_STATE.SPECIMEN_PICKUP) {
-                        intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
-                        safeWaitMilliSeconds(200);
-                    }
-                    outtake.moveArm(Outtake.ARM_STATE.SPECIMEN_PICKUP);
+                    intakeOuttakeController.moveOuttakeToSpecimenPickUp();
                 } else {
                     outtake.moveArm(Outtake.ARM_STATE.PRE_TRANSFER);
                     outtake.moveOuttakeSlidesToTransfer();
@@ -359,15 +350,7 @@ public class GamepadController {
         }
 
         if(gp2GetCirclePress()) {
-            if(intakeSlides.intakeSlidesState != IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED){
-                intakeOuttakeController.moveIntakeArmAndSlidesToTransfer();
-                safeWaitMilliSeconds(300);
-            }
-            if (intakeArm.intakeArmState != IntakeArm.ARM_STATE.POST_TRANSFER) {
-                intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
-                safeWaitMilliSeconds(200);
-            }
-            outtake.moveArm(Outtake.ARM_STATE.SPECIMEN_PICKUP);
+            intakeOuttakeController.moveOuttakeToSpecimenPickUp();
             //outtake.ascendToClimbLevel2(); // Uncomment this line for Level 2 climb
             outtake.ascendToClimbLevel3(); // Uncomment this line for Level 3 climb
         }
@@ -376,14 +359,15 @@ public class GamepadController {
         if(gp2GetRightBumperPress()){
             if(outtake.climberAscended){
                 //outtake.climbLevel2(); // Uncomment this line for Level 2 climb
-                outtake.climbLevel3Part1(); // Uncomment this line for Level 3 climb
+
+                // The below lines is for Level 3 climb, comment for Level 2 climb
+                outtake.climbLevel3Part1();
+                safeWaitMilliSeconds(1000);
+                intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
+                safeWaitMilliSeconds(500);
+                outtake.climbLevel3Part2();
+                // The above is for Level 3 climb
             }
-            // The below lines is for Level 3 climb, comment for Level 2 climb
-            safeWaitMilliSeconds(1000);
-            intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
-            safeWaitMilliSeconds(500);
-            outtake.climbLevel3Part2();
-            // The above is for Level 3 climb
         }
 
         if (!gp2GetStart()) {

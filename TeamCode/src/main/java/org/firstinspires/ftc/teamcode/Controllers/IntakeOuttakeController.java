@@ -66,7 +66,7 @@ public class IntakeOuttakeController {
     }
 
     public void moveIntakeArmAndSlidesToTransfer() {
-        if (intakeSlides.intakeSlidesState == IntakeSlides.SLIDES_STATE.MAX_EXTENSION_AUTO) {
+        if (intakeSlides.intakeSlidesState == IntakeSlides.SLIDES_STATE.MAX_EXTENSION) {
             intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
             safeWaitMilliSeconds(50);
         }
@@ -146,7 +146,7 @@ public class IntakeOuttakeController {
                 vision.locateNearestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                if (vision.angle > 45 && vision.angle < 135) {
+                if (vision.angle < 45 ) {
                     intakeArm.moveSwivelCentered();
                 } else {
                     intakeArm.moveSwivelPerpendicular();
@@ -348,7 +348,9 @@ public class IntakeOuttakeController {
             intakeArm.moveArm(IntakeArm.ARM_STATE.SPECIMEN_PICKUP);
             safeWaitMilliSeconds(200);
         }
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.SPECIMEN_PICKUP);
         outtake.moveArm(Outtake.ARM_STATE.SPECIMEN_PICKUP);
+        outtake.adjustOpenGrip();
     }
 
     public Action moveOuttakeToSpecimenPickUpAction() {
@@ -368,6 +370,7 @@ public class IntakeOuttakeController {
     public void pickupSpecimenAndMoveOuttakeToHighChamber() {
         outtake.closeGrip();
         safeWaitMilliSeconds(100);
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
     }
 
@@ -410,6 +413,7 @@ public class IntakeOuttakeController {
 
     public void moveOuttakeToHighChamberLatch(){
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER_LATCH);
+        outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER_LATCH);
         safeWaitMilliSeconds(50);
     }
 
@@ -562,20 +566,6 @@ public class IntakeOuttakeController {
 
     }
 
-    public Action pickupSequenceAction1() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                pickupSequence();
-                return false;
-            }
-        };
-    }
-
     public Action pickupSequenceAction() {
         return new Action() {
             @Override
@@ -584,15 +574,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                Actions.runBlocking(
-                        new SequentialAction(
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.PICKUP),
-                                new SleepAction(0.2),
-                                closeIntakeGripAction(),
-                                new SleepAction(0.1),
-                                moveIntakeArmToAction(IntakeArm.ARM_STATE.PRE_PICKUP)
-                        )
-                );
+                pickupSequence();
                 return false;
             }
         };

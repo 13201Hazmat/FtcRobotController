@@ -35,6 +35,7 @@ public class Outtake {
 
     public enum GRIP_STATE {
         OPEN(0.41), //0.52 max
+        OPEN_WIDE(0.57),
         CLOSED(0.17);
 
         private final double gripPosition;
@@ -52,7 +53,7 @@ public class Outtake {
         TRANSFER(0.37),
         AUTO_PRE_DROP(0.54),
         DROP(0.54),//0.66
-        SPECIMEN_PICKUP(0.1),
+        SPECIMEN_PICKUP(0.13),//0.1
         SPECIMEN_MAKE_DROP(0.44),
         HIGH_CHAMBER(0.38),//0.66
         HIGH_CHAMBER_LATCH(0.38),
@@ -73,9 +74,9 @@ public class Outtake {
         PRE_TRANSFER(0.01),//0.21
         TRANSFER(0.01),//0.2
         AUTO_PRE_DROP(0.46),//0.68
-        SPECIMEN_PICKUP(0.20),
+        SPECIMEN_PICKUP(0.19),//0.2
         SPECIMEN_MAKE_DROP(0.75),
-        HIGH_CHAMBER(0.62),//0.92
+        HIGH_CHAMBER(0.615),//0.92
         HIGH_CHAMBER_LATCH(0.5),
         AUTO_PARK(0.27),
         DROP(0.58),//0.72
@@ -100,13 +101,13 @@ public class Outtake {
         HIGH_BUCKET(1300),
         HIGHER_BUCKET(1400),
         HIGH_CHAMBER(0),
-        HIGH_CHAMBER_LATCH(0),
+        HIGH_CHAMBER_LATCH(200),
         LEVEL2_ASCEND(1900),//700 for lower bar
         LEVEL2_CLIMB_ENGAGED(1750), //600 for lower bar
         LEVEL2_CLIMB(1200), //0 for lower bar
         LEVEL3_ASCEND(700),//700 for lower bar
         LEVEL3_CLIMB_ENGAGED(600), //600 for lower bar
-        LEVEL3_CLIMB(0), //0 for lower bar
+        LEVEL3_CLIMB(300), //0 for lower bar
         MAX_EXTENDED(2000);
 
         public final double motorPosition;
@@ -262,6 +263,7 @@ public class Outtake {
                 outtakeWristState = WRIST_STATE.MAX;
                 break;
         }
+        //adjustOpenGrip();
     }
 
     public void ascendToClimbLevel2(){
@@ -341,8 +343,22 @@ public class Outtake {
      *If state of hand grip is set to open, set position of servo's to specified
      */
     public void openGrip(){
-        outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN.gripPosition);
+        if (outtakeArmState != ARM_STATE.SPECIMEN_PICKUP) {
+            outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN.gripPosition);
+        } else {
+            outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN_WIDE.gripPosition);
+        }
         outtakeGripState = Outtake.GRIP_STATE.OPEN;
+    }
+
+    public void adjustOpenGrip(){
+        if (outtakeGripState == Outtake.GRIP_STATE.OPEN) {
+            if (outtakeArmState != ARM_STATE.SPECIMEN_PICKUP) {
+                outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN.gripPosition);
+            } else {
+                outtakeGripServo.setPosition(Outtake.GRIP_STATE.OPEN_WIDE.gripPosition);
+            }
+        }
     }
 
     /**

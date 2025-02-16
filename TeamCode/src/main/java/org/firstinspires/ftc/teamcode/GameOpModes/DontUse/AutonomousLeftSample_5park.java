@@ -233,7 +233,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         trajFirstBucketToYellowSampleNear,
                         new SleepAction(0.13),
                         new ParallelAction(
-                                intakeOuttakeController.pickupSequenceAction1(),
+                                intakeOuttakeController.pickupSequenceAction(),
                                 intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Near to Bucket
@@ -252,7 +252,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         trajBucketToYellowSampleMiddle,
                         new SleepAction(0.13),
                         new ParallelAction(
-                                intakeOuttakeController.pickupSequenceAction1(),
+                                intakeOuttakeController.pickupSequenceAction(),
                                  intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Middle to Bucket
@@ -271,7 +271,7 @@ public class AutonomousLeftSample_5park extends LinearOpMode {
                         trajBucketToYellowSampleFar,
                         new SleepAction(0.13),
                         new ParallelAction(
-                                intakeOuttakeController.pickupSequenceAction1(),
+                                intakeOuttakeController.pickupSequenceAction(),
                                 intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                         ),
                         //Sample Far to Bucket

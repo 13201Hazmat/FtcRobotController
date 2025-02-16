@@ -38,7 +38,7 @@ public class GamepadDriveTrainController extends Thread{
     public void runDriveControl_byRRDriveModes() {
 
         if (!GameField.moveForwardFlag) {
-            driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetRightStickX()) * 0.75;
+            driveTrain.gamepadInputTurn = gp1TurboMode(-gp1GetRightStickX());
 
             if (driveTrain.driveType == DriveTrain.DriveType.ROBOT_CENTRIC) {
                 driveTrain.gamepadInput = new Vector2d(

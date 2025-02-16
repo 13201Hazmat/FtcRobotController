@@ -19,7 +19,8 @@ import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.RotatedRect;
 
 @TeleOp (name = "Test Vision", group = "Testing")
-public class TestVision extends LinearOpMode {
+public class
+TestVision extends LinearOpMode {
     public Vision vision;
     public VisionPortal visionPortal;
     public TestGamepadController gamepadController;
@@ -58,11 +59,11 @@ public class TestVision extends LinearOpMode {
                             intakeArm.moveSwivelCentered();
                             if(vision.angle < 45.0){
                                 //near horizontal case
-                                intakeArm.moveSwivelPerpendicular();
+                                intakeArm.moveSwivelCentered();
                             }
                             else{
                                 //near vertical
-                                intakeArm.moveSwivelCentered();
+                                intakeArm.moveSwivelPerpendicular();
                             }
                             break;
                         case PRE_PICKUP:
@@ -185,8 +186,10 @@ public class TestVision extends LinearOpMode {
         if (GameField.debugLevel != GameField.DEBUG_LEVEL.NONE) {
             telemetry.addLine("Running Hazmat TestVision");
             vision.printDebugMessages();
+
             intakeSlides.printDebugMessages();
-            intakeArm.printDebugMessages();
+            telemetry.addData("    Extension Factor", intakeSlides.slideExtensionFactor());
+            //intakeArm.printDebugMessages();
 
             for (ColorBlobLocatorProcessor.Blob b : vision.blobs) {
                 RotatedRect boxFit = b.getBoxFit();

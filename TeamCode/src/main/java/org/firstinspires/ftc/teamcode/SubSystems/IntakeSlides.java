@@ -13,8 +13,7 @@ public class IntakeSlides {
     public enum SLIDES_STATE {
         TRANSFER_MIN_RETRACTED (0.20, 0.245),
         IN_BETWEEN(0.35,0.395),
-        MAX_EXTENSION(0.510, 0.555), //0.450,0.495
-        MAX_EXTENSION_AUTO(0.575,0.620);
+        MAX_EXTENSION(0.575,0.620); //0.450,0.495
 
         public double leftSlidePos;
         public double rightSlidePos;
@@ -25,7 +24,7 @@ public class IntakeSlides {
     }
     public SLIDES_STATE intakeSlidesState = SLIDES_STATE.TRANSFER_MIN_RETRACTED;
 
-    public double INTAKE_SLIDE_DELTA = 0.1;
+    public double INTAKE_SLIDE_DELTA = 0.01;//0.1
 
 
     public double leftIntakeSlideCurrPos, leftIntakeSlideNewPos = intakeSlidesState.leftSlidePos;
@@ -53,14 +52,15 @@ public class IntakeSlides {
     }
 
     public double slideExtensionFactor(){
-        return (intakeSlideServoRight.getPosition()/SLIDES_STATE.MAX_EXTENSION.rightSlidePos);
+        return ((intakeSlideServoRight.getPosition()- SLIDES_STATE.TRANSFER_MIN_RETRACTED.rightSlidePos) /
+                (SLIDES_STATE.MAX_EXTENSION.rightSlidePos - SLIDES_STATE.TRANSFER_MIN_RETRACTED.rightSlidePos));
     }
 
     public void moveIntakeSlidesToRange(double extensionFactor) {
         double leftSlideExtensionPosition = SLIDES_STATE.TRANSFER_MIN_RETRACTED.leftSlidePos
-                + extensionFactor * (SLIDES_STATE.MAX_EXTENSION_AUTO.leftSlidePos - SLIDES_STATE.TRANSFER_MIN_RETRACTED.leftSlidePos);
+                + extensionFactor * (SLIDES_STATE.MAX_EXTENSION.leftSlidePos - SLIDES_STATE.TRANSFER_MIN_RETRACTED.leftSlidePos);
         double rightSlideExtensionPosition = SLIDES_STATE.TRANSFER_MIN_RETRACTED.rightSlidePos
-                + extensionFactor * (SLIDES_STATE.MAX_EXTENSION_AUTO.rightSlidePos - SLIDES_STATE.TRANSFER_MIN_RETRACTED.rightSlidePos);
+                + extensionFactor * (SLIDES_STATE.MAX_EXTENSION.rightSlidePos - SLIDES_STATE.TRANSFER_MIN_RETRACTED.rightSlidePos);
 
         intakeSlideServoLeft.setPosition(leftSlideExtensionPosition);
         intakeSlideServoRight.setPosition(rightSlideExtensionPosition);
@@ -88,9 +88,9 @@ public class IntakeSlides {
             intakeSlideServoRight.setPosition(SLIDES_STATE.MAX_EXTENSION.rightSlidePos);
             intakeSlidesState = SLIDES_STATE.MAX_EXTENSION;
         } else {
-            intakeSlideServoLeft.setPosition(SLIDES_STATE.MAX_EXTENSION_AUTO.leftSlidePos);
-            intakeSlideServoRight.setPosition(SLIDES_STATE.MAX_EXTENSION_AUTO.rightSlidePos);
-            intakeSlidesState = SLIDES_STATE.MAX_EXTENSION_AUTO;
+            intakeSlideServoLeft.setPosition(SLIDES_STATE.MAX_EXTENSION.leftSlidePos);
+            intakeSlideServoRight.setPosition(SLIDES_STATE.MAX_EXTENSION.rightSlidePos);
+            intakeSlidesState = SLIDES_STATE.MAX_EXTENSION;
         }
 
     }
@@ -99,7 +99,7 @@ public class IntakeSlides {
         double intakeSlideServoLeftPosition = intakeSlideServoLeft.getPosition();
         double intakeSlideServoRightPosition = intakeSlideServoRight.getPosition();
 
-        if (intakeSlidesState == SLIDES_STATE.MAX_EXTENSION_AUTO) {
+        if (intakeSlidesState == SLIDES_STATE.MAX_EXTENSION) {
             intakeSlideServoLeft.setPosition(SLIDES_STATE.MAX_EXTENSION.leftSlidePos);
             intakeSlideServoRight.setPosition(SLIDES_STATE.MAX_EXTENSION.rightSlidePos);
             intakeSlidesState = SLIDES_STATE.MAX_EXTENSION;

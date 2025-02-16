@@ -41,7 +41,7 @@ public class VisionLimeLight {
 
     public VisionLimeLight(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
-        //limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
     }
@@ -90,13 +90,18 @@ public class VisionLimeLight {
                 limelight.getStatus().getTemp(), limelight.getStatus().getCpu(),(int)limelight.getStatus().getFps());
         telemetry.addData("Pipeline", "Index: %d, Type: %s",
                 limelight.getStatus().getPipelineIndex(), limelight.getStatus().getPipelineType());
-        if (result.isValid()) {
-            telemetry.addData("tx", result.getTx());
-            telemetry.addData("txnc", result.getTxNC());
-            telemetry.addData("ty", result.getTy());
-            telemetry.addData("tync", result.getTyNC());
-            telemetry.addData("Sample Angle:", sampleOrientation);
+        if (result != null) {
+            if (result.isValid()) {
+                telemetry.addData("tx", result.getTx());
+                telemetry.addData("txnc", result.getTxNC());
+                telemetry.addData("ty", result.getTy());
+                telemetry.addData("tync", result.getTyNC());
+
+            }
         }
+        telemetry.addData("Sample Angle:", sampleOrientation);
+        telemetry.addData("xPos", xPos);
+        telemetry.addData("yPos", yPos);
         telemetry.addData("Angle", angle);
         telemetry.addData("Y Extension Factor", yExtensionFactor);
         telemetry.addLine("=================");

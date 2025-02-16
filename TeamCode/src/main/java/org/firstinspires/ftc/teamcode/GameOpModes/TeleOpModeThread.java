@@ -117,7 +117,7 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        safeWaitSeconds(0.2);
+        safeWaitSeconds(0.3);
 
         intakeArm = new IntakeArm(hardwareMap, telemetry);
         telemetry.addLine("IntakeArm Initialized");

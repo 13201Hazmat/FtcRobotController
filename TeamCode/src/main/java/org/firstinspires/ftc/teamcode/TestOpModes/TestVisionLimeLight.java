@@ -35,6 +35,7 @@ public class TestVisionLimeLight extends LinearOpMode {
         GameField.opModeRunning = GameField.OP_MODE_RUNNING.HAZMAT_TELEOP;
 
         initSubsystems();
+        visionLimeLight.startLimelight();
 
         //selectColor();
 
@@ -68,16 +69,16 @@ public class TestVisionLimeLight extends LinearOpMode {
                         case PRE_PICKUP:
                             //GameField.turboFactor = true;
                             //if (intakeArm.intakeGripAutoClose) {
-                                if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
-                                    //PICKUP SEQUENCE
-                                    intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
-                                    safeWaitMilliSeconds(200);
-                                    intakeArm.closeGrip();
-                                    safeWaitMilliSeconds(100);
-                                    intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                                } else {
-                                    intakeArm.openGrip();
-                                }
+                            if (intakeArm.intakeGripState == IntakeArm.GRIP_STATE.OPEN) {
+                                //PICKUP SEQUENCE
+                                intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
+                                safeWaitMilliSeconds(200);
+                                intakeArm.closeGrip();
+                                safeWaitMilliSeconds(100);
+                                intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                            } else {
+                                intakeArm.openGrip();
+                            }
                             /*} else {
                                 intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
                             }*/
@@ -113,45 +114,45 @@ public class TestVisionLimeLight extends LinearOpMode {
 
     public void initSubsystems() {
 
-            telemetry.setAutoClear(true);
+        telemetry.setAutoClear(true);
 
-            telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
-            telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
 
-            //Init Pressed
-            telemetry.addLine("Robot Init Pressed");
-            telemetry.addLine("==================");
-            telemetry.update();
+        //Init Pressed
+        telemetry.addLine("Robot Init Pressed");
+        telemetry.addLine("==================");
+        telemetry.update();
 
-            visionLimeLight = new VisionLimeLight(hardwareMap, telemetry);
-            telemetry.addLine("Vision Initialized");
-            telemetry.update();
+        visionLimeLight = new VisionLimeLight(hardwareMap, telemetry);
+        telemetry.addLine("Vision Initialized");
+        telemetry.update();
 
-            intakeArm = new IntakeArm(hardwareMap, telemetry);
-            telemetry.addLine("IntakeArm Initialized");
-            telemetry.update();
+        intakeArm = new IntakeArm(hardwareMap, telemetry);
+        telemetry.addLine("IntakeArm Initialized");
+        telemetry.update();
 
-            intakeSlides = new IntakeSlides(hardwareMap, telemetry);
-            telemetry.addLine("IntakeSlides Initialized");
-            telemetry.update();
+        intakeSlides = new IntakeSlides(hardwareMap, telemetry);
+        telemetry.addLine("IntakeSlides Initialized");
+        telemetry.update();
 
-            /* Create Controllers */
-            gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
-            telemetry.addLine("Gamepad Initialized");
-            telemetry.update();
+        /* Create Controllers */
+        gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
+        telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
 
-            for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-            }
-
-            //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
-            GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
-
-            telemetry.addLine("+++++++++++++++++++++++");
-            telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
-            telemetry.update();
-
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        //GameField.debugLevel = GameField.DEBUG_LEVEL.NONE;
+        GameField.debugLevel = GameField.DEBUG_LEVEL.MAXIMUM;
+
+        telemetry.addLine("+++++++++++++++++++++++");
+        telemetry.addLine("Init Completed, All systems Go! Let countdown begin. Waiting for Start");
+        telemetry.update();
+
+    }
 
     public void selectColor() {
         while (!isStopRequested()) {
@@ -199,5 +200,3 @@ public class TestVisionLimeLight extends LinearOpMode {
         }
     }
 }
-
-

@@ -16,6 +16,8 @@ import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Vision {
     private Telemetry telemetry;
@@ -25,10 +27,10 @@ public class Vision {
 
     private static final int X_RANGE = 320;
     private static final int Y_RANGE = 240;
-    private static final int Y_AREA_OF_INTEREST_MAX = 80;  // Full extension 1.0
-    private static final int Y_AREA_OF_INTEREST_MIN = 180; // Half extension 0.5
-    private static final double EXTENSION_FACTOR_MAX = 1.0;
-    private static final double EXTENSION_FACTOR_MIN = 0.5;
+    private static final int Y_AREA_OF_INTEREST_MAX = 30;  // Full extension 1.0
+    private static final int Y_AREA_OF_INTEREST_MIN = 210; // Half extension 0.5
+    private static final double EXTENSION_FACTOR_MAX = 0.8;
+    private static final double EXTENSION_FACTOR_MIN = 0.2;//0.5
 
     public boolean targetBlobDetected = false;
     public double yExtensionFactor = 0.0;
@@ -45,8 +47,9 @@ public class Vision {
         colorLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
+                .setRoi(ImageRegion.asUnityCenterCoordinates(0.3, 0.95, 0.85, -0.95))
                 //.setRoi(ImageRegion.asImageCoordinates(130, 0,  190, 180))
-                .setRoi(ImageRegion.entireFrame())
+                //.setRoi(ImageRegion.entireFrame())
                 .setDrawContours(true)
                 .setBlurSize(2)
                 .setErodeSize(7)
@@ -69,8 +72,8 @@ public class Vision {
 
         if (targetBlobDetected) {
             numberOfBlobsDetected = blobs.size();
-            ColorBlobLocatorProcessor.Blob closestBlob = blobs.get(0);
-            boxFit = closestBlob.getBoxFit();
+            ColorBlobLocatorProcessor.Blob farthestBlob = blobs.get(numberOfBlobsDetected-1);
+            boxFit = farthestBlob.getBoxFit();
 
             blockX = (int) boxFit.center.x;
             blockY = (int) boxFit.center.y;
@@ -88,11 +91,86 @@ public class Vision {
                 angle = Math.max(rawAngle, 90.0 - rawAngle);
             }
 
+            /*
             // *** Calculate Extension Factor ***
             yExtensionFactor = EXTENSION_FACTOR_MIN +
                     ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
                             / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
+             */
+            //x=0.0000123456⋅ysq −0.0023456789⋅y+0.1234567890
+            //Calculated polynomial equation using deepseek from experimental values found from robot physically
+            /* Extension - pixel value - distance from base of robot
+            0.21 - 204 - 5"
+            0.26 - 195 - 5.5
+            0.32 - 145 - 7.5
+            0.37 - 110 - 9.5
+            0.43 - 81 - 11
+            0.48 - 71 - 12
+            0.53 - 58 - 13
+            0.61 - 48 - 14.25
+            0.69 - 32 - 15.5
+             */
+            //yExtensionFactor = -0.0002 * blockY * blockY - 0.064 * blockY + 6.23;
+            yExtensionFactor = calculateYExtensionFactorFromLookUp(blockY);
+
         }
+    }
+
+    public double calculateYExtensionFactorFromLookUp(double yToLookup){
+        double answer = 0;
+        double[][] data = {
+                {0.21, 204},
+                {0.26, 195},
+                {0.32, 145},
+                {0.37, 110},
+                {0.43, 81},
+                {0.48, 71},
+                {0.53, 58},
+                {0.61, 48},
+                {0.69, 32}
+        };
+
+        // Create the lookup table (using a HashMap for efficient lookups)
+        Map<Double, Double> lookupTable = createLookupTable(data);
+
+        if (lookupTable.containsKey(yToLookup)) {
+            double xValue = lookupTable.get(yToLookup);
+            answer = xValue;
+        } else {
+            // Handle cases where the y value is not found.  Linear interpolation is one option:
+            Double lowerY = null;
+            Double upperY = null;
+            for (Double y : lookupTable.keySet()) {
+                if (y < yToLookup && (lowerY == null || y > lowerY)) {
+                    lowerY = y;
+                }
+                if (y > yToLookup && (upperY == null || y < upperY)) {
+                    upperY = y;
+                }
+            }
+
+            if (lowerY != null && upperY != null) {
+                double lowerX = lookupTable.get(lowerY);
+                double upperX = lookupTable.get(upperY);
+
+                double interpolatedX = lowerX + (upperX - lowerX) * (yToLookup - lowerY) / (upperY - lowerY);
+                answer = interpolatedX;
+            }
+        }
+
+
+        return answer;
+    }
+
+    // Creates the lookup table from the given data
+    static Map<Double, Double> createLookupTable(double[][] data) {
+        Map<Double, Double> lookup = new HashMap<>();
+        for (double[] row : data) {
+            double x = row[0];
+            double y = row[1];
+            lookup.put(y, x); // y is the key, x is the value
+        }
+        return lookup;
     }
 
     public void printDebugMessages() {

@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.TestOpModes.ConceptVisionColorLocatorTest;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 
 public class IntakeArm {
@@ -328,6 +329,20 @@ public class IntakeArm {
             sensedSampleColor = ColorRange.GREEN;
         }
     }
+
+    /*public void compareSensedIntakeSampleColor(){
+        // Define HSV color ranges for Yellow, Red, and Blue
+        private Scalar lowerYellow = new Scalar(20, 100, 100); // Lower bound for Yellow
+        private Scalar upperYellow = new Scalar(30, 255, 255); // Upper bound for Yellow
+
+        private Scalar lowerRed1 = new Scalar(0, 100, 100);  // Lower bound for Red (first range)
+        private Scalar upperRed1 = new Scalar(10, 255, 255); // Upper bound for Red (first range)
+        private Scalar lowerRed2 = new Scalar(160, 100, 100);  // Lower bound for Red (second range)
+        private Scalar upperRed2 = new Scalar(180, 255, 255); // Upper bound for Red (second range)
+
+        private Scalar lowerBlue = new Scalar(100, 100, 100); // Lower bound for Blue
+        private Scalar upperBlue = new Scalar(130, 255, 255); // Upper bound for Blue
+    }*/
 
 
     public void printDebugMessages() {
