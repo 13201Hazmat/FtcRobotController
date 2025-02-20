@@ -167,9 +167,9 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
         submersibleSpecimenPreload = new Pose2d(-31.5, -1.2, Math.toRadians(0));
-        colorSampleNear = new Pose2d(-20, 37.5, Math.toRadians(164));//-26
+        colorSampleNear = new Pose2d(-20, 37.5, Math.toRadians(165));//-26
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(145));//121
-        colorSampleFar = new Pose2d(-20, 37.5, Math.toRadians(126));
+        colorSampleFar = new Pose2d(-20, 37.5, Math.toRadians(127));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(45));
         pickupSpecimenOne = new Pose2d(0, 42, Math.toRadians(0));
         submersibleSpecimenOne = new Pose2d(-31.5, -4.8, Math.toRadians(0));
@@ -386,7 +386,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                             new SequentialAction(
                                     //*** Move Color Sample Far to Observation Zone
                                     trajObservationDropToColorSampleNear,
-                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.3, 10),
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.35, 10),
                                     new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     //new SleepAction(0.1),
