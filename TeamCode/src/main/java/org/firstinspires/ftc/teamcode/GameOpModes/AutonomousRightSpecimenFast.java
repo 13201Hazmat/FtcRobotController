@@ -385,8 +385,10 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //*** Move Color Sample Far to Observation Zone
-                                    trajObservationDropToColorSampleNear,
-                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.325, 10),
+                                    new ParallelAction(
+                                            trajObservationDropToColorSampleNear,
+                                            intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.325, 10)
+                                    ),
                                     new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     //new SleepAction(0.1),
