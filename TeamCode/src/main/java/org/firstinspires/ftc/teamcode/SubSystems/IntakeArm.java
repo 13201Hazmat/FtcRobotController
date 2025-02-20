@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.TestOpModes.ConceptVisionColorLocatorTest;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.opencv.core.Scalar;
 
 public class IntakeArm {
     public Servo intakeArmServo;
@@ -311,19 +312,28 @@ public class IntakeArm {
     public NormalizedRGBA sensedColor;
     public double intakeSensingDistance = 500;
 
-    public void senseIntakeSampleColor(){
+    public void senseIntakeSampleColor() {
         if (intakeSensingActivated) {
-            if (intakeSensor instanceof DistanceSensor){
+            if (intakeSensor instanceof DistanceSensor) {
                 intakeSensingDistance = ((DistanceSensor) intakeSensor).getDistance(DistanceUnit.MM);
             }
-            if(intakeSensingDistance < SENSE_DISTANCE){
+
+            if (intakeSensingDistance < SENSE_DISTANCE) {
                 intakeSampleSensed = true;
                 sensedColor = intakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
 
-                //TODO MUST VINAYAK
-                //Write code to check if picked color is in Yellow Range or the color of thealliance, else
-                //openGrip and intakeSampleSensed = false;
+                Scalar lowerYellow = new Scalar(20, 100, 100);
+                Scalar upperYellow = new Scalar(30, 255, 255);
+
+                boolean isYellow = (sensedSampleHsvValues[0] >= lowerYellow.val[0] && sensedSampleHsvValues[0] <= upperYellow.val[0]) &&
+                        (sensedSampleHsvValues[1] >= lowerYellow.val[1] / 255.0 && sensedSampleHsvValues[1] <= upperYellow.val[1] / 255.0) &&
+                        (sensedSampleHsvValues[2] >= lowerYellow.val[2] / 255.0 && sensedSampleHsvValues[2] <= upperYellow.val[2] / 255.0);
+
+                if (!isYellow) {
+                    openGrip();
+                    intakeSampleSensed = false;
+                }
             } else {
                 intakeSampleSensed = false;
             }
@@ -333,6 +343,7 @@ public class IntakeArm {
             sensedSampleColor = ColorRange.GREEN;
         }
     }
+
 
     /*public void compareSensedIntakeSampleColor(){
         // Define HSV color ranges for Yellow, Red, and Blue

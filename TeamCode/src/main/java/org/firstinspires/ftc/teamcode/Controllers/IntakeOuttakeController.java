@@ -156,6 +156,21 @@ public class IntakeOuttakeController {
         };
     }
 
+    public Action swivelByVisionAction() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                vision.locateNearestSampleFromRobot();
+                intakeArm.moveSwivelTo(vision.angle);
+                return false;
+            }
+        };
+    }
+
     public Action openIntakeGripAction() {
         return new Action() {
             @Override

@@ -107,7 +107,7 @@ public class Outtake {
         LEVEL2_CLIMB(1200), //0 for lower bar
         LEVEL3_ASCEND(700),//700 for lower bar
         LEVEL3_CLIMB_ENGAGED(600), //600 for lower bar
-        LEVEL3_CLIMB(300), //0 for lower bar
+        LEVEL3_CLIMB(250), //300 for lower bar // 250 num 2
         MAX_EXTENDED(2000);
 
         public final double motorPosition;
@@ -316,9 +316,9 @@ public class Outtake {
         movePTO(PTO_STATE.PTO_OFF);
         safeWaitMilliSeconds(100);
         startOuttakeClimbMotors();
-        safeWaitMilliSeconds(1000);
+        safeWaitMilliSeconds(2000);
         reverseOuttakeClimbMotors();
-        safeWaitMilliSeconds(8000);
+        safeWaitMilliSeconds(6000);
         stopOuttakeClimbMotors();
     }
 

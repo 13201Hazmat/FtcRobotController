@@ -47,6 +47,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.TurnConstraints;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -60,13 +61,14 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.opencv.core.Mat;
 
 /**
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT 2", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto RIGHT Fast", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousRightSpecimenFast extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -152,9 +154,9 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
 
     //List all Trajectories
     Action trajInitToSubmersiblePreload,
-            trajSubmersiblePreloadToColorSampleNear, trajColorSampleNearToObservationDrop,
+            trajSubmersiblePreloadToColorSampleFar, trajColorSampleFarToObservationDrop,
             trajObservationDropToColorSampleMiddle, trajColorSampleMiddleToObservationDrop,
-            trajObservationDropToColorSampleFar, trajColorSampleFarToObservationDrop,
+            trajObservationDropToColorSampleNear, trajColorSampleNearToObservationDrop,
             trajObservationDropToPickupSpecimenOne,
             trajPickupSpecimenOneToSubmersibleOne,  trajSubmersibleOneToPickupSpecimenTwo,
             trajPickupSpecimenTwoToSubmersibleTwo,  trajSubmersibleTwoToPickupPreload2,
@@ -165,11 +167,11 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
         submersibleSpecimenPreload = new Pose2d(-31.5, -1.2, Math.toRadians(0));
-        colorSampleNear = new Pose2d(-17, 36.7, Math.toRadians(163));//-26
-        colorSampleMiddle = new Pose2d(-17, 36.7, Math.toRadians(145));//121
-        colorSampleFar = new Pose2d(-17, 36.7, Math.toRadians(142));
+        colorSampleNear = new Pose2d(-20, 37.5, Math.toRadians(164));//-26
+        colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(145));//121
+        colorSampleFar = new Pose2d(-20, 37.5, Math.toRadians(126));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(45));
-        pickupSpecimenOne = new Pose2d(0, 38, Math.toRadians(0));
+        pickupSpecimenOne = new Pose2d(0, 42, Math.toRadians(0));
         submersibleSpecimenOne = new Pose2d(-31.5, -4.8, Math.toRadians(0));
         pickupSpecimenTwo = pickupSpecimenOne; //new Pose2d(-7.3, 10.3, Math.toRadians(0)); //-180
         submersibleSpecimenTwo = new Pose2d(-31.5, -9, Math.toRadians(0));
@@ -186,12 +188,12 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
                 .strafeToLinearHeading(submersibleSpecimenPreload.position, submersibleSpecimenPreload.heading)
                 .build();
 
-        trajSubmersiblePreloadToColorSampleNear = drive.actionBuilder(submersibleSpecimenPreload)
+        trajSubmersiblePreloadToColorSampleFar = drive.actionBuilder(submersibleSpecimenPreload)
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(colorSampleNear, Math.toRadians(90))
+                .splineToLinearHeading(colorSampleFar, Math.toRadians(90))
                 .build();
 
-        trajColorSampleNearToObservationDrop = drive.actionBuilder(colorSampleNear)
+        trajColorSampleFarToObservationDrop = drive.actionBuilder(colorSampleFar)
                 .turnTo(observationDrop.heading, new TurnConstraints(2*Math.PI, -2*Math.PI, 2*Math.PI))
                 .build();
 
@@ -203,11 +205,11 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
                 .turnTo(observationDrop.heading, new TurnConstraints(2*Math.PI, -2*Math.PI, 2*Math.PI))
                 .build();
 
-        trajObservationDropToColorSampleFar = drive.actionBuilder(observationDrop)
-                .turnTo(colorSampleFar.heading, new TurnConstraints(2*Math.PI, -2*Math.PI, 2*Math.PI))
+        trajObservationDropToColorSampleNear = drive.actionBuilder(observationDrop)
+                .turnTo(colorSampleNear.heading, new TurnConstraints(2*Math.PI, -2*Math.PI, 2*Math.PI))
                 .build();
 
-        trajColorSampleFarToObservationDrop = drive.actionBuilder(colorSampleFar)
+        trajColorSampleNearToObservationDrop = drive.actionBuilder(colorSampleNear)
                 .turnTo(observationDrop.heading, new TurnConstraints(2*Math.PI, -2*Math.PI, 2*Math.PI))
                 .build();
 
@@ -285,22 +287,22 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
                         intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
                         new SleepAction(0.2),
                         new ParallelAction(
-                                trajSubmersiblePreloadToColorSampleNear,
+                                trajSubmersiblePreloadToColorSampleFar,
                                 new SequentialAction(
                                         new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
                                         intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT)
                                 ),
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.4, 30),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 40),
                                 intakeOuttakeController.openIntakeGripAction()
                         ),
-                        //*** Drop Specimen Preload to Move Color Sample Near to Observation Zone
+                        //*** Drop Specimen Preload to Move Color Sample Far to Observation Zone
                         new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction(),
                         //new SleepAction(0.1),
                         new ParallelAction(
-                                trajColorSampleNearToObservationDrop,
+                                trajColorSampleFarToObservationDrop,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.6, 90)
                         ),
                         //new SleepAction(0.1),
@@ -321,8 +323,8 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
                         intakeOuttakeController.openIntakeGripAction(),
                         //new SleepAction(0.1),
 
-                        //*** Move Color Sample Far to Observation Zone
-                        pickFarSampleAndDropToObservationDropAction(),
+                        //*** Move Color Sample Near to Observation Zone
+                        pickNearSampleAndDropToObservationDropAction(),
 
                         //*** Ger Ready for Specimen Pickup
                         intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
@@ -371,7 +373,7 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
         );
     }
 
-    public Action pickFarSampleAndDropToObservationDropAction(){
+    public Action pickNearSampleAndDropToObservationDropAction(){
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -383,13 +385,13 @@ public class AutonomousRightSpecimenNEW2 extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //*** Move Color Sample Far to Observation Zone
-                                    trajObservationDropToColorSampleFar,
-                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 30),
-                                    new SleepAction(0.1),
+                                    trajObservationDropToColorSampleNear,
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.3, 10),
+                                    new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     //new SleepAction(0.1),
                                     new ParallelAction(
-                                            trajColorSampleFarToObservationDrop,
+                                            trajColorSampleNearToObservationDrop,
                                             intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 90)
                                     ),
                                     //new SleepAction(0.1),
