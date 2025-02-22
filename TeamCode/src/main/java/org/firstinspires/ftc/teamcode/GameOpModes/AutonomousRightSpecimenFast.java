@@ -168,7 +168,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, initPose);
         submersibleSpecimenPreload = new Pose2d(-31, -1.2, Math.toRadians(0));
         colorSampleNear = new Pose2d(-16.5, 37.5, Math.toRadians(167));//-26
-        colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
+        colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(147));//121
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(0, 42, Math.toRadians(0));

@@ -57,7 +57,7 @@ public class Outtake {
         SPECIMEN_MAKE_DROP(0.44),
         HIGH_CHAMBER(0.38),//0.66
         HIGH_CHAMBER_LATCH(0.38),
-        AUTO_PARK(0.33),
+        AUTO_PARK(0.32),
         MAX(0.66);
 
         private double armPos;
