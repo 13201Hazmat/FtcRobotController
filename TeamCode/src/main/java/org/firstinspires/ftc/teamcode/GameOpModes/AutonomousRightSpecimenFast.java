@@ -171,13 +171,13 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
-        pickupSpecimenOne = new Pose2d(-0.25, 42, Math.toRadians(0));
+        pickupSpecimenOne = new Pose2d(-0.55, 42, Math.toRadians(0));//-0.25,42,0
         submersibleSpecimenOne = new Pose2d(-30.75, -3.75, Math.toRadians(0));
-        pickupSpecimenTwo = new Pose2d(-0.25, 46, Math.toRadians(0));
+        pickupSpecimenTwo = new Pose2d(-0.75, 46, Math.toRadians(0));//-0.25,46,0
         submersibleSpecimenTwo = new Pose2d(-30, -9, Math.toRadians(0));
         pickupSpecimenPreload2 = new Pose2d(-1, 47, Math.toRadians(0));
         submersibleSpecimenPreload2 =  new Pose2d(-30, -13, Math.toRadians(0));
-        pickupSpecimenThree = new Pose2d(-1, 47, Math.toRadians(0));
+        pickupSpecimenThree = new Pose2d(-1.4, 50, Math.toRadians(0));//-1,47,0
         submersibleSpecimenThree = new Pose2d(-30, -11, Math.toRadians(0));
         observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
@@ -294,13 +294,13 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                                         new SleepAction(0.1),
                                         intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT)
                                 ),
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80),
-                                intakeOuttakeController.openIntakeGripAction()
+                                intakeOuttakeController.openIntakeGripAction(),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)
                         ),
                         //*** Drop Specimen Preload to Move Color Sample Far to Observation Zone
                         new SleepAction(0.2),
                         intakeOuttakeController.pickupSequenceAction(),
-                        //new SleepAction(0.1),
+                        new SleepAction(0.1),
                         new ParallelAction(
                                 trajColorSampleFarToObservationDrop,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.6, 90)
@@ -464,7 +464,8 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //*** Drop Specimen Preload to Pick and drop Specimen Preload 2
-                                    new SleepAction(0.2),
+                                    //0.2
+                                    new SleepAction(0.5),
                                     intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                                     trajPickupPreload2ToSubmersiblePreload2,
                                     new SleepAction(0.1),

@@ -11,7 +11,7 @@ public class IntakeSlides {
 
     //IntakeSlides servo states
     public enum SLIDES_STATE {
-        TRANSFER_MIN_RETRACTED (0.20, 0.245),
+        TRANSFER_MIN_RETRACTED (0.21, 0.255),
         IN_BETWEEN(0.35,0.395),
         MAX_EXTENSION(0.575,0.620); //0.450,0.495
 

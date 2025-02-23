@@ -222,7 +222,7 @@ public class GamepadController {
                 || intakeArm.intakeArmState == IntakeArm.ARM_STATE.LOWER_PRE_PICKUP)
                 && intakeArm.intakeGripState == IntakeArm.GRIP_STATE.CLOSED) {
             //safeWaitMilliSeconds(200);
-            intakeArm.senseIntakeSampleColor();
+            //intakeArm.senseIntakeSampleColor();
             if (intakeArm.intakeSampleSensed) {
                 gp2RumbleFine(200);
                 if (intakeOuttakeController.autoTransferEnabled) {
