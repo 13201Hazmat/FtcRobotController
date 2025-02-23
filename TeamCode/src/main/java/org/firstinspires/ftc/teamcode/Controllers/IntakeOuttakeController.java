@@ -571,6 +571,7 @@ public class IntakeOuttakeController {
         };
     }
 
+
     public void pickupSequence(){
         moveIntakeArm(IntakeArm.ARM_STATE.PICKUP);
         safeWaitMilliSeconds(200);
