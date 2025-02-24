@@ -166,19 +166,19 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
-        submersibleSpecimenPreload = new Pose2d(-30, -1.2, Math.toRadians(0));
+        submersibleSpecimenPreload = new Pose2d(-29.75, -1.2, Math.toRadians(0));
         colorSampleNear = new Pose2d(-16.5, 37.5, Math.toRadians(167));//-26
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
-        pickupSpecimenOne = new Pose2d(-0.55, 42, Math.toRadians(0));//-0.25,42,0
-        submersibleSpecimenOne = new Pose2d(-30.75, -3.75, Math.toRadians(0));
-        pickupSpecimenTwo = new Pose2d(-0.75, 46, Math.toRadians(0));//-0.25,46,0
-        submersibleSpecimenTwo = new Pose2d(-30, -9, Math.toRadians(0));
-        pickupSpecimenPreload2 = new Pose2d(-1, 47, Math.toRadians(0));
-        submersibleSpecimenPreload2 =  new Pose2d(-30, -13, Math.toRadians(0));
-        pickupSpecimenThree = new Pose2d(-1.4, 50, Math.toRadians(0));//-1,47,0
-        submersibleSpecimenThree = new Pose2d(-30, -11, Math.toRadians(0));
+        pickupSpecimenOne = new Pose2d(-0.65, 42, Math.toRadians(3));//-0.25,42,0
+        submersibleSpecimenOne = new Pose2d(-30.25, -6.75, Math.toRadians(0));
+        pickupSpecimenTwo = new Pose2d(-1, 46, Math.toRadians(3));//-0.25,46,0
+        submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
+        pickupSpecimenPreload2 = new Pose2d(-2, 47, Math.toRadians(3));
+        submersibleSpecimenPreload2 =  new Pose2d(-29, -13, Math.toRadians(0));
+        pickupSpecimenThree = new Pose2d(-6.5, 55, Math.toRadians(3));//-1,47,0
+        submersibleSpecimenThree = new Pose2d(-27, -11, Math.toRadians(0));
         observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
@@ -225,7 +225,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
 
         trajSubmersibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
                 .setTangent(Math.toRadians(3))
-                .splineToSplineHeading(pickupSpecimenTwo, Math.toRadians(15),
+                .splineToSplineHeading(pickupSpecimenTwo, Math.toRadians(-15),
                         new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
@@ -238,7 +238,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
 
         trajSubmersibleTwoToPickupPreload2 = drive.actionBuilder(submersibleSpecimenTwo)
                 .setTangent(Math.toRadians(3))
-                .splineToSplineHeading(pickupSpecimenPreload2, Math.toRadians(15),
+                .splineToSplineHeading(pickupSpecimenPreload2, Math.toRadians(-15),
                         new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
@@ -251,7 +251,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
 
         trajSubmersiblePreload2ToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenPreload2)
                 .setTangent(Math.toRadians(3))
-                .splineToSplineHeading(pickupSpecimenThree, Math.toRadians(10),
+                .splineToSplineHeading(pickupSpecimenThree, Math.toRadians(-15),
                         new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
@@ -355,7 +355,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
 
 
                         //Drop Specimen 1 to Pick and drop Specimen 2
-                        new SleepAction(0.3),
+                        new SleepAction(0.5),
                         intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                         trajPickupSpecimenTwoToSubmersibleTwo,
                         new SleepAction(0.1),
@@ -465,7 +465,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                             new SequentialAction(
                                     //*** Drop Specimen Preload to Pick and drop Specimen Preload 2
                                     //0.2
-                                    new SleepAction(0.5),
+                                    new SleepAction(0.7),
                                     intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                                     trajPickupPreload2ToSubmersiblePreload2,
                                     new SleepAction(0.1),
