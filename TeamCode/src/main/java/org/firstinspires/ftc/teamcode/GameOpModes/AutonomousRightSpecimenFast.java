@@ -166,7 +166,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
-        submersibleSpecimenPreload = new Pose2d(-28.75, -1.2, Math.toRadians(0));
+        submersibleSpecimenPreload = new Pose2d(-29.75, -1.2, Math.toRadians(0));
         colorSampleNear = new Pose2d(-16.5, 37.5, Math.toRadians(167));//-26
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
@@ -178,7 +178,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         pickupSpecimenPreload2 = new Pose2d(-2, 47, Math.toRadians(3));
         submersibleSpecimenPreload2 =  new Pose2d(-29, -13, Math.toRadians(0));
         pickupSpecimenThree = new Pose2d(-6.5, 55, Math.toRadians(3));//-1,47,0
-        submersibleSpecimenThree = new Pose2d(-26.5, -11, Math.toRadians(0));
+        submersibleSpecimenThree = new Pose2d(-26.2, -11, Math.toRadians(0));
         observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
