@@ -149,10 +149,10 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(11.5, 21.5, Math.toRadians(-22.5));//18.28, 35.16, -26.5
+        firstBucket = new Pose2d(11.5, 21, Math.toRadians(-22.5));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(9.25, 24, Math.toRadians(-5));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(8.5, 23, Math.toRadians(-7));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(19.75));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-7.6));;//10, 27.5, -6.5
