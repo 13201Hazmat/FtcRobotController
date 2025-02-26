@@ -172,7 +172,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(-0.60, 42, Math.toRadians(3));//-0.25,42,0
-        submersibleSpecimenOne = new Pose2d(-30.25, -6.75, Math.toRadians(0));
+        submersibleSpecimenOne = new Pose2d(-30.25, -6.25, Math.toRadians(0));//-6.75
         pickupSpecimenTwo = new Pose2d(-1, 46, Math.toRadians(3));//-0.25,46,0
         submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
         pickupSpecimenPreload2 = new Pose2d(-2, 47, Math.toRadians(3));
