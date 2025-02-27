@@ -152,10 +152,10 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
         firstBucket = new Pose2d(11.8, 21, Math.toRadians(-21.8));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11, 23, Math.toRadians(-8.2));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(10.7, 23, Math.toRadians(-3));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(19.75));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(11, 22.5, Math.toRadians(-7.6));;//10, 27.5, -6.5
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(3));;//10, 27.5, -6.5
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
@@ -223,8 +223,9 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                         intakeOuttakeController.pickupSequenceAction(),
                         //Sample Near to Bucket
                         new SequentialAction(
-                                trajBucketToYellowSampleMiddle,
-                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                trajBucketToYellowSampleMiddle
+
 
                         ),
                         new ParallelAction(
@@ -243,7 +244,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
 
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
