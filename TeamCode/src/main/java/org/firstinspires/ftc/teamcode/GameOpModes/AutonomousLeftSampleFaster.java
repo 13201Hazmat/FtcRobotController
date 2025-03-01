@@ -320,7 +320,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                intakeArm.senseIntakeSampleColor();
+                //intakeArm.senseIntakeSampleColor();
                 safeWaitMilliSeconds(500);
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
@@ -347,7 +347,7 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                         intakeArm.toggleSwivel();
                         safeWaitMilliSeconds(200);
                         intakeOuttakeController.pickupSequence();
-                        intakeArm.senseIntakeSampleColor();
+                        //intakeArm.senseIntakeSampleColor();
                         safeWaitMilliSeconds(500);
                         counter++;
                         return true;
