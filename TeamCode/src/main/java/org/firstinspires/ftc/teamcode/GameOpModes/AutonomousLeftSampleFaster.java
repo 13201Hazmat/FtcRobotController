@@ -291,6 +291,12 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                                     //intakeOuttakeController.swivelByVisionAction(),
                                     new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
+                                    sensePickUpAndDecisionAction(),
+                                    trajBucketToSubmersiblePick,
+                                    new SleepAction(1),
+                                    intakeOuttakeController.extendIntakeArmByVisionAction(),
+                                    new SleepAction(0.5),
+                                    intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
                     );
@@ -320,8 +326,28 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                //intakeArm.senseIntakeSampleColor();
+                intakeArm.senseIntakeSampleColor();
                 safeWaitMilliSeconds(500);
+                Actions.runBlocking(
+                        new SequentialAction(
+                                //Submersible Pick to Bucket
+                                new ParallelAction(
+                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                        trajSubmersiblePickToBucket
+                                ),
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                new SleepAction(2)
+                                //trajBucketToSubmersiblePick,
+                                    /*new ParallelAction(
+                                            trajBucketToSubmersiblePark
+                                            //new SleepAction(3),
+                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                    ),*/
+                        )
+                );
+                /**
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
@@ -334,14 +360,16 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
                                     intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
-                                            trajBucketToSubmersiblePark,
-                                            new SleepAction(3),
-                                            intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                            trajBucketToSubmersiblePark
+                                            //new SleepAction(3),
+                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
                             )
                     );
                 } else { // retry twice
+                    intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
+                    /*
                     if (counter < 2) {
                         intakeArm.openGrip();
                         intakeArm.toggleSwivel();
@@ -354,7 +382,10 @@ public class AutonomousLeftSampleFaster extends LinearOpMode {
                     } else { // Just park
                         intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
                     }
+
+
                 }
+                 */
                 return false;
             }
         };
