@@ -54,7 +54,7 @@ TestVision extends LinearOpMode {
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;
-                            intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
+                            intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor-0.01);//Subtracted 0.005 due to constant error
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                             intakeArm.moveSwivelCentered();
                             if(vision.angle < 45.0){

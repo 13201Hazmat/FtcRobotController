@@ -110,6 +110,19 @@ public class Vision {
             0.61 - 48 - 14.25
             0.69 - 32 - 15.5
              */
+            /* Extension - Pixel pos - inches from base of robot 3/1/25
+            0.343 - 199 - 8"
+            0.356 - 178 - 9
+            0.411 - 151 - 10.25
+            0.438 - 126 - 11.5
+            0.466 - 103 - 13
+            0.630 - 80  - 14.5
+            0.658 - 72  - 15.25
+            0.767 - 55  - 16.5
+            0.795 - 45  - 17.5
+            0.904 - 34  - 18.5
+            0.986 - 27  - 19.25
+             */
             //yExtensionFactor = -0.0002 * blockY * blockY - 0.064 * blockY + 6.23;
             yExtensionFactor = calculateYExtensionFactorFromLookUp(blockY);
 
@@ -119,15 +132,17 @@ public class Vision {
     public double calculateYExtensionFactorFromLookUp(double yToLookup){
         double answer = 0;
         double[][] data = {
-                {0.21, 204},
-                {0.26, 195},
-                {0.32, 145},
-                {0.37, 110},
-                {0.43, 81},
-                {0.48, 71},
-                {0.53, 58},
-                {0.61, 48},
-                {0.69, 32}
+                {0.343, 199},
+                {0.356, 178},
+                {0.411, 151},
+                {0.438, 126},
+                {0.466, 103},
+                {0.630, 80},
+                {0.658, 72},
+                {0.767, 55},
+                {0.795, 45},
+                {0.904, 34},
+                {0.968, 27}
         };
 
         // Create the lookup table (using a HashMap for efficient lookups)
