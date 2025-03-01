@@ -24,7 +24,7 @@ public class IntakeSlides {
     }
     public SLIDES_STATE intakeSlidesState = SLIDES_STATE.TRANSFER_MIN_RETRACTED;
 
-    public double INTAKE_SLIDE_DELTA = 0.1;//0.01 TODO: CHange to 0.01 if caliberating Camera
+    public double INTAKE_SLIDE_DELTA = 0.01;//0.01 TODO: CHange to 0.01 if caliberating Camera
 
 
     public double leftIntakeSlideCurrPos, leftIntakeSlideNewPos = intakeSlidesState.leftSlidePos;

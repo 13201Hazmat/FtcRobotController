@@ -108,6 +108,14 @@ TestVision extends LinearOpMode {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
             }
 
+            if(gamepadController.gp1GetDpad_upPress()){
+                intakeSlides.moveIntakeSlidesForward();
+            }
+            if(gamepadController.gp1GetDpad_downPress()){
+                intakeSlides.moveIntakeSlidesBackward();
+            }
+
+
             printDebugMessages();
         }
     }
@@ -188,7 +196,7 @@ TestVision extends LinearOpMode {
             vision.printDebugMessages();
 
             intakeSlides.printDebugMessages();
-            telemetry.addData("    Extension Factor", intakeSlides.slideExtensionFactor());
+            telemetry.addData("    Extension Factorr", intakeSlides.slideExtensionFactor());
             //intakeArm.printDebugMessages();
 
             for (ColorBlobLocatorProcessor.Blob b : vision.blobs) {
