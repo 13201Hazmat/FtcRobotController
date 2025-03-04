@@ -132,17 +132,17 @@ public class Vision {
     public double calculateYExtensionFactorFromLookUp(double yToLookup){
         double answer = 0;
         double[][] data = {
-                {0.343, 199},
-                {0.356, 178},
-                {0.411, 151},
-                {0.438, 126},
-                {0.466, 103},
-                {0.630, 80},
-                {0.658, 72},
-                {0.767, 55},
-                {0.795, 45},
-                {0.904, 34},
-                {0.968, 27}
+                {0.315, 200},
+                {0.343, 177},
+                {0.384, 158},
+                {0.424, 133},
+                {0.438, 115},
+                {0.478, 96},
+                {0.521, 80},
+                {0.562, 67},
+                {0.685, 53},
+                {0.740, 40},
+                {0.795, 28}
         };
 
         // Create the lookup table (using a HashMap for efficient lookups)
