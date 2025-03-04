@@ -63,8 +63,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT Faster 4_1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT Faster 4_1 Test", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -220,12 +220,16 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
+                                        //intakeOuttake.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
-                        //new SleepAction(0.13),
-                        intakeOuttakeController.pickupSequenceAction(),
+                        //new SleepAction(0.13)
+                            //intakeOuttakeController.pickupSequenceAction()
+                            new ParallelAction(
+                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    intakeOuttakeController.pickupSequenceAction()
+                            ),
                         //Sample Near to Bucket
                         new SequentialAction(
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
@@ -237,16 +241,19 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
+                                        //intakeOuttake.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
 
                         //Bucket to Sample Middle
                         //trajFarToMiddle,
                         //new SleepAction(0.13),
-                        intakeOuttakeController.pickupSequenceAction(),
-
+                        //intakeOuttakeController.pickupSequenceAction(),
+                            new ParallelAction(
+                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    intakeOuttakeController.pickupSequenceAction()
+                            ),
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
@@ -335,7 +342,7 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                    //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
                                             new SleepAction(3),
