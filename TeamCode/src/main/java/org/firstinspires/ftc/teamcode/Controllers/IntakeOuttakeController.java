@@ -736,9 +736,9 @@ public class IntakeOuttakeController {
                         new SequentialAction(
                                 openOuttakeGripAction(),
                                 new SleepAction(500),
-                                moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER)
-                                //moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
-                                //safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
+                                moveOuttakeArmToAction(Outtake.ARM_STATE.TRANSFER),
+                                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER),
+                                safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER)
                         )
                 );
                 return false;
@@ -768,10 +768,8 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                //outtake.moveOuttakeSlidesToTransfer();
-                //safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.TRANSFER);
-                moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.TRANSFER);
-                safeWaitTillOuttakeSlideStateMilliSecondsAction(Outtake.SLIDE_STATE.TRANSFER);
+                outtake.moveOuttakeSlidesToTransfer();
+                safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.TRANSFER);
                 return false;
             }
         };
