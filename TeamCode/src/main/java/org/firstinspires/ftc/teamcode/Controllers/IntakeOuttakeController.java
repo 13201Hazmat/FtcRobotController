@@ -128,7 +128,7 @@ public class IntakeOuttakeController {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeSlides.moveIntakeSlidesToRange(extensionFactor);
-                moveIntakeArm(IntakeArm.ARM_STATE.LOWER_PRE_PICKUP); //LOWER_PRE_PICKUP
+                moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP); //LOWER_PRE_PICKUP
                 intakeArm.moveSwivelTo(swivelDegrees);
                 return false;
             }
@@ -143,7 +143,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                vision.locateNearestSampleFromRobot();
+                vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 if (vision.angle < 45 ) {
@@ -164,7 +164,6 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                vision.locateNearestSampleFromRobot();
                 intakeArm.moveSwivelTo(vision.angle);
                 return false;
             }

@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * This code defines the TeleOp mode is done by Hazmat Robot for Freight Frenzy<BR>
  *
  */
-@TeleOp(name = "Inspection OpMode", group = " 00-Teleop")
-public class InspectionOpMode extends LinearOpMode {
+@TeleOp(name = "Judging OpMode", group = " 00-Teleop")
+public class JudgingOpMode extends LinearOpMode {
 
     public GamepadController gamepadController;
     public GamepadDriveTrainController gamepadDriveTrainController;
@@ -81,9 +81,9 @@ public class InspectionOpMode extends LinearOpMode {
                 intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
                 intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 gamepadController.safeWaitMilliSeconds(1000);
-                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER);
+                outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_BUCKET);
                 outtake.moveArm(Outtake.ARM_STATE.DROP);
-                //outtake.moveWristDrop();
+                outtake.moveWrist(Outtake.ARM_STATE.DROP);
                 outtake.closeGrip();
             }
 

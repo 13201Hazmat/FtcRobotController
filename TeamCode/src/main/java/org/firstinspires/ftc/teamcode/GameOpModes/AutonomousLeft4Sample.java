@@ -63,8 +63,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT Faster 4_1 Test", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT 4 Sample", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeft4Sample extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -220,16 +220,12 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
-                                        //intakeOuttake.moveOuttakeSlidesToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
-                        //new SleepAction(0.13)
-                            //intakeOuttakeController.pickupSequenceAction()
-                            new ParallelAction(
-                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
-                                    intakeOuttakeController.pickupSequenceAction()
-                            ),
+                        //new SleepAction(0.13),
+                        intakeOuttakeController.pickupSequenceAction(),
                         //Sample Near to Bucket
                         new SequentialAction(
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
@@ -241,19 +237,16 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1()
-                                        //intakeOuttake.moveOuttakeSlidesToTransferAction1()
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
                                 )
                         ),
 
                         //Bucket to Sample Middle
                         //trajFarToMiddle,
                         //new SleepAction(0.13),
-                        //intakeOuttakeController.pickupSequenceAction(),
-                            new ParallelAction(
-                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
-                                    intakeOuttakeController.pickupSequenceAction()
-                            ),
+                        intakeOuttakeController.pickupSequenceAction(),
+
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         new ParallelAction(
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
@@ -300,9 +293,18 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
                                     new SleepAction(1), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
+                                    //intakeOuttakeController.swivelByVisionAction(),
                                     new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
+                                    //trajBucketToSubmersiblePick1
+                                    /*new SleepAction(1),
+                                    intakeOuttakeController.extendIntakeArmByVisionAction(),
+                                    new SleepAction(0.5),
+                                    intakeOuttakeController.pickupSequenceAction(),
+                                    sensePickUpAndDecisionAction()
+
+                                     */
                             )
                     );
                 } else { // 4 Sample auto
@@ -332,7 +334,28 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeArm.senseIntakeSampleColor();
-                if (true) {
+                safeWaitMilliSeconds(500);
+                Actions.runBlocking(
+                        new SequentialAction(
+                                //Submersible Pick to Bucket
+                                new ParallelAction(
+                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                        trajSubmersiblePickToBucket
+                                ),
+                                new SleepAction(0.5),
+                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                trajBucketToSubmersiblePick
+                                    /*new ParallelAction(
+                                            trajBucketToSubmersiblePark
+                                            //new SleepAction(3),
+                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                    ),*/
+                        )
+                );
+                /**
+                if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //Submersible Pick to Bucket
@@ -344,25 +367,32 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
                                     intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
-                                            trajBucketToSubmersiblePark,
-                                            new SleepAction(3),
-                                            intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                            trajBucketToSubmersiblePark
+                                            //new SleepAction(3),
+                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
                             )
                     );
                 } else { // retry twice
+                    intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
+                    /*
                     if (counter < 2) {
                         intakeArm.openGrip();
                         intakeArm.toggleSwivel();
                         safeWaitMilliSeconds(200);
                         intakeOuttakeController.pickupSequence();
+                        //intakeArm.senseIntakeSampleColor();
+                        safeWaitMilliSeconds(500);
                         counter++;
                         return true;
                     } else { // Just park
                         intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
                     }
+
+
                 }
+                 */
                 return false;
             }
         };
@@ -376,10 +406,7 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
         }
     }
 
-    public void debugOuttakeSlides(){
-        telemetry.addData("Outtake slides state", outtake.isOuttakeSlidesInState(Outtake.SLIDE_STATE.TRANSFER));
-        telemetry.update();
-    }
+
     public void initSubsystems(){
 
         telemetry.setAutoClear(true);
@@ -442,6 +469,7 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
+        /* Commenting for 4 Sample Auto
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
@@ -484,11 +512,15 @@ public class AutonomousLeftSampleFaster4_1Test extends LinearOpMode {
 
             telemetry.update();
         }
+         */
+        GameField.startPosition = GameField.START_POSITION.LEFT;
+        GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+        autoOption = AUTO_OPTION.FOUR_SAMPLE_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
-            telemetry.addData("Selected Alliance", GameField.allianceColor);
+            //telemetry.addData("Selected Alliance", GameField.allianceColor);
             telemetry.addData("Selected Starting Position", GameField.startPosition);
             telemetry.addData("Selected Auto Option", autoOption);
             telemetry.addData("---------------------------------------", "");

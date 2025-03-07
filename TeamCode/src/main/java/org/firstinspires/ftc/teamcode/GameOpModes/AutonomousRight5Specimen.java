@@ -65,8 +65,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT Test", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousRightSpecimenTest extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto RIGHT 5 Specimen", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousRight5Specimen extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -159,8 +159,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
             trajPickupSpecimenOneToSubmersibleOne,  trajSubmersibleOneToPickupSpecimenTwo,
             trajPickupSpecimenTwoToSubmersibleTwo,  trajSubmersibleTwoToPickupPreload2,
             trajPickupPreload2ToSubmersiblePreload2, trajSubmersiblePreload2ToPickupSpecimenThree,
-            trajPickupSpecimenThreeToSubmersibleThree, trajSubmersibleThreeToObservationPark, trajSubmersiblePreload2ToObservationPark
-            , trajTestSpline1;
+            trajPickupSpecimenThreeToSubmersibleThree, trajSubmersibleThreeToObservationPark, trajSubmersiblePreload2ToObservationPark;
 
     public void buildAutonoumousMode() {
         //Initialize Pose2d as desired
@@ -170,13 +169,13 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
         colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
-        pickupSpecimenOne = new Pose2d(-0.60, 32, Math.toRadians(3));//-0.25,42,0
+        pickupSpecimenOne = new Pose2d(-0.60, 42, Math.toRadians(3));//-0.25,42,0
         submersibleSpecimenOne = new Pose2d(-30.25, -6.25, Math.toRadians(0));//-6.75
-        pickupSpecimenTwo = new Pose2d(-1, 30, Math.toRadians(3));//-0.25,46,0
+        pickupSpecimenTwo = new Pose2d(-1, 32, Math.toRadians(3));//46,0
         submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
-        pickupSpecimenPreload2 = new Pose2d(-2, 37, Math.toRadians(3));
+        pickupSpecimenPreload2 = new Pose2d(-2, 32, Math.toRadians(3)); //47
         submersibleSpecimenPreload2 =  new Pose2d(-29, -13, Math.toRadians(0));
-        pickupSpecimenThree = new Pose2d(-6.5, 45, Math.toRadians(3));//-1,47,0
+        pickupSpecimenThree = new Pose2d(-6.5, 32, Math.toRadians(3));//-55
         submersibleSpecimenThree = new Pose2d(-26.2, -11, Math.toRadians(0));
         observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
@@ -225,7 +224,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         trajSubmersibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenTwo, Math.toRadians(-15),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajPickupSpecimenTwoToSubmersibleTwo = drive.actionBuilder(pickupSpecimenTwo)
@@ -238,7 +237,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         trajSubmersibleTwoToPickupPreload2 = drive.actionBuilder(submersibleSpecimenTwo)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenPreload2, Math.toRadians(-15),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajPickupPreload2ToSubmersiblePreload2 = drive.actionBuilder(pickupSpecimenPreload2)
@@ -251,7 +250,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         trajSubmersiblePreload2ToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenPreload2)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenThree, Math.toRadians(-15),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajPickupSpecimenThreeToSubmersibleThree = drive.actionBuilder(pickupSpecimenThree)
@@ -263,16 +262,12 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
 
         trajSubmersibleThreeToObservationPark = drive.actionBuilder(submersibleSpecimenThree)
                 .splineToSplineHeading(observationPark, Math.toRadians(57),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajSubmersiblePreload2ToObservationPark = drive.actionBuilder(submersibleSpecimenPreload2)
                 .splineToSplineHeading(observationPark, Math.toRadians(57),
                         new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
-                .build();
-
-        trajTestSpline1 = drive.actionBuilder(submersibleSpecimenPreload)
-                .splineTo(pickupSpecimenTwo.position, pickupSpecimenTwo.heading)
                 .build();
     }
 
@@ -289,9 +284,209 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
                         new SleepAction(0.1),
                         intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
                         new SleepAction(0.2),
-                        trajTestSpline1
+                        new ParallelAction(
+                                trajSubmersiblePreloadToColorSampleFar,
+                                new SequentialAction(
+                                        new SleepAction(0.2),//TODO 0.3
+                                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                        new SleepAction(0.1),
+                                        intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT),
+                                        intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.SPECIMEN_PICKUP)
+                                ),
+                                intakeOuttakeController.openIntakeGripAction(),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)
+                        ),
+                        //*** Drop Specimen Preload to Move Color Sample Far to Observation Zone
+                        //TODO new SleepAction(0.2),
+                        intakeOuttakeController.pickupSequenceAction(),
+                        //TODO new SleepAction(0.1),
+                        new ParallelAction(
+                                trajColorSampleFarToObservationDrop,
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.6, 90)
+                        ),
+                        //new SleepAction(0.1),
+                        intakeOuttakeController.openIntakeGripAction(),
+                        new SleepAction(0.1),
+
+
+                        //*** Move Color Sample Middle to Observation Zone
+                        new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 45),
+                                trajObservationDropToColorSampleMiddle
+                        ),
+                        //TODO new SleepAction(0.1),
+                        intakeOuttakeController.pickupSequenceAction(),
+                        //new SleepAction(0.1),
+                        new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.75, 90),
+                                trajColorSampleMiddleToObservationDrop
+                        ),
+                        //new SleepAction(0.1),
+                        intakeOuttakeController.openIntakeGripAction(),
+                        new SleepAction(0.1),
+
+                        //*** Move Color Sample Near to Observation Zone
+                        pickNearSampleAndDropToObservationDropAction(),
+
+                        //*** Ger Ready for Specimen Pickup
+                        intakeOuttakeController.moveIntakeSlidesToAction(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED),
+                        intakeOuttakeController.moveIntakeArmToAction(IntakeArm.ARM_STATE.SPECIMEN_PICKUP),
+                        new SleepAction(0.3),
+                        intakeOuttakeController.moveOuttakeToSpecimenPickUpAction(),
+
+                        //Observation Drop to Pick and drop Specimen 1
+                        trajObservationDropToPickupSpecimenOne,
+                        new SleepAction(0.2), //TODO 0.3
+                        intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
+                        trajPickupSpecimenOneToSubmersibleOne,
+                        new SleepAction(0.1),
+                        intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
+                        new SleepAction(0.1),
+                        new ParallelAction(
+                                trajSubmersibleOneToPickupSpecimenTwo,
+                                new SequentialAction(
+                                        new SleepAction(0.2),//TODO 0.3
+                                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                        new SleepAction(0.1),
+                                        intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
+                                )
+                        ),
+
+
+                        //Drop Specimen 1 to Pick and drop Specimen 2
+                        new SleepAction(0.2), //TODO 0.3
+                        intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
+                        trajPickupSpecimenTwoToSubmersibleTwo,
+                        new SleepAction(0.1),
+                        intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
+                        new SleepAction(0.1),
+                        new ParallelAction(
+                                trajSubmersibleTwoToPickupPreload2,
+                                new SequentialAction(
+                                        new SleepAction(0.2),//TODO 0.3
+                                        intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                        new SleepAction(0.1),
+                                        intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
+                                )
+                        ),
+
+                        //Drop Specimen 2 to Pick and drop Specimen Preload, Specimen3 and Park
+                        pickPreload2ToDropPreload2PickAndDropSpecimenThreeAndParkAction()
+
+
                 )
         );
+    }
+
+    public Action pickNearSampleAndDropToObservationDropAction(){
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                if (autoOption == AUTO_OPTION.FIVE_SPECIMEN_AUTO) {
+                    Actions.runBlocking(
+                            new SequentialAction(
+                                    //*** Move Color Sample Far to Observation Zone
+                                    new ParallelAction(
+                                            intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.35, 10),
+                                            trajObservationDropToColorSampleNear
+                                    ),
+                                    //new SleepAction(0.25),
+                                    intakeOuttakeController.pickupSequenceAction(),
+                                    //new SleepAction(0.1),
+                                    new ParallelAction(
+                                            trajColorSampleNearToObservationDrop,
+                                            intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 90)
+                                    ),
+                                    //new SleepAction(0.1),
+                                    intakeOuttakeController.openIntakeGripAction()
+                                    //new SleepAction(0.1)
+
+                            )
+                    );
+
+                }
+                return false;
+            }
+        };
+    }
+
+    public Action pickPreload2ToDropPreload2PickAndDropSpecimenThreeAndParkAction(){
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                if (autoOption == AUTO_OPTION.FIVE_SPECIMEN_AUTO) {
+                    Actions.runBlocking(
+                            new SequentialAction(
+                                    //*** Drop Specimen Preload to Pick and drop Specimen Preload 2
+                                    new SleepAction(0.2), //TODO 0.3
+                                    intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
+                                    trajPickupPreload2ToSubmersiblePreload2,
+                                    new SleepAction(0.1),
+                                    intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
+                                    new SleepAction(0.1),
+                                    new ParallelAction(
+                                            trajSubmersiblePreload2ToPickupSpecimenThree,
+                                            new SequentialAction(
+                                                    new SleepAction(0.2),//TODO 0.3
+                                                    intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                                    new SleepAction(0.1),
+                                                    intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
+                                            )
+                                    ),
+                                    intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
+                                    trajSubmersiblePreload2ToPickupSpecimenThree,
+                                    new SleepAction(0.1),
+                                    intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
+                                    new SleepAction(0.1),
+                                    new ParallelAction(
+                                            trajPickupSpecimenThreeToSubmersibleThree,
+                                            new SequentialAction(
+                                                    new SleepAction(0.2),//TODO 0.3
+                                                    intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                                    new SleepAction(0.1),
+                                                    intakeOuttakeController.moveOuttakeArmOnlyToAction(Outtake.ARM_STATE.INIT)
+                                            )
+                                    ),
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0),
+                                    new SleepAction(0.1)
+                            )
+                    );
+                } else {
+                    Actions.runBlocking(
+                            new SequentialAction(
+                                    //*** Drop Specimen Preload to Pick and drop Specimen Preload 2
+                                    //0.2
+                                    new SleepAction(0.7),
+                                    intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
+                                    trajPickupPreload2ToSubmersiblePreload2,
+                                    new SleepAction(0.1),
+                                    intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
+                                    new SleepAction(0.1),
+                                    new ParallelAction(
+                                            trajSubmersiblePreload2ToObservationPark,
+                                            new SequentialAction(
+                                                    new SleepAction(0.3),
+                                                    intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
+                                                    new SleepAction(0.1),
+                                                    intakeOuttakeController.moveOuttakeArmOnlyToAction(Outtake.ARM_STATE.INIT)
+                                            )
+                                    ),
+                                    intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1,0),
+                                    new SleepAction(0.5)
+                            )
+                    );
+                }
+                return false;
+            }
+        };
     }
 
 
@@ -376,7 +571,7 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
-        while (!isStopRequested()) {
+        /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
             telemetry.addData("Select Starting Position using XYAB on Logitech (or ▢ΔOX on Playstation) on gamepad 1:", "");
@@ -417,12 +612,16 @@ public class AutonomousRightSpecimenTest extends LinearOpMode {
             }
 
             telemetry.update();
-        }
+        }*/
+
+        GameField.startPosition = GameField.START_POSITION.LEFT;
+        GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+        autoOption = AUTO_OPTION.FIVE_SPECIMEN_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
-            telemetry.addData("Selected Alliance", GameField.allianceColor);
+            //telemetry.addData("Selected Alliance", GameField.allianceColor);
             telemetry.addData("Selected Starting Position", GameField.startPosition);
             telemetry.addData("Selected Auto Option", autoOption);
             telemetry.addData("---------------------------------------", "");

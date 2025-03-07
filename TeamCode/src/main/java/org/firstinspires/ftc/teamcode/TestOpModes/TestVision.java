@@ -42,7 +42,7 @@ TestVision extends LinearOpMode {
         while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            vision.locateNearestSampleFromRobot();
+            vision.locateFarthestSampleFromRobot();
 
             if (!gamepadController.gp1GetStart()) {
                 if (gamepadController.gp1GetRightBumperPress()) {
@@ -54,7 +54,7 @@ TestVision extends LinearOpMode {
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;
-                            intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor-0.06);//Subtracted 0.005 due to constant error
+                            intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);//Subtracted 0.005 due to constant error
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                             intakeArm.moveSwivelCentered();
                             if(vision.angle < 45.0){
@@ -108,6 +108,7 @@ TestVision extends LinearOpMode {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
             }
 
+            intakeSlides.INTAKE_SLIDE_DELTA = 0.01;
             if(gamepadController.gp1GetDpad_upPress()){
                 intakeSlides.moveIntakeSlidesForward();
             }

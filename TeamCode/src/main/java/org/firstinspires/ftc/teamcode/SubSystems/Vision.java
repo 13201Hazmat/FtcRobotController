@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import android.util.Size;
 
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.SortOrder;
 
@@ -63,7 +62,7 @@ public class Vision {
                 .build();
     }
 
-    public void locateNearestSampleFromRobot() {
+    public void locateFarthestSampleFromRobot() {
         blobs = colorLocator.getBlobs();
         ColorBlobLocatorProcessor.Util.filterByArea(500, 10000, blobs);
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
@@ -91,59 +90,46 @@ public class Vision {
                 angle = Math.max(rawAngle, 90.0 - rawAngle);
             }
 
-            /*
-            // *** Calculate Extension Factor ***
-            yExtensionFactor = EXTENSION_FACTOR_MIN +
-                    ((double) (blockY - Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
-                            / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
-             */
-            //x=0.0000123456⋅ysq −0.0023456789⋅y+0.1234567890
-            //Calculated polynomial equation using deepseek from experimental values found from robot physically
-            /* Extension - pixel value - distance from base of robot
-            0.21 - 204 - 5"
-            0.26 - 195 - 5.5
-            0.32 - 145 - 7.5
-            0.37 - 110 - 9.5
-            0.43 - 81 - 11
-            0.48 - 71 - 12
-            0.53 - 58 - 13
-            0.61 - 48 - 14.25
-            0.69 - 32 - 15.5
-             */
-            /* Extension - Pixel pos - inches from base of robot 3/1/25
-            0.343 - 199 - 8"
-            0.356 - 178 - 9
-            0.411 - 151 - 10.25
-            0.438 - 126 - 11.5
-            0.466 - 103 - 13
-            0.630 - 80  - 14.5
-            0.658 - 72  - 15.25
-            0.767 - 55  - 16.5
-            0.795 - 45  - 17.5
-            0.904 - 34  - 18.5
-            0.986 - 27  - 19.25
-             */
-            //yExtensionFactor = -0.0002 * blockY * blockY - 0.064 * blockY + 6.23;
             yExtensionFactor = calculateYExtensionFactorFromLookUp(blockY);
-
         }
+        if (yExtensionFactor < 0.1) {
+            yExtensionFactor = 0.714;
+        }
+
     }
 
     public double calculateYExtensionFactorFromLookUp(double yToLookup){
         double answer = 0;
+        /*double[][] data = {
+                {0.309, 200}, //7 0.315 0.332
+                {0.337, 177}, //8 0.343 0.366
+                {0.369, 158}, //9 0.384 0.404
+                {0.414, 133}, //10 0.424
+                {0.450, 115}, //11 0.438
+                {0.495, 96}, //12 0.478 0.491
+                {0.527, 80}, //13 0.521
+                {0.594, 67}, //14 0.562 0.614
+                {0.659, 53}, //15 0.685 0.716
+                {0.734, 40} , //16 0.740 0.762
+                {0.789, 28}  //17
+        };*/
+
         double[][] data = {
-                {0.315, 200}, //7 0.315 0.332
-                {0.343, 177}, //8 0.343 0.366
-                {0.375, 158}, //9 0.384 0.404
-                {0.420, 133}, //10 0.424
-                {0.456, 115}, //11 0.438
-                {0.501, 96}, //12 0.478 0.491
-                {0.533, 80}, //13 0.521
-                {0.600, 67}, //14 0.562 0.614
-                {0.665, 53}, //15 0.685 0.716
-                {0.740, 40} , //16 0.740 0.762
-                {0.795, 28}  //17
+                {0.258, 201},//6
+                {0.276, 170}, //7
+                {0.301, 158}, //8
+                {0.338, 129}, //9
+                {0.400, 112}, //10
+                {0.441, 95}, //11
+                {0.495, 77}, //12
+                {0.529, 64}, //13
+                {0.605, 50}, //14
+                {0.663, 39}, //15
+                {0.714, 28} , //16
+                {0.750, 22}  //17
         };
+
+
 
         // Create the lookup table (using a HashMap for efficient lookups)
         Map<Double, Double> lookupTable = createLookupTable(data);

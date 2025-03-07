@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TestOpModes;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.RotatedRect;
-
+@Disabled
 @TeleOp (name = "Test Vision Limelight", group = "Testing")
 public class TestVisionLimeLight extends LinearOpMode {
     public VisionLimeLight visionLimeLight;

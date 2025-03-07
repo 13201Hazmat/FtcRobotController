@@ -65,8 +65,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT Fast 5", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto RIGHT 4 Specimen", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousRight4Specimen extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -167,15 +167,15 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
         submersibleSpecimenPreload = new Pose2d(-29.75, -1.2, Math.toRadians(0));
         colorSampleNear = new Pose2d(-16.5, 37.5, Math.toRadians(167));//-26
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
-        colorSampleFar = new Pose2d(-19.5, 38.75, Math.toRadians(129));
+        colorSampleFar = new Pose2d(-21, 38.25, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(-0.60, 42, Math.toRadians(3));//-0.25,42,0
         submersibleSpecimenOne = new Pose2d(-30.25, -6.25, Math.toRadians(0));//-6.75
-        pickupSpecimenTwo = new Pose2d(-1, 32, Math.toRadians(3));//46,0
+        pickupSpecimenTwo = new Pose2d(-0.8, 46, Math.toRadians(3));//-0.25,46,0
         submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
-        pickupSpecimenPreload2 = new Pose2d(-2, 32, Math.toRadians(3)); //47
-        submersibleSpecimenPreload2 =  new Pose2d(-29, -13, Math.toRadians(0));
-        pickupSpecimenThree = new Pose2d(-6.5, 32, Math.toRadians(3));//-55
+        pickupSpecimenPreload2 = new Pose2d(-1, 47, Math.toRadians(3));
+        submersibleSpecimenPreload2 =  new Pose2d(-27.8, -13, Math.toRadians(0));
+        pickupSpecimenThree = new Pose2d(-5.5, 55, Math.toRadians(3));//-1,47,0
         submersibleSpecimenThree = new Pose2d(-26.2, -11, Math.toRadians(0));
         observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
 
@@ -218,7 +218,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
         trajPickupSpecimenOneToSubmersibleOne = drive.actionBuilder(pickupSpecimenOne)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenOne, Math.toRadians(-180),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajSubmersibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
@@ -231,7 +231,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenTwo, Math.toRadians(-180),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajSubmersibleTwoToPickupPreload2 = drive.actionBuilder(submersibleSpecimenTwo)
@@ -244,7 +244,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenPreload2, Math.toRadians(-180),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajSubmersiblePreload2ToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenPreload2)
@@ -257,7 +257,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenThree, Math.toRadians(-180),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
         trajSubmersibleThreeToObservationPark = drive.actionBuilder(submersibleSpecimenThree)
@@ -267,7 +267,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
 
         trajSubmersiblePreload2ToObservationPark = drive.actionBuilder(submersibleSpecimenPreload2)
                 .splineToSplineHeading(observationPark, Math.toRadians(57),
-                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
     }
 
@@ -287,7 +287,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                         new ParallelAction(
                                 trajSubmersiblePreloadToColorSampleFar,
                                 new SequentialAction(
-                                        new SleepAction(0.2),//TODO 0.3
+                                        new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
                                         intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT),
@@ -297,9 +297,9 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)
                         ),
                         //*** Drop Specimen Preload to Move Color Sample Far to Observation Zone
-                        //TODO new SleepAction(0.2),
+                        new SleepAction(0.2),
                         intakeOuttakeController.pickupSequenceAction(),
-                        //TODO new SleepAction(0.1),
+                        new SleepAction(0.1),
                         new ParallelAction(
                                 trajColorSampleFarToObservationDrop,
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.6, 90)
@@ -314,7 +314,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 45),
                                 trajObservationDropToColorSampleMiddle
                         ),
-                        //TODO new SleepAction(0.1),
+                        new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction(),
                         //new SleepAction(0.1),
                         new ParallelAction(
@@ -323,7 +323,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                         ),
                         //new SleepAction(0.1),
                         intakeOuttakeController.openIntakeGripAction(),
-                        //TODO new SleepAction(0.1),
+                        new SleepAction(0.1),
 
                         //*** Move Color Sample Near to Observation Zone
                         pickNearSampleAndDropToObservationDropAction(),
@@ -336,7 +336,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
 
                         //Observation Drop to Pick and drop Specimen 1
                         trajObservationDropToPickupSpecimenOne,
-                        new SleepAction(0.2), //TODO 0.3
+                        new SleepAction(0.3),
                         intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                         trajPickupSpecimenOneToSubmersibleOne,
                         new SleepAction(0.1),
@@ -345,7 +345,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                         new ParallelAction(
                                 trajSubmersibleOneToPickupSpecimenTwo,
                                 new SequentialAction(
-                                        new SleepAction(0.2),//TODO 0.3
+                                        new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
                                         intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
@@ -354,16 +354,16 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
 
 
                         //Drop Specimen 1 to Pick and drop Specimen 2
-                        new SleepAction(0.2), //TODO 0.3
+                        new SleepAction(0.5),
                         intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                         trajPickupSpecimenTwoToSubmersibleTwo,
                         new SleepAction(0.1),
                         intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
-                        new SleepAction(0.1),
+                        new SleepAction(0.2),
                         new ParallelAction(
                                 trajSubmersibleTwoToPickupPreload2,
                                 new SequentialAction(
-                                        new SleepAction(0.2),//TODO 0.3
+                                        new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
                                         intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
@@ -394,7 +394,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                                             intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.35, 10),
                                             trajObservationDropToColorSampleNear
                                     ),
-                                    //new SleepAction(0.25),
+                                    new SleepAction(0.25),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     //new SleepAction(0.1),
                                     new ParallelAction(
@@ -426,16 +426,16 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //*** Drop Specimen Preload to Pick and drop Specimen Preload 2
-                                    new SleepAction(0.2), //TODO 0.3
+                                    new SleepAction(0.3),
                                     intakeOuttakeController.pickupSpecimenAndMoveOuttakeToHighChamberAction(),
                                     trajPickupPreload2ToSubmersiblePreload2,
-                                    new SleepAction(0.1),
+                                    new SleepAction(0.2),
                                     intakeOuttakeController.moveOuttakeToHighChamberLatchAction(),
                                     new SleepAction(0.1),
                                     new ParallelAction(
                                             trajSubmersiblePreload2ToPickupSpecimenThree,
                                             new SequentialAction(
-                                                    new SleepAction(0.2),//TODO 0.3
+                                                    new SleepAction(0.3),
                                                     intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                                     new SleepAction(0.1),
                                                     intakeOuttakeController.moveOuttakeToSpecimenPickUpAction()
@@ -449,7 +449,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
                                     new ParallelAction(
                                             trajPickupSpecimenThreeToSubmersibleThree,
                                             new SequentialAction(
-                                                    new SleepAction(0.2),//TODO 0.3
+                                                    new SleepAction(0.3),
                                                     intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                                     new SleepAction(0.1),
                                                     intakeOuttakeController.moveOuttakeArmOnlyToAction(Outtake.ARM_STATE.INIT)
@@ -571,7 +571,7 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
-        while (!isStopRequested()) {
+        /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
             telemetry.addData("Select Starting Position using XYAB on Logitech (or ▢ΔOX on Playstation) on gamepad 1:", "");
@@ -612,12 +612,15 @@ public class AutonomousRightSpecimenFast_5 extends LinearOpMode {
             }
 
             telemetry.update();
-        }
+        }*/
+        GameField.startPosition = GameField.START_POSITION.LEFT;
+        GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+        autoOption = AUTO_OPTION.FOUR_SPECIMEN_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
-            telemetry.addData("Selected Alliance", GameField.allianceColor);
+            //telemetry.addData("Selected Alliance", GameField.allianceColor);
             telemetry.addData("Selected Starting Position", GameField.startPosition);
             telemetry.addData("Selected Auto Option", autoOption);
             telemetry.addData("---------------------------------------", "");

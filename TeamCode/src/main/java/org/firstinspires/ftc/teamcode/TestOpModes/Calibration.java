@@ -278,7 +278,7 @@ public class Calibration extends LinearOpMode {
             //intakeSlides.printDebugMessages();
             //outtake.printDebugMessages();
             telemetry.addLine("Intake Grip: GP1 + Dpad_right, - Dpad_left");
-            telemetry.addLine("    Tight Close with Sample is 0.11, Fully open is 0.50");
+            telemetry.addLine("    Tight Close with Sample is 0.26, Fully open is 0.72");
             telemetry.addData("    Grip Position", intakeArm.intakeGripServo.getPosition());
             telemetry.addLine("----------");
 

@@ -12,9 +12,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
-import org.firstinspires.ftc.teamcode.TestOpModes.ConceptVisionColorLocatorTest;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.opencv.core.Scalar;
 
 public class IntakeArm {
     public Servo intakeArmServo;
@@ -26,8 +24,8 @@ public class IntakeArm {
     public enum GRIP_STATE {
         OPEN_WIDE(0.72), //0.50 max
         OPEN(0.57),//0.36
-        LOOSENED(0.35),//0.15
-        CLOSED(0.32);//0.11
+        LOOSENED(0.30),//0.15
+        CLOSED(0.26);//0.11
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -307,7 +305,7 @@ public class IntakeArm {
     public boolean intakeSensingActivated = true;
     public boolean intakeSampleSensed = false;
     public ColorRange sensedSampleColor = ColorRange.GREEN;
-    public double SENSE_DISTANCE = 13;
+    public double SENSE_DISTANCE = 50;
     public float[] sensedSampleHsvValues = new float[3];
     public NormalizedRGBA sensedColor;
     public double intakeSensingDistance = 500;
@@ -336,21 +334,21 @@ public class IntakeArm {
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
 
                 isYellow =  (sensedSampleHsvValues[0] > YELLOW_MIN[0] && sensedSampleHsvValues[0] < YELLOW_MAX[0]
-                    && sensedSampleHsvValues[1] > YELLOW_MIN[1] && sensedSampleHsvValues[1] < YELLOW_MAX[0]);
+                    && sensedSampleHsvValues[1] > YELLOW_MIN[1] && sensedSampleHsvValues[1] < YELLOW_MAX[1]);
 
                 isRed =  (sensedSampleHsvValues[0] > RED_MIN[0] && sensedSampleHsvValues[0] < RED_MAX[0]
-                        && sensedSampleHsvValues[1] > RED_MIN[1] && sensedSampleHsvValues[1] < RED_MAX[0]);
+                        && sensedSampleHsvValues[1] > RED_MIN[1] && sensedSampleHsvValues[1] < RED_MAX[1]);
 
                 isBlue =  (sensedSampleHsvValues[0] > BLUE_MIN[0] && sensedSampleHsvValues[0] < BLUE_MAX[0]
-                        && sensedSampleHsvValues[1] > BLUE_MIN[1] && sensedSampleHsvValues[1] < BLUE_MAX[0]);
+                        && sensedSampleHsvValues[1] > BLUE_MIN[1] && sensedSampleHsvValues[1] < BLUE_MAX[1]);
 
-                if (GameField.allianceColor == ColorRange.RED) {
-                    isYellowOrAlliance = isYellow || isRed;
+                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                    intakeSampleSensed = isYellow || isRed;
                     isWrongPick = isBlue;
                 }
 
-                if (GameField.allianceColor == ColorRange.BLUE) {
-                    isYellowOrAlliance = isYellow || isBlue;
+                if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                    intakeSampleSensed = isYellow || isBlue;
                     isWrongPick = isRed;
                 }
 
@@ -361,28 +359,11 @@ public class IntakeArm {
             } else {
                 intakeSampleSensed = false;
             }
-
         } else {
             intakeSampleSensed = false;
             sensedSampleColor = ColorRange.GREEN;
         }
     }
-
-
-    /*public void compareSensedIntakeSampleColor(){
-        // Define HSV color ranges for Yellow, Red, and Blue
-        private Scalar lowerYellow = new Scalar(20, 100, 100); // Lower bound for Yellow
-        private Scalar upperYellow = new Scalar(30, 255, 255); // Upper bound for Yellow
-
-        private Scalar lowerRed1 = new Scalar(0, 100, 100);  // Lower bound for Red (first range)
-        private Scalar upperRed1 = new Scalar(10, 255, 255); // Upper bound for Red (first range)
-        private Scalar lowerRed2 = new Scalar(160, 100, 100);  // Lower bound for Red (second range)
-        private Scalar upperRed2 = new Scalar(180, 255, 255); // Upper bound for Red (second range)
-
-        private Scalar lowerBlue = new Scalar(100, 100, 100); // Lower bound for Blue
-        private Scalar upperBlue = new Scalar(130, 255, 255); // Upper bound for Blue
-    }*/
-
 
     public void printDebugMessages() {
         //******  debug ******

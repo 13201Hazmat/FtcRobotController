@@ -63,8 +63,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT diff", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeftSampleFarFirst extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT Vision Calib", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeftVisionCalib extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -141,21 +141,21 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
 
     //List all Trajectories
     Action trajInitToFirstBucket,
-            trajFarToMiddle,
-            trajBucketToYellowSampleFar, trajMiddleToNear,
-            trajNearToSubmersiblePick, trajSubmersiblePickToBucket,
-            trajNearToSubmersiblePark;
+            trajBucketToYellowSampleMiddle,
+            trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
+            trajBucketToSubmersiblePick, trajSubmersiblePickToBucket,
+            trajBucketToSubmersiblePick1,trajBucketToSubmersiblePark;
 
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12.5, 22.5, Math.toRadians(-22.75));//18.28, 35.16, -26.5
-        yellowSampleNear = new Pose2d(12.5, 20, Math.toRadians(-23));
+        firstBucket = new Pose2d(11.5, 20.5, Math.toRadians(-17.8));//18.28, 35.16, -26.5
+        yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11, 22.5, Math.toRadians(-15));;//-12 to the right
+        yellowSampleMiddle = new Pose2d(9.75, 23.1, Math.toRadians(-1.5));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
-        yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(14));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(11.4, 22.5, Math.toRadians(-7.6));;//10, 27.5, -6.5
+        yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
         submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
@@ -169,22 +169,27 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                 //.splineToLinearHeading(firstBucket, Math.toRadians(90)) //90
                 .build();
 
-        trajBucketToYellowSampleFar = drive.actionBuilder(firstBucket)
-                .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
-                .build();
-
-        trajFarToMiddle = drive.actionBuilder(yellowSampleFar)
+        trajBucketToYellowSampleMiddle = drive.actionBuilder(nearBucket)
                 .strafeToLinearHeading(yellowSampleMiddle.position, yellowSampleMiddle.heading,
                         new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajMiddleToNear = drive.actionBuilder(yellowSampleMiddle)
-                .strafeToLinearHeading(yellowSampleNear.position, yellowSampleNear.heading,
+        trajBucketToYellowSampleFar = drive.actionBuilder(middleBucket)
+                .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
+                        new TranslationalVelConstraint(25.0), new ProfileAccelConstraint(-18.0, 18.0))
+                .build();
+
+        trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
+                .strafeToLinearHeading(farBucket.position, farBucket.heading,
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajNearToSubmersiblePick = drive.actionBuilder(yellowSampleNear)
+        trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
+                .setTangent(Math.toRadians(15))
+                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
+                .build();
+
+        trajBucketToSubmersiblePick1 = drive.actionBuilder(farBucket)
                 .setTangent(Math.toRadians(15))
                 .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
                 .build();
@@ -194,7 +199,7 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                 .splineToLinearHeading(farBucket, Math.toRadians(-180))
                 .build();
 
-        trajNearToSubmersiblePark = drive.actionBuilder(yellowSampleNear)
+        trajBucketToSubmersiblePark = drive.actionBuilder(farBucket)
                 .setTangent(Math.toRadians(15))
                 .splineToLinearHeading(submersiblePark, Math.toRadians(-90))
                 .build();
@@ -207,12 +212,12 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                 new ParallelAction(
                     printDebugMessagesAction(),
                     new SequentialAction(
-                        new SleepAction(intialWaitTime),
+                        /*new SleepAction(intialWaitTime),
                         //Init to First Bucket
                         trajInitToFirstBucket,
                         new SleepAction(0.1),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -10),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -220,17 +225,16 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                                 )
                         ),
                         //new SleepAction(0.13),
-                        //intakeOuttakeController.pickupSequenceAction(),
-                        //Sample Near to Bucket
-                        trajBucketToYellowSampleFar,
-                        new SleepAction(0.4),
                         intakeOuttakeController.pickupSequenceAction(),
-                        new ParallelAction(
-                                trajFarToMiddle,
-                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()
+                        //Sample Near to Bucket
+                        new SequentialAction(
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                trajBucketToYellowSampleMiddle
+
+
                         ),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.8, 0),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -245,7 +249,7 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
 
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -253,16 +257,18 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                                 )
                         ),
                         //Bucket to Sample Far
-                        trajMiddleToNear,
-                        new SleepAction(0.3),
+                        trajBucketToYellowSampleFar,
+                        new SleepAction(0.13),
                         intakeOuttakeController.pickupSequenceAction(),
                         //Sample Far to Bucket
-                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
-                        new SleepAction(0.3),
+                        new ParallelAction(
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                trajYellowSampleFarToBucket
+                        ),
                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
                         intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
-
+*/
                         //Five Sample Auto or Parking for 4 sample auto
                         submersiblePickAndDropAction()
                     )
@@ -283,12 +289,12 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                 if (autoOption == AUTO_OPTION.FIVE_SAMPLE_AUTO) {
                     Actions.runBlocking(
                             new SequentialAction(
-                                    trajNearToSubmersiblePick,
-                                    new SleepAction(1), //TODO:Adjust based on how much time camera takes to sense consitently
+                                    //trajBucketToSubmersiblePick,
+                                    new SleepAction(1.2), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(3.0),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
@@ -297,7 +303,7 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     new ParallelAction(
-                                            trajNearToSubmersiblePark,
+                                           // trajBucketToSubmersiblePark,
                                             new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
@@ -319,21 +325,21 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                intakeArm.senseIntakeSampleColor();
                 safeWaitMilliSeconds(500);
+                intakeArm.senseIntakeSampleColor();
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //Submersible Pick to Bucket
                                     new ParallelAction(
-                                            intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
-                                            trajSubmersiblePickToBucket
+                                            intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()//,
+                                            //trajSubmersiblePickToBucket
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
-                                            trajNearToSubmersiblePark,
+                                            //trajBucketToSubmersiblePark,
                                             new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
@@ -344,10 +350,8 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
                     if (counter < 2) {
                         intakeArm.openGrip();
                         intakeArm.toggleSwivel();
-                        safeWaitMilliSeconds(200);
+                        safeWaitMilliSeconds(500); //300
                         intakeOuttakeController.pickupSequence();
-                        intakeArm.senseIntakeSampleColor();
-                        safeWaitMilliSeconds(500);
                         counter++;
                         return true;
                     } else { // Just park
@@ -367,7 +371,10 @@ public class AutonomousLeftSampleFarFirst extends LinearOpMode {
         }
     }
 
-
+    public void debugOuttakeSlides(){
+        telemetry.addData("Outtake slides state", outtake.isOuttakeSlidesInState(Outtake.SLIDE_STATE.TRANSFER));
+        telemetry.update();
+    }
     public void initSubsystems(){
 
         telemetry.setAutoClear(true);
