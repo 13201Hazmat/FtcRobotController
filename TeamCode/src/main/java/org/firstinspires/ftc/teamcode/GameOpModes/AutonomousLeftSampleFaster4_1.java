@@ -290,10 +290,10 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(1), //TODO:Adjust based on how much time camera takes to sense consitently
+                                    new SleepAction(0.5), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(1.0),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
@@ -325,7 +325,7 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeArm.senseIntakeSampleColor();
-                if (true) {
+                if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //Submersible Pick to Bucket

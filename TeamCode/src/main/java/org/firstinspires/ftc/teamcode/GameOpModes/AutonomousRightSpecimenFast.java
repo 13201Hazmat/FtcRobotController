@@ -292,7 +292,8 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                                         new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
-                                        intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT)
+                                        intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT),
+                                        intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.SPECIMEN_PICKUP)
                                 ),
                                 intakeOuttakeController.openIntakeGripAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)

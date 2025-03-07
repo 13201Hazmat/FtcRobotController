@@ -312,25 +312,49 @@ public class IntakeArm {
     public NormalizedRGBA sensedColor;
     public double intakeSensingDistance = 500;
 
+    public double[] YELLOW_MIN = new double[]{60,0.5};
+    public double[] YELLOW_MAX = new double[]{100,1.0};
+    public double[] RED_MIN = new double[]{0,0.5};
+    public double[] RED_MAX = new double[]{40,1.0};
+    public double[] BLUE_MIN = new double[]{200,0.5};
+    public double[] BLUE_MAX = new double[]{260,1.0};
+
+    public boolean isYellow, isRed, isBlue;
+    public boolean isYellowOrAlliance, isWrongPick;
+
     public void senseIntakeSampleColor() {
         if (intakeSensingActivated) {
             if (intakeSensor instanceof DistanceSensor) {
                 intakeSensingDistance = ((DistanceSensor) intakeSensor).getDistance(DistanceUnit.MM);
             }
 
+            intakeSensor.setGain( (float) 3.74);
+
             if (intakeSensingDistance < SENSE_DISTANCE) {
                 intakeSampleSensed = true;
                 sensedColor = intakeSensor.getNormalizedColors();
                 Color.colorToHSV(sensedColor.toColor(), sensedSampleHsvValues);
 
-                Scalar lowerYellow = new Scalar(20, 100, 100);
-                Scalar upperYellow = new Scalar(30, 255, 255);
+                isYellow =  (sensedSampleHsvValues[0] > YELLOW_MIN[0] && sensedSampleHsvValues[0] < YELLOW_MAX[0]
+                    && sensedSampleHsvValues[1] > YELLOW_MIN[1] && sensedSampleHsvValues[1] < YELLOW_MAX[0]);
 
-                boolean isYellow = (sensedSampleHsvValues[0] >= lowerYellow.val[0] && sensedSampleHsvValues[0] <= upperYellow.val[0]) &&
-                        (sensedSampleHsvValues[1] >= lowerYellow.val[1] / 255.0 && sensedSampleHsvValues[1] <= upperYellow.val[1] / 255.0) &&
-                        (sensedSampleHsvValues[2] >= lowerYellow.val[2] / 255.0 && sensedSampleHsvValues[2] <= upperYellow.val[2] / 255.0);
+                isRed =  (sensedSampleHsvValues[0] > RED_MIN[0] && sensedSampleHsvValues[0] < RED_MAX[0]
+                        && sensedSampleHsvValues[1] > RED_MIN[1] && sensedSampleHsvValues[1] < RED_MAX[0]);
 
-                if (!isYellow) {
+                isBlue =  (sensedSampleHsvValues[0] > BLUE_MIN[0] && sensedSampleHsvValues[0] < BLUE_MAX[0]
+                        && sensedSampleHsvValues[1] > BLUE_MIN[1] && sensedSampleHsvValues[1] < BLUE_MAX[0]);
+
+                if (GameField.allianceColor == ColorRange.RED) {
+                    isYellowOrAlliance = isYellow || isRed;
+                    isWrongPick = isBlue;
+                }
+
+                if (GameField.allianceColor == ColorRange.BLUE) {
+                    isYellowOrAlliance = isYellow || isBlue;
+                    isWrongPick = isRed;
+                }
+
+                if (isWrongPick) {
                     openGrip();
                     intakeSampleSensed = false;
                 }
