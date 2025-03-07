@@ -335,7 +335,7 @@ public class AutonomousLeftSampleFaster4_1 extends LinearOpMode {
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
                                             new SleepAction(3),

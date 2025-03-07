@@ -47,7 +47,6 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.TurnConstraints;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -61,14 +60,13 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
-import org.opencv.core.Mat;
 
 /**
  * Hazmat Autonomous
  */
 
-@Autonomous(name = "Hazmat Auto RIGHT Fast", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousRightSpecimenFast extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto RIGHT Fast 5 Edit", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousRightSpecimenFast5Edit extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -220,56 +218,56 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
         trajPickupSpecimenOneToSubmersibleOne = drive.actionBuilder(pickupSpecimenOne)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenOne, Math.toRadians(-180),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajSubmersibleOneToPickupSpecimenTwo = drive.actionBuilder(submersibleSpecimenOne)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenTwo, Math.toRadians(-15),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajPickupSpecimenTwoToSubmersibleTwo = drive.actionBuilder(pickupSpecimenTwo)
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenTwo, Math.toRadians(-180),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajSubmersibleTwoToPickupPreload2 = drive.actionBuilder(submersibleSpecimenTwo)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenPreload2, Math.toRadians(-15),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajPickupPreload2ToSubmersiblePreload2 = drive.actionBuilder(pickupSpecimenPreload2)
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenPreload2, Math.toRadians(-180),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajSubmersiblePreload2ToPickupSpecimenThree = drive.actionBuilder(submersibleSpecimenPreload2)
                 .setTangent(Math.toRadians(3))
                 .splineToSplineHeading(pickupSpecimenThree, Math.toRadians(-15),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajPickupSpecimenThreeToSubmersibleThree = drive.actionBuilder(pickupSpecimenThree)
                 .setReversed(true)
                 .setTangent(Math.toRadians(-100))
                 .splineToSplineHeading(submersibleSpecimenThree, Math.toRadians(-180),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajSubmersibleThreeToObservationPark = drive.actionBuilder(submersibleSpecimenThree)
                 .splineToSplineHeading(observationPark, Math.toRadians(57),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
 
         trajSubmersiblePreload2ToObservationPark = drive.actionBuilder(submersibleSpecimenPreload2)
                 .splineToSplineHeading(observationPark, Math.toRadians(57),
-                        new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
+                        new TranslationalVelConstraint(50.0), new ProfileAccelConstraint(-75.0, 95.0))
                 .build();
     }
 
@@ -292,8 +290,7 @@ public class AutonomousRightSpecimenFast extends LinearOpMode {
                                         new SleepAction(0.3),
                                         intakeOuttakeController.dropSamplefromOuttakeOnlyAction(),
                                         new SleepAction(0.1),
-                                        intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT),
-                                        intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.SPECIMEN_PICKUP)
+                                        intakeOuttakeController.moveOuttakeArmToAction(Outtake.ARM_STATE.INIT)
                                 ),
                                 intakeOuttakeController.openIntakeGripAction(),
                                 intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)
