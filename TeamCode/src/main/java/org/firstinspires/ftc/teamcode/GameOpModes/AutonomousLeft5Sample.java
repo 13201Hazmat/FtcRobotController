@@ -152,7 +152,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
         firstBucket = new Pose2d(11.5, 20.5, Math.toRadians(-17.8));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(9.75, 23.1, Math.toRadians(-1.5));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(9.75, 23.1, Math.toRadians(-2.5));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
@@ -293,7 +293,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                                     new SleepAction(0.9), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
-                                    //intakeOuttakeController.swivelByVisionAction(),
+                                    intakeOuttakeController.swivelByVisionAction(),
                                     new SleepAction(1.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
