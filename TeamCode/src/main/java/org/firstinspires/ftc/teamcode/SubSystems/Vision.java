@@ -64,7 +64,7 @@ public class Vision {
 
     public void locateFarthestSampleFromRobot() {
         blobs = colorLocator.getBlobs();
-        ColorBlobLocatorProcessor.Util.filterByArea(500, 10000, blobs);
+        ColorBlobLocatorProcessor.Util.filterByArea(2000, 10000, blobs);
         ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
         targetBlobDetected = !blobs.isEmpty();

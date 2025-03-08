@@ -290,21 +290,13 @@ public class AutonomousLeft4Sample extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(1), //TODO:Adjust based on how much time camera takes to sense consitently
+                                    new SleepAction(0.9), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(0.5),
+                                    new SleepAction(1.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
-                                    //trajBucketToSubmersiblePick1
-                                    /*new SleepAction(1),
-                                    intakeOuttakeController.extendIntakeArmByVisionAction(),
-                                    new SleepAction(0.5),
-                                    intakeOuttakeController.pickupSequenceAction(),
-                                    sensePickUpAndDecisionAction()
-
-                                     */
                             )
                     );
                 } else { // 4 Sample auto
@@ -312,7 +304,7 @@ public class AutonomousLeft4Sample extends LinearOpMode {
                             new SequentialAction(
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
-                                            new SleepAction(3),
+                                            //new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
@@ -334,27 +326,6 @@ public class AutonomousLeft4Sample extends LinearOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 intakeArm.senseIntakeSampleColor();
-                safeWaitMilliSeconds(500);
-                Actions.runBlocking(
-                        new SequentialAction(
-                                //Submersible Pick to Bucket
-                                new ParallelAction(
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
-                                        trajSubmersiblePickToBucket
-                                ),
-                                new SleepAction(0.5),
-                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
-                                trajBucketToSubmersiblePick
-                                    /*new ParallelAction(
-                                            trajBucketToSubmersiblePark
-                                            //new SleepAction(3),
-                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
-                                    ),*/
-                        )
-                );
-                /**
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
@@ -365,34 +336,27 @@ public class AutonomousLeft4Sample extends LinearOpMode {
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                    intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                    //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
-                                            trajBucketToSubmersiblePark
+                                            trajBucketToSubmersiblePark,
                                             //new SleepAction(3),
-                                            //intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                            intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
                             )
                     );
                 } else { // retry twice
-                    intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
-                    /*
                     if (counter < 2) {
                         intakeArm.openGrip();
                         intakeArm.toggleSwivel();
                         safeWaitMilliSeconds(200);
                         intakeOuttakeController.pickupSequence();
-                        //intakeArm.senseIntakeSampleColor();
-                        safeWaitMilliSeconds(500);
                         counter++;
                         return true;
                     } else { // Just park
                         intakeOuttakeController.setToAutoEndStateSubmerssiblePark();
                     }
-
-
                 }
-                 */
                 return false;
             }
         };

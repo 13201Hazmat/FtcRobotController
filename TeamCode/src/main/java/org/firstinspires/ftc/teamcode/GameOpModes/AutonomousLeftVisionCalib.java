@@ -457,7 +457,7 @@ public class AutonomousLeftVisionCalib extends LinearOpMode {
             telemetry.update();
         }
 
-        while (!isStopRequested()) {
+        /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
             telemetry.addData("Selected Alliance", GameField.allianceColor);
@@ -478,7 +478,8 @@ public class AutonomousLeftVisionCalib extends LinearOpMode {
             }
 
             telemetry.update();
-        }
+        }*/
+        autoOption = AUTO_OPTION.FIVE_SAMPLE_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");

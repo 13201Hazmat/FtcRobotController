@@ -290,11 +290,11 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(1.2), //TODO:Adjust based on how much time camera takes to sense consitently
+                                    new SleepAction(0.9), //TODO:Adjust based on how much time camera takes to sense consitently
                                     //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(3.0),
+                                    new SleepAction(1.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
@@ -304,7 +304,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                             new SequentialAction(
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
-                                            new SleepAction(3),
+                                            //new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
@@ -339,7 +339,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                                     //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
                                             trajBucketToSubmersiblePark,
-                                            new SleepAction(3),
+                                            //new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
                                     new SleepAction(1)
