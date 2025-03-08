@@ -146,11 +146,14 @@ public class IntakeOuttakeController {
                 vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
+                intakeArm.moveSwivelTo(vision.angle);
+                /*
                 if (vision.angle < 45 ) {
                     intakeArm.moveSwivelCentered();
                 } else {
                     intakeArm.moveSwivelPerpendicular();
                 }
+                */
                 return false;
             }
         };
