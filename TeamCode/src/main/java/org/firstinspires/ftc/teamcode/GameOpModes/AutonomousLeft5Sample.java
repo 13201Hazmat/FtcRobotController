@@ -348,7 +348,11 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                 } else { // retry twice
                     if (counter < 2) {
                         intakeArm.openGrip();
-                        intakeArm.toggleSwivel();
+                        if (counter==1) {
+                            intakeArm.moveSwivelPerpendicular();
+                        } else {
+                            intakeArm.moveSwivelCentered();
+                        }
                         safeWaitMilliSeconds(200);
                         intakeOuttakeController.pickupSequence();
                         counter++;

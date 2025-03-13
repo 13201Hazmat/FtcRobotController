@@ -169,15 +169,15 @@ public class AutonomousRight4Specimen extends LinearOpMode {
         colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
         colorSampleFar = new Pose2d(-21, 38.25, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
-        pickupSpecimenOne = new Pose2d(-0.60, 42, Math.toRadians(3));//-0.25,42,0
+        pickupSpecimenOne = new Pose2d(-0.50, 42, Math.toRadians(3));//-0.25,42,0
         submersibleSpecimenOne = new Pose2d(-30.25, -6.25, Math.toRadians(0));//-6.75
-        pickupSpecimenTwo = new Pose2d(-0.8, 46, Math.toRadians(3));//-0.25,46,0
+        pickupSpecimenTwo = new Pose2d(-0.3, 42, Math.toRadians(3));//-0.25,46,0
         submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
-        pickupSpecimenPreload2 = new Pose2d(-1, 47, Math.toRadians(3));
-        submersibleSpecimenPreload2 =  new Pose2d(-27.8, -13, Math.toRadians(0));
+        pickupSpecimenPreload2 = new Pose2d(-0.5, 42, Math.toRadians(3));
+        submersibleSpecimenPreload2 =  new Pose2d(-29, -13, Math.toRadians(0));
         pickupSpecimenThree = new Pose2d(-5.5, 55, Math.toRadians(3));//-1,47,0
         submersibleSpecimenThree = new Pose2d(-26.2, -11, Math.toRadians(0));
-        observationPark = new Pose2d(-7.3, 7.4, Math.toRadians(70));
+        observationPark = new Pose2d(-6, 8.4, Math.toRadians(70));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();

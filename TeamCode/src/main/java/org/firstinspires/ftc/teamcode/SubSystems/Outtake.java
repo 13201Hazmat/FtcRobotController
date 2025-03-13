@@ -34,9 +34,9 @@ public class Outtake {
     public DigitalChannel outtakeTouch;
 
     public enum GRIP_STATE {
-        OPEN(0.41), //0.52 max
-        OPEN_WIDE(0.57),
-        CLOSED(0.17);
+        OPEN(0.26), //0.41  0.52 max
+        OPEN_WIDE(0.42),//0.57
+        CLOSED(0.02);//0.17
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
