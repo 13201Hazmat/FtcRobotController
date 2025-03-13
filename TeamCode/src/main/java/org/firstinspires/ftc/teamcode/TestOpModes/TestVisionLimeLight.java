@@ -37,8 +37,7 @@ public class TestVisionLimeLight extends LinearOpMode {
 
         initSubsystems();
         visionLimeLight.startLimelight();
-
-        //selectColor();
+        waitForStart();
 
         while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
@@ -80,9 +79,6 @@ public class TestVisionLimeLight extends LinearOpMode {
                             } else {
                                 intakeArm.openGrip();
                             }
-                            /*} else {
-                                intakeArm.moveArm(IntakeArm.ARM_STATE.PICKUP);
-                            }*/
                             break;
                         case PICKUP:
                             intakeArm.toggleGrip();
@@ -111,6 +107,7 @@ public class TestVisionLimeLight extends LinearOpMode {
 
             printDebugMessages();
         }
+        visionLimeLight.stopLimeLight();
     }
 
     public void initSubsystems() {
