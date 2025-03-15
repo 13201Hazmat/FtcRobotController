@@ -99,12 +99,21 @@ public class TestVisionLimeLight extends LinearOpMode {
             }
 
             if(gamepadController.gp1GetDpad_upPress()){
-                visionLimeLight.moveArmForward();
+                visionLimeLight.extendArm();
             }
 
             if(gamepadController.gp1GetDpad_downPress()){
+                visionLimeLight.retractArm();
+            }
+
+            if(gamepadController.gp1GetDpad_rightPress()){
+                visionLimeLight.moveArmForward();
+            }
+
+            if(gamepadController.gp1GetDpad_leftPress()){
                 visionLimeLight.moveArmBackward();
             }
+
 
             //printDebugMessages();
             telemetry.addData("angle", visionLimeLight.angle);

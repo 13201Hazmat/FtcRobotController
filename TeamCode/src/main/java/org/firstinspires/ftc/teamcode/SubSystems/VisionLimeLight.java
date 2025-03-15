@@ -35,6 +35,14 @@ public class VisionLimeLight {
         telemetry.update();
     }
 
+    public void extendArm(){
+        limeLightArm.setPosition(ARM_STATE.EXTENDED.armPos);
+    }
+
+    public void retractArm(){
+        limeLightArm.setPosition(ARM_STATE.RETRACTED.armPos);
+    }
+
     private static final int X_RANGE = 320;
     private static final int Y_RANGE = 240;
     private static final int Y_AREA_OF_INTEREST_MAX = 80;  // Full extension 1.0
@@ -57,6 +65,7 @@ public class VisionLimeLight {
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limeLightArm = hardwareMap.get(Servo.class, "limelight_arm");
+        retractArm();
     }
 
     public void startLimelight() {
