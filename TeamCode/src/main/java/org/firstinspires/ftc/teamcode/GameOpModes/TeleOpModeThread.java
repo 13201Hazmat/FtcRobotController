@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
-import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
@@ -37,7 +36,6 @@ public class TeleOpModeThread extends LinearOpMode {
     public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
     public Vision vision;
-    public Lights lights;
 
     //Static Class for knowing system state
 
@@ -127,11 +125,6 @@ public class TeleOpModeThread extends LinearOpMode {
         telemetry.addLine("Vision Initialized");
         telemetry.update();*/
 
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
         intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
@@ -190,7 +183,6 @@ public class TeleOpModeThread extends LinearOpMode {
             intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
             //vision.printDebugMessages();
-            lights.printDebugMessages();
         }
         telemetry.update();
     }

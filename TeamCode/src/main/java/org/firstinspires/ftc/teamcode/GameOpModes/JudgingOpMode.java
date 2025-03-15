@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
-import org.firstinspires.ftc.teamcode.SubSystems.Lights;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
@@ -36,7 +35,6 @@ public class JudgingOpMode extends LinearOpMode {
     public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
     public Vision vision;
-    public Lights lights;
 
     //Static Class for knowing system state
 
@@ -131,11 +129,6 @@ public class JudgingOpMode extends LinearOpMode {
         telemetry.addLine("Vision Initialized");
         telemetry.update();
 
-        /* Create Lights */
-        lights = new Lights(hardwareMap, telemetry);
-        telemetry.addLine("Lights Initialized");
-        telemetry.update();
-
         /* Create Controllers */
         intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake,  vision,this);
         telemetry.addLine("IntakeController Initialized");
@@ -185,7 +178,6 @@ public class JudgingOpMode extends LinearOpMode {
             intakeArm.printDebugMessages();
             intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
-            lights.printDebugMessages();
         }
         telemetry.update();
     }
