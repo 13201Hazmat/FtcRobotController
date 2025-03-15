@@ -351,24 +351,33 @@ public class GamepadController {
 
         if(gp2GetCirclePress()) {
             intakeOuttakeController.moveOuttakeToSpecimenPickUp();
-            outtake.ascendToClimbLevel2(); // Uncomment this line for Level 2 climb
-            //outtake.ascendToClimbLevel3(); // Uncomment this line for Level 3 climb
+            //outtake.ascendToClimbLevel2(); // Uncomment this line for Level 2 climb
+            outtake.ascendToClimbLevel3(); // Uncomment this line for Level 3 climb
         }
 
 
-        if(gp2GetRightBumperPress()){
-            if(outtake.climberAscended){
-                outtake.climbLevel2(); // Uncomment this line for Level 2 climb
+        if(outtake.outtakeSlidesState == Outtake.SLIDE_STATE.LEVEL3_CLIMB ) {
+            if(gp2GetRightBumperPress()) {
+                outtake.climbLevel3Part2();
+            }
+        } else {
+            if (gp2GetRightBumperPress()) {
+                if (outtake.climberAscended) {
+                    //outtake.climbLevel2(); // Uncomment this line for Level 2 climb
 
-                // The below lines is for Level 3 climb, comment for Level 2 climb
+                    // The below lines is for Level 3 climb, comment for Level 2 climb
                 /*outtake.climbLevel3Part1();
                 safeWaitMilliSeconds(1000);
                 intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.MAX_EXTENSION);
                 safeWaitMilliSeconds(500);
                 outtake.climbLevel3Part2();*/
-                // The above is for Level 3 climb
+                    // The above is for Level 3 climb
+
+                    outtake.climbLevel3Part1();
+                }
             }
         }
+
 
         if (!gp2GetStart()) {
             if (gp2GetDpad_downPress()) {

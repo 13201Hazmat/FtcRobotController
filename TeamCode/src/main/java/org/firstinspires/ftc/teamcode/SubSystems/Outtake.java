@@ -107,7 +107,7 @@ public class Outtake {
         LEVEL2_CLIMB(1200), //0 for lower bar
         LEVEL3_ASCEND(700),//700 for lower bar
         LEVEL3_CLIMB_ENGAGED(600), //600 for lower bar
-        LEVEL3_CLIMB(250), //300 for lower bar // 250 num 2
+        LEVEL3_CLIMB(475), //300 for lower bar // 250 num 2
         MAX_EXTENDED(2000);
 
         public final double motorPosition;
@@ -298,7 +298,7 @@ public class Outtake {
         stopOuttakeClimbMotors();
     }
 
-    public void climbLevel3Part1(){
+    /*public void climbLevel3Part1(){
         outtakeMotorPower = 117.0/312.0; //1.0;
         moveOuttakeSlides(SLIDE_STATE.LEVEL3_CLIMB);
         movePTO(PTO_STATE.PTO_ON);
@@ -320,7 +320,32 @@ public class Outtake {
         reverseOuttakeClimbMotors();
         safeWaitMilliSeconds(6000);
         stopOuttakeClimbMotors();
+    }*/
+
+    public void climbLevel3Part1(){
+        outtakeMotorPower = 117.0/312.0; //1.0;
+        moveOuttakeSlides(SLIDE_STATE.LEVEL3_CLIMB);
+        movePTO(PTO_STATE.PTO_ON);
+        safeWaitMilliSeconds(100);
+        startOuttakeClimbMotors();
+        while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL3_CLIMB)) {
+            if ( outtakeSlideLeft.getCurrentPosition() < SLIDE_STATE.LEVEL2_CLIMB_ENGAGED.motorPosition) {
+                printDebugMessages();
+            }
+        }
+        stopOuttakeClimbMotors();
     }
+
+    public void climbLevel3Part2(){
+        movePTO(PTO_STATE.PTO_OFF);
+        safeWaitMilliSeconds(300);
+        startOuttakeClimbMotors();
+        safeWaitMilliSeconds(3000);
+        reverseOuttakeClimbMotors();
+        safeWaitMilliSeconds(6000);
+        stopOuttakeClimbMotors();
+    }
+
 
 
 
