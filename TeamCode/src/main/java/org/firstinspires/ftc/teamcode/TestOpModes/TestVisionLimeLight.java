@@ -18,7 +18,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.opencv.core.RotatedRect;
-@Disabled
 @TeleOp (name = "Test Vision Limelight", group = "Testing")
 public class TestVisionLimeLight extends LinearOpMode {
     public VisionLimeLight visionLimeLight;
@@ -37,9 +36,10 @@ public class TestVisionLimeLight extends LinearOpMode {
 
         initSubsystems();
         visionLimeLight.startLimelight();
+        safeWaitMilliSeconds(1000);
         waitForStart();
 
-        while (opModeIsActive() || opModeInInit()) {
+        while (opModeIsActive()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
             visionLimeLight.locateNearestSampleFromRobot();
@@ -54,17 +54,10 @@ public class TestVisionLimeLight extends LinearOpMode {
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;
-                            intakeSlides.moveIntakeSlidesToRange(visionLimeLight.yExtensionFactor);
+                            intakeSlides.moveIntakeSlidesSpecific(0.4);
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                             intakeArm.moveSwivelCentered();
-                            if(visionLimeLight.angle < 45.0){
-                                //near horizontal case
-                                intakeArm.moveSwivelPerpendicular();
-                            }
-                            else{
-                                //near vertical
-                                intakeArm.moveSwivelCentered();
-                            }
+                            intakeArm.moveSwivelTo(visionLimeLight.angle);
                             break;
                         case PRE_PICKUP:
                             //GameField.turboFactor = true;
@@ -105,7 +98,20 @@ public class TestVisionLimeLight extends LinearOpMode {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
             }
 
-            printDebugMessages();
+            if(gamepadController.gp1GetDpad_upPress()){
+                visionLimeLight.moveArmForward();
+            }
+
+            if(gamepadController.gp1GetDpad_downPress()){
+                visionLimeLight.moveArmBackward();
+            }
+
+            //printDebugMessages();
+            telemetry.addData("angle", visionLimeLight.angle);
+            telemetry.addData("xPos", visionLimeLight.xPos);
+            telemetry.addData("yPos", visionLimeLight.yPos);
+            telemetry.update();
+            safeWaitMilliSeconds(500);
         }
         visionLimeLight.stopLimeLight();
     }
