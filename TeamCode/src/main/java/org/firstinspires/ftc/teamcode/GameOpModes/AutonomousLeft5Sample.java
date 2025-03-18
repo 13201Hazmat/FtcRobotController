@@ -59,6 +59,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 /**
  * Hazmat Autonomous
@@ -72,7 +73,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight visionLimeLight;
     //public Lights lights;
 
     public MecanumDrive drive;
@@ -133,6 +134,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
     Pose2d farBucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
+    Pose2d submersiblePrePick = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePick = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
@@ -144,7 +146,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
             trajBucketToYellowSampleMiddle,
             trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
             trajBucketToSubmersiblePick, trajSubmersiblePickToBucket,
-            trajBucketToSubmersiblePick1,trajBucketToSubmersiblePark;
+            trajBucketToSubmersiblePark;
 
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
@@ -156,7 +158,7 @@ public class AutonomousLeft5Sample extends LinearOpMode {
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
-        submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
+        submersiblePrePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
 
@@ -185,11 +187,6 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                 .build();
 
         trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
-                .setTangent(Math.toRadians(15))
-                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
-                .build();
-
-        trajBucketToSubmersiblePick1 = drive.actionBuilder(farBucket)
                 .setTangent(Math.toRadians(15))
                 .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
                 .build();
@@ -290,11 +287,11 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    new SleepAction(0.9), //TODO:Adjust based on how much time camera takes to sense consitently
-                                    //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
+                                    intakeOuttakeController.strafeToSample(),
+                                    new SleepAction(0.5),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(1.5),
+                                    new SleepAction(1),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
@@ -407,12 +404,11 @@ public class AutonomousLeft5Sample extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
+        visionLimeLight = new VisionLimeLight(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
         telemetry.update();
 
-
-        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
+        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, visionLimeLight,this);
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 

@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Controllers;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -15,23 +16,32 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
+import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 
 public class IntakeOuttakeController {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight vision;
     LinearOpMode currentOpMode;
 
     public boolean autoTransferEnabled = false;
     public boolean initiateAutoTransfer = false;
 
-    public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, Vision vision, LinearOpMode currentOpMode) {
+    Action trajStrafeToBlock;
+
+    public MecanumDrive drive;
+
+    Pose2d submersiblePrePick = new Pose2d(53, -16, Math.toRadians(-90));
+    Pose2d submersiblePick;
+
+    public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, VisionLimeLight vision, LinearOpMode currentOpMode) {
         this.intakeArm = intakeArm;
         this.intakeSlides = intakeSlides;
         this.outtake = outtake;
@@ -135,6 +145,27 @@ public class IntakeOuttakeController {
         };
     }
 
+
+    public Action strafeToSample() {
+        return new Action() {
+            @Override
+            public void preview(Canvas canvas) {
+            }
+
+            @Override
+            public boolean run(TelemetryPacket packet) {
+                vision.extendArm();
+                new SleepAction(0.5);
+                vision.locateNearestSampleFromRobot();
+                submersiblePick = new Pose2d(53 + vision.inchesToStrafe, -16, Math.toRadians(-90));
+                trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
+                        .strafeToConstantHeading(submersiblePick.position)
+                        .build();
+                return false;
+            }
+        };
+    }
+
     public Action extendIntakeArmByVisionAction() {
         return new Action() {
             @Override
@@ -143,14 +174,8 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                if (vision.angle < 45 ) {
-                    intakeArm.moveSwivelCentered();
-                } else {
-                    intakeArm.moveSwivelPerpendicular();
-                }
                 return false;
             }
         };

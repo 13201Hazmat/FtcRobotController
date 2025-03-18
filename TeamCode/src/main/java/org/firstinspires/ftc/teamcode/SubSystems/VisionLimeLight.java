@@ -49,15 +49,13 @@ public class VisionLimeLight {
     private static final int Y_AREA_OF_INTEREST_MIN = 180; // Half extension 0.5
     private static final double EXTENSION_FACTOR_MAX = 1.0;
     private static final double EXTENSION_FACTOR_MIN = 0.5;
+    private static final double INTAKE_XPOS = 340;
+    private static final double INCHES_PER_PIXEL = 0.02;
+    public double inchesToStrafe;
 
     public boolean targetBlobDetected = false;
     public double yExtensionFactor = 0.0;
     public double angle = 0.0;
-
-    public double[] pythonOutputs;
-    private RotatedRect boxFit;
-    private int blockX = 0, blockY = 0;
-    private int numberOfBlobsDetected = 0;
 
     public VisionLimeLight(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
@@ -84,30 +82,14 @@ public class VisionLimeLight {
 
     public void locateNearestSampleFromRobot() {
         result = limelight.getLatestResult().getPythonOutput();
-        angle = result[0];
-        xPos = result[1];
-        yPos = result[2];
-        /*
-        result = limelight.getLatestResult();
         if (result != null) {
-            if (result.isValid()) {
-                targetBlobDetected = true;
-                pythonOutputs = result.getPythonOutput();
-                if (pythonOutputs != null && pythonOutputs.length > 0) {
-                    angle = pythonOutputs[0];
-                    xPos = pythonOutputs[1];
-                    yPos = pythonOutputs[2];
-                }
-            }
+            angle = result[0];
+            xPos = result[1];
+            yPos = result[2];
         }
-        // *** Calculate Extension Factor ***
-        yExtensionFactor = EXTENSION_FACTOR_MIN +
-                ((double) (-Y_AREA_OF_INTEREST_MIN) * (EXTENSION_FACTOR_MAX - EXTENSION_FACTOR_MIN)
-                        / (double) (Y_AREA_OF_INTEREST_MAX - Y_AREA_OF_INTEREST_MIN));
 
-         */
+        inchesToStrafe = (xPos - INTAKE_XPOS) * INCHES_PER_PIXEL;
     }
-
 
     public void printDebugMessages() {
         telemetry.addLine("LimeLight Vision Debug");
