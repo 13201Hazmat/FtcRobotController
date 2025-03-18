@@ -58,6 +58,7 @@ public class Outtake {
         HIGH_CHAMBER(0.38),//0.66
         HIGH_CHAMBER_LATCH(0.38),
         AUTO_PARK(0.32),
+        LEVEL3_ASCEND(0.06),
         MAX(0.66);
 
         private double armPos;
@@ -80,6 +81,7 @@ public class Outtake {
         HIGH_CHAMBER_LATCH(0.5),
         AUTO_PARK(0.27),
         DROP(0.58),//0.72
+        LEVEL3_ASCEND(0.51),
         MAX(0.68);
 
         private double wristPos;
@@ -107,7 +109,7 @@ public class Outtake {
         LEVEL2_CLIMB(1200), //0 for lower bar
         LEVEL3_ASCEND(700),//700 for lower bar
         LEVEL3_CLIMB_ENGAGED(600), //600 for lower bar
-        LEVEL3_CLIMB(475), //300 for lower bar // 250 num 2
+        LEVEL3_CLIMB(0), //475 for lower bar // 250 num 2
         MAX_EXTENDED(2000);
 
         public final double motorPosition;
@@ -116,10 +118,17 @@ public class Outtake {
 
         }
     }
-    public IntakeSlides.SLIDES_STATE intakeSlidesState = IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED;
-
     public SLIDE_STATE outtakeSlidesState = SLIDE_STATE.TRANSFER;
     public SLIDE_STATE lastOuttakeSlideState = SLIDE_STATE.TRANSFER;
+
+    public enum CLIMB_STATE{
+        INIT,
+        ASCENDED,
+        LOWERLEVEL,
+        EXTENDED,
+        RETRACTED
+    }
+    public CLIMB_STATE climbState = CLIMB_STATE.INIT;
 
     public enum PTO_STATE {
         PTO_OFF(0.67, 0.47),
@@ -258,6 +267,10 @@ public class Outtake {
                 outtakeWristServo.setPosition(WRIST_STATE.AUTO_PARK.wristPos);
                 outtakeWristState = WRIST_STATE.AUTO_PARK;
                 break;
+            case LEVEL3_ASCEND:
+                outtakeWristServo.setPosition(WRIST_STATE.LEVEL3_ASCEND.wristPos);
+                outtakeWristState = WRIST_STATE.LEVEL3_ASCEND;
+                break;
             case MAX:
                 outtakeWristServo.setPosition(WRIST_STATE.MAX.wristPos);
                 outtakeWristState = WRIST_STATE.MAX;
@@ -274,8 +287,11 @@ public class Outtake {
 
     public void ascendToClimbLevel3(){
         movePTO(PTO_STATE.PTO_OFF);
+        moveArm(ARM_STATE.LEVEL3_ASCEND);
+        moveWrist(ARM_STATE.LEVEL3_ASCEND);
         moveOuttakeSlides(SLIDE_STATE.LEVEL3_ASCEND);
         climberAscended = true;
+        climbState = CLIMB_STATE.ASCENDED;
     }
 
     public void movePTO(PTO_STATE toPTOState) {
@@ -334,20 +350,24 @@ public class Outtake {
             }
         }
         stopOuttakeClimbMotors();
+        climbState = CLIMB_STATE.LOWERLEVEL;
     }
 
     public void climbLevel3Part2(){
         movePTO(PTO_STATE.PTO_OFF);
         safeWaitMilliSeconds(300);
         startOuttakeClimbMotors();
-        safeWaitMilliSeconds(3000);
-        reverseOuttakeClimbMotors();
-        safeWaitMilliSeconds(6000);
+        safeWaitMilliSeconds(2200);
         stopOuttakeClimbMotors();
+        climbState = CLIMB_STATE.EXTENDED;
     }
 
-
-
+    public void climbLevel3Part3(){
+        reverseOuttakeClimbMotors();
+        safeWaitMilliSeconds(6000);
+        //stopOuttakeClimbMotors();
+        climbState = CLIMB_STATE.RETRACTED;
+    }
 
     public void safeWaitMilliSeconds(double time) {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
