@@ -146,7 +146,7 @@ public class IntakeOuttakeController {
     }
 
 
-    public Action strafeToSample() {
+    public Action strafeToSample(Pose2d submersiblePrePick) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -157,10 +157,16 @@ public class IntakeOuttakeController {
                 vision.extendArm();
                 new SleepAction(0.5);
                 vision.locateNearestSampleFromRobot();
-                submersiblePick = new Pose2d(53 + vision.inchesToStrafe, -16, Math.toRadians(-90));
+                submersiblePick = new Pose2d(submersiblePrePick.position.x + vision.inchesToStrafe,
+                        submersiblePrePick.position.y, submersiblePrePick.heading.log());
                 trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
                         .strafeToConstantHeading(submersiblePick.position)
                         .build();
+                Actions.runBlocking(
+                        new SequentialAction(
+                                trajStrafeToBlock
+                        )
+                );
                 return false;
             }
         };

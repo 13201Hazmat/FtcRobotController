@@ -287,7 +287,8 @@ public class AutonomousLeft5Sample extends LinearOpMode {
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePick,
-                                    intakeOuttakeController.strafeToSample(),
+                                    intakeOuttakeController.strafeToSample(submersiblePrePick),
+
                                     new SleepAction(0.5),
                                     intakeOuttakeController.extendIntakeArmByVisionAction(),
                                     intakeOuttakeController.swivelByVisionAction(),
