@@ -52,7 +52,8 @@ public class IntakeArm {
         TRANSFER(0.59), //0.66
         LOWER_PRE_PICKUP(0.36), //0.6
         SPECIMEN_PICKUP(0.73),
-        DYNAMIC(0.68);
+        DYNAMIC(0.68),
+        LEVEL3_ASCEND(0.25);
 
         private double armPos;
         ARM_STATE(double armPos){
@@ -74,7 +75,8 @@ public class IntakeArm {
         SWEEP(0.61),
         INIT(0.16),//0.22
         SPECIMEN_PICKUP(0.01),//0.88
-        DYNAMIC(0.16);
+        DYNAMIC(0.16),
+        LEVEL3_ASCEND(0.73);;
 
         private final double wristPosition;
         WRIST_STATE(double wristPosition){
@@ -180,6 +182,12 @@ public class IntakeArm {
                 intakeWristState = WRIST_STATE.SPECIMEN_PICKUP;
                 moveSwivelCentered();
                 closeGrip();
+                break;
+            case LEVEL3_ASCEND:
+                intakeWristServo.setPosition(WRIST_STATE.LEVEL3_ASCEND.wristPosition);
+                intakeWristState = WRIST_STATE.LEVEL3_ASCEND;
+                moveSwivelCentered();
+                break;
         }
     }
 
@@ -203,7 +211,7 @@ public class IntakeArm {
     }
 
     public void moveSwivelTo(double servoDegrees){
-        intakeSwivelServo.setPosition(SWIVEL_STATE.CENTERED.swivelPosition * (1- servoDegrees/180.0));
+        intakeSwivelServo.setPosition(SWIVEL_STATE.CENTERED.swivelPosition + (servoDegrees * 0.275) / 90);
         intakeSwivelState = SWIVEL_STATE.DYNAMIC;
     }
 

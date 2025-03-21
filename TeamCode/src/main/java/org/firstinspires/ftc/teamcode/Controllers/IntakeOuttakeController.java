@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 
 public class IntakeOuttakeController {
@@ -146,11 +147,12 @@ public class IntakeOuttakeController {
                 vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                if (vision.angle < 45 ) {
+                /*if (vision.angle < 45 ) {
                     intakeArm.moveSwivelCentered();
                 } else {
                     intakeArm.moveSwivelPerpendicular();
-                }
+                }*/
+                intakeArm.moveSwivelTo(vision.angle);
                 return false;
             }
         };

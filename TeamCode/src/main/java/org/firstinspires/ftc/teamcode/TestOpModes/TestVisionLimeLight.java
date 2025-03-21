@@ -2,31 +2,33 @@ package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Controllers.GamepadDriveTrainController;
 import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
+import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
-import org.opencv.core.RotatedRect;
-@Disabled
+
 @TeleOp (name = "Test Vision Limelight", group = "Testing")
 public class TestVisionLimeLight extends LinearOpMode {
     public VisionLimeLight visionLimeLight;
     public VisionPortal visionPortal;
     public TestGamepadController gamepadController;
+    public GamepadDriveTrainController gamepadDriveTrainController;
     public DriveTrain driveTrain;
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
+    public Outtake outtake;
 
     ColorRange selectedTargetColor = ColorRange.YELLOW;
 
@@ -38,6 +40,11 @@ public class TestVisionLimeLight extends LinearOpMode {
         initSubsystems();
         visionLimeLight.startLimelight();
         waitForStart();
+
+        /* If Stop is pressed, exit OpMode */
+        if (isStopRequested()) return;
+
+        gamepadDriveTrainController.start();
 
         while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
@@ -54,17 +61,9 @@ public class TestVisionLimeLight extends LinearOpMode {
                         case POST_TRANSFER:
                         case TRANSFER:
                             //GameField.turboFactor = false;
-                            intakeSlides.moveIntakeSlidesToRange(visionLimeLight.yExtensionFactor);
+                            intakeSlides.moveIntakeSlidesToRange(visionLimeLight.calculateYExtensionFactorFromLookUp(visionLimeLight.yPos));
                             intakeArm.moveArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                            intakeArm.moveSwivelCentered();
-                            if(visionLimeLight.angle < 45.0){
-                                //near horizontal case
-                                intakeArm.moveSwivelPerpendicular();
-                            }
-                            else{
-                                //near vertical
-                                intakeArm.moveSwivelCentered();
-                            }
+                            intakeArm.moveSwivelTo(visionLimeLight.angle);
                             break;
                         case PRE_PICKUP:
                             //GameField.turboFactor = true;
@@ -105,9 +104,26 @@ public class TestVisionLimeLight extends LinearOpMode {
                 intakeArm.moveArm(IntakeArm.ARM_STATE.POST_TRANSFER);
             }
 
+            if(gamepadController.gp1GetDpad_upPress()){
+                outtake.extendVisionArm();
+            }
+
+            if(gamepadController.gp1GetDpad_downPress()){
+                outtake.retractVisionArm();
+            }
+
+            intakeSlides.INTAKE_SLIDE_DELTA = 0.01;
+            if(gamepadController.gp1GetTrianglePress()){
+                intakeSlides.moveIntakeSlidesForward();
+            }
+            if(gamepadController.gp1GetCrossPress()){
+                intakeSlides.moveIntakeSlidesBackward();
+            }
+
             printDebugMessages();
         }
         visionLimeLight.stopLimeLight();
+        gamepadDriveTrainController.exit();
     }
 
     public void initSubsystems() {
@@ -122,6 +138,11 @@ public class TestVisionLimeLight extends LinearOpMode {
         telemetry.addLine("==================");
         telemetry.update();
 
+        driveTrain = new DriveTrain(hardwareMap, new Pose2d(0,0,0), telemetry);
+        driveTrain.driveType = DriveTrain.DriveType.ROBOT_CENTRIC;
+        telemetry.addData("DriveTrain Initialized with Pose:",driveTrain.toStringPose2d(driveTrain.pose));
+        telemetry.update();
+
         visionLimeLight = new VisionLimeLight(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
         telemetry.update();
@@ -134,9 +155,18 @@ public class TestVisionLimeLight extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
+        outtake = new Outtake(hardwareMap, telemetry);
+        telemetry.addLine("Outtake Initialized");
+        telemetry.update();
+
         /* Create Controllers */
         gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
         telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
+
+        /* Create Controllers */
+        gamepadDriveTrainController = new GamepadDriveTrainController(gamepad1, driveTrain, this);
+        telemetry.addLine("Gamepad DriveTrain Initialized");
         telemetry.update();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -186,6 +216,7 @@ public class TestVisionLimeLight extends LinearOpMode {
             visionLimeLight.printDebugMessages();
             intakeSlides.printDebugMessages();
             intakeArm.printDebugMessages();
+            driveTrain.printDebugMessages();
 
         }
         telemetry.update();

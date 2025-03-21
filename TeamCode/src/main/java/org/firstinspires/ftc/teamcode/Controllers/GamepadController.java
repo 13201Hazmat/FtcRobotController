@@ -358,9 +358,12 @@ public class GamepadController {
         if (gp2GetRightBumperPress()) {
             switch (outtake.climbState) {
                 case ASCENDED:
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.LEVEL3_ASCEND);
+                    outtake.extendVisionArm();
                     outtake.climbLevel3Part1();
                     break;
                 case LOWERLEVEL:
+                    outtake.moveVisionArmClimb();
                     outtake.climbLevel3Part2();
                     break;
                 case EXTENDED:

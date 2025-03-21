@@ -169,6 +169,7 @@ public class Outtake {
         outtakeTouch = hardwareMap.get(DigitalChannel .class, "outtakeTouch");
         leftPTOServo = hardwareMap.get(Servo.class, "left_pto");
         rightPTOServo = hardwareMap.get(Servo.class, "right_pto");
+        limeLightArm = hardwareMap.get(Servo.class, "limeLightArm");
 
         initOuttake();
     }
@@ -207,6 +208,7 @@ public class Outtake {
         }
         turnOuttakeClimbBrakeModeOn();
         movePTO(PTO_STATE.PTO_OFF);
+        retractVisionArm();
     }
 
     public void moveArm(ARM_STATE toOuttakeArmState){
@@ -290,6 +292,9 @@ public class Outtake {
         moveArm(ARM_STATE.LEVEL3_ASCEND);
         moveWrist(ARM_STATE.LEVEL3_ASCEND);
         moveOuttakeSlides(SLIDE_STATE.LEVEL3_ASCEND);
+        startOuttakeClimbMotors();
+        safeWaitMilliSeconds(1000);
+        stopOuttakeClimbMotors();
         climberAscended = true;
         climbState = CLIMB_STATE.ASCENDED;
     }
@@ -314,30 +319,6 @@ public class Outtake {
         stopOuttakeClimbMotors();
     }
 
-    /*public void climbLevel3Part1(){
-        outtakeMotorPower = 117.0/312.0; //1.0;
-        moveOuttakeSlides(SLIDE_STATE.LEVEL3_CLIMB);
-        movePTO(PTO_STATE.PTO_ON);
-        safeWaitMilliSeconds(100);
-        startOuttakeClimbMotors();
-        while(!isOuttakeSlidesInState(SLIDE_STATE.LEVEL3_CLIMB)) {
-            if ( outtakeSlideLeft.getCurrentPosition() < SLIDE_STATE.LEVEL2_CLIMB_ENGAGED.motorPosition) {
-                printDebugMessages();
-            }
-        }
-        stopOuttakeClimbMotors();
-    }
-
-    public void climbLevel3Part2(){
-        movePTO(PTO_STATE.PTO_OFF);
-        safeWaitMilliSeconds(100);
-        startOuttakeClimbMotors();
-        safeWaitMilliSeconds(2000);
-        reverseOuttakeClimbMotors();
-        safeWaitMilliSeconds(6000);
-        stopOuttakeClimbMotors();
-    }*/
-
     public void climbLevel3Part1(){
         outtakeMotorPower = 117.0/312.0; //1.0;
         moveOuttakeSlides(SLIDE_STATE.LEVEL3_CLIMB);
@@ -355,9 +336,9 @@ public class Outtake {
 
     public void climbLevel3Part2(){
         movePTO(PTO_STATE.PTO_OFF);
-        safeWaitMilliSeconds(300);
+        safeWaitMilliSeconds(150);
         startOuttakeClimbMotors();
-        safeWaitMilliSeconds(2200);
+        safeWaitMilliSeconds(1500); //2500
         stopOuttakeClimbMotors();
         climbState = CLIMB_STATE.EXTENDED;
     }
@@ -618,6 +599,35 @@ public class Outtake {
             outtakeSampleSensed = false;
             sensedSampleColor = ColorRange.GREEN;
         }
+    }
+
+    public Servo limeLightArm;
+
+    public enum VISION_ARM_STATE{
+        RETRACTED(1),
+        EXTENDED(0.72),
+        CLIMB(0.54);
+
+        private final double armPos;
+        VISION_ARM_STATE(double armPos) {this.armPos = armPos;}
+    }
+
+    public VISION_ARM_STATE limelightArmState = VISION_ARM_STATE.RETRACTED;
+
+
+    public void extendVisionArm(){
+        limeLightArm.setPosition(VISION_ARM_STATE.EXTENDED.armPos);
+        limelightArmState = VISION_ARM_STATE.EXTENDED;
+    }
+
+    public void retractVisionArm(){
+        limeLightArm.setPosition(VISION_ARM_STATE.RETRACTED.armPos);
+        limelightArmState = VISION_ARM_STATE.RETRACTED;
+    }
+
+    public void moveVisionArmClimb(){
+        limeLightArm.setPosition(VISION_ARM_STATE.CLIMB.armPos);
+        limelightArmState = VISION_ARM_STATE.CLIMB;
     }
 
     public void printDebugMessages() {

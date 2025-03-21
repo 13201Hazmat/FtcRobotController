@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 
 /**
@@ -31,6 +32,7 @@ public class Calibration extends LinearOpMode {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
+    public VisionLimeLight limeLightArm;
 
     //Static Class for knowing system state
 
@@ -150,6 +152,13 @@ public class Calibration extends LinearOpMode {
                 outtake.moveWristBackward();
             }
 
+            if(gamepadController.gp2GetRightStickButtonPress()){
+                limeLightArm.moveArmForward();
+            }
+
+            if(gamepadController.gp2GetLeftStickButtonPress()){
+                limeLightArm.moveArmBackward();
+            }
 
             if (gamepadController.gp2GetRightBumperPress()) {
                 outtake.moveArmForward();
@@ -158,6 +167,7 @@ public class Calibration extends LinearOpMode {
                 outtake.moveArmBackward();
             }
 
+            /*
             if (gamepadController.gp2GetRightStickButtonPress()) {
                 outtake.openGrip();
                 outtake.moveArm(Outtake.ARM_STATE.TRANSFER);
@@ -173,6 +183,7 @@ public class Calibration extends LinearOpMode {
                 outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
                 outtake.moveWrist(Outtake.ARM_STATE.HIGH_CHAMBER);
             }
+            */
 
             if (gamepadController.gp2GetTrianglePersistent() ||
                     gamepadController.gp2GetCrossPersistent()) {
@@ -244,6 +255,10 @@ public class Calibration extends LinearOpMode {
         /* Create Controllers */
         gamepadController = new TestGamepadController(gamepad1, gamepad2, driveTrain, telemetry);
         telemetry.addLine("Gamepad Initialized");
+        telemetry.update();
+
+        limeLightArm = new VisionLimeLight(hardwareMap, telemetry);
+        telemetry.addLine("LimeLightArm Initialized");
         telemetry.update();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -340,6 +355,11 @@ public class Calibration extends LinearOpMode {
             //telemetry.addData("Outtake Slides Left Climb Current", outtake.outtakeSlideLeftClimb.getCurrent(CurrentUnit.AMPS));
             //telemetry.addData("Outtake Slides Right Climb Current", outtake.outtakeSlideRightClimb.getCurrent(CurrentUnit.AMPS));
 
+            telemetry.addLine("----------");
+
+            telemetry.addLine("LimeLight Arm: GP2 + Right Joystick, - Left Joystick");
+            telemetry.addLine("     Zero is Arm retracted");
+            telemetry.addData("     Arm Position", outtake.limeLightArm.getPosition());
             telemetry.addLine("----------");
         }
         telemetry.update();
