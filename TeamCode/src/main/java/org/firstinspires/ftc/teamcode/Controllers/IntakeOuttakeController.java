@@ -26,13 +26,13 @@ public class IntakeOuttakeController {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight vision;
     LinearOpMode currentOpMode;
 
     public boolean autoTransferEnabled = false;
     public boolean initiateAutoTransfer = false;
 
-    public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, Vision vision, LinearOpMode currentOpMode) {
+    public IntakeOuttakeController(IntakeArm intakeArm, IntakeSlides intakeSlides, Outtake outtake, VisionLimeLight vision, LinearOpMode currentOpMode) {
         this.intakeArm = intakeArm;
         this.intakeSlides = intakeSlides;
         this.outtake = outtake;
@@ -144,7 +144,7 @@ public class IntakeOuttakeController {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                vision.locateFarthestSampleFromRobot();
+                //vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 /*if (vision.angle < 45 ) {
@@ -719,9 +719,6 @@ public class IntakeOuttakeController {
         outtake.openGrip();
         safeWaitMilliSeconds(200);
         outtake.moveArm(Outtake.ARM_STATE.PRE_TRANSFER);
-        //outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.TRANSFER); // TODO: TRY TRANSFERING FREELY
-        //outtake.moveOuttakeSlidesToTransfer();
-        //safeWaitTillOuttakeSlideStateMilliSeconds(1500, Outtake.SLIDE_STATE.TRANSFER);
     }
 
     public Action dropSamplefromOuttakeAction() {
@@ -800,6 +797,7 @@ public class IntakeOuttakeController {
 
 
     public void setToAutoEndStateSubmerssiblePark() {
+        outtake.retractVisionArm();
         moveIntakeArmAndSlidesToTransfer();
         //intakeSlides.moveIntakeSlides(IntakeSlides.SLIDES_STATE.TRANSFER_MIN_RETRACTED);
         moveIntakeArm(IntakeArm.ARM_STATE.POST_TRANSFER);

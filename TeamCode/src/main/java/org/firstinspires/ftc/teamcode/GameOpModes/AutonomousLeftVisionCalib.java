@@ -59,6 +59,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 /**
  * Hazmat Autonomous
@@ -72,7 +73,7 @@ public class AutonomousLeftVisionCalib extends LinearOpMode {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight vision;
     //public Lights lights;
 
     public MecanumDrive drive;
@@ -404,7 +405,7 @@ public class AutonomousLeftVisionCalib extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
+        vision = new VisionLimeLight(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
         telemetry.update();
 

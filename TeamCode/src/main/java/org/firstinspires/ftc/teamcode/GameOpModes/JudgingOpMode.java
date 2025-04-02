@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 
 /**
@@ -34,7 +35,7 @@ public class JudgingOpMode extends LinearOpMode {
     public IntakeSlides intakeSlides;
     public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight vision;
 
     //Static Class for knowing system state
 
@@ -125,7 +126,7 @@ public class JudgingOpMode extends LinearOpMode {
         telemetry.addLine("Outtake Initialized");
         telemetry.update();
 
-        vision = new Vision(hardwareMap, telemetry);
+        vision = new VisionLimeLight(hardwareMap, telemetry);
         telemetry.addLine("Vision Initialized");
         telemetry.update();
 

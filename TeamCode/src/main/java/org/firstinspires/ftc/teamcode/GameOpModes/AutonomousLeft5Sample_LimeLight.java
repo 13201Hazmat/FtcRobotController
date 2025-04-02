@@ -58,7 +58,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
-import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 /**
@@ -73,7 +72,6 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
     public IntakeArm intakeArm;
     public IntakeSlides intakeSlides;
     public Outtake outtake;
-    public Vision oldVision;
     public VisionLimeLight vision;
     //public Lights lights;
 
@@ -121,9 +119,10 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
         if (opModeIsActive() && !isStopRequested()) {
             gameTimer.reset();
             startTimer.reset();
-
+            vision.startLimelight();
             runAutonomousMode();
         }
+        vision.stopLimeLight();
     }   // end runOpMode()
 
     //List All Poses
@@ -146,7 +145,7 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
     Action trajInitToFirstBucket,
             trajBucketToYellowSampleMiddle,
             trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
-            trajBucketToSubmersiblePick, trajSubmersiblePickToBucket,
+            trajBucketToSubmersiblePrePick, trajSubmersiblePickToBucket,
             trajStrafeToBlock,
             trajBucketToSubmersiblePark;
 
@@ -161,6 +160,7 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
         submersiblePrePick = new Pose2d(53, -16, Math.toRadians(-90));
+        submersiblePick = submersiblePrePick;
         submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
 
@@ -188,9 +188,9 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
+        trajBucketToSubmersiblePrePick = drive.actionBuilder(farBucket)
                 .setTangent(Math.toRadians(15))
-                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
+                .splineToLinearHeading(submersiblePrePick, Math.toRadians(-90))
                 .build();
 
         trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
@@ -285,15 +285,26 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
             public boolean run(TelemetryPacket packet) {
                 //*****************************
                 //Bucket to Submersible Pick
+
                 if (autoOption == AUTO_OPTION.FIVE_SAMPLE_AUTO) {
                     Actions.runBlocking(
                             new SequentialAction(
-                                    trajBucketToSubmersiblePick,
-                                    strafeToSample(submersiblePrePick),
-                                    new SleepAction(0.5),
-                                    intakeOuttakeController.extendIntakeArmByVisionAction(),
+                                    trajBucketToSubmersiblePrePick
+                            )
+                    );
+
+                    outtake.extendVisionArm();
+                    safeWaitMilliSeconds(500);
+                    vision.locateNearestSampleFromRobot();
+                    safeWaitMilliSeconds(500);
+
+                    Actions.runBlocking(
+                            new SequentialAction(
+                                    strafeToSampleAction(submersiblePrePick),
+                                    //new SleepAction(0.5),
+                                    extendIntakeArmByVisionAction(),
                                     //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(1),
+                                    new SleepAction(0.5),
                                     intakeOuttakeController.pickupSequenceAction(),
                                     sensePickUpAndDecisionAction()
                             )
@@ -323,21 +334,15 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                //vision.locateFarthestSampleFromRobot();
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                /*if (vision.angle < 45 ) {
-                    intakeArm.moveSwivelCentered();
-                } else {
-                    intakeArm.moveSwivelPerpendicular();
-                }*/
                 intakeArm.moveSwivelTo(vision.angle);
                 return false;
             }
         };
     }
 
-    public Action strafeToSample(Pose2d submersiblePrePick) {
+    public Action strafeToSampleAction(Pose2d submersiblePrePick) {
         return new Action() {
             @Override
             public void preview(Canvas canvas) {
@@ -345,17 +350,16 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                outtake.extendVisionArm();
-                new SleepAction(0.5);
-                vision.locateNearestSampleFromRobot();
-                submersiblePick = new Pose2d(submersiblePrePick.position.x + vision.inchesToStrafe,
+                submersiblePick = new Pose2d(submersiblePrePick.position.x - vision.inchesToStrafe ,
                         submersiblePrePick.position.y, submersiblePrePick.heading.log());
+
                 trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
-                        .strafeToConstantHeading(submersiblePick.position)
+                        .strafeTo(submersiblePick.position)
                         .build();
                 Actions.runBlocking(
                         new SequentialAction(
-                                trajStrafeToBlock
+                                trajStrafeToBlock,
+                                new SleepAction(2)
                         )
                 );
                 return false;
@@ -454,15 +458,12 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-        oldVision = new Vision(hardwareMap, telemetry);
-        telemetry.addLine("Vision Initialized");
-        telemetry.update();
 
         vision = new VisionLimeLight(hardwareMap, telemetry);
         telemetry.addLine("Vision Limelight Initialized");
         telemetry.update();
 
-        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, oldVision,this);
+        intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
         telemetry.addLine("IntakeController Initialized");
         telemetry.update();
 

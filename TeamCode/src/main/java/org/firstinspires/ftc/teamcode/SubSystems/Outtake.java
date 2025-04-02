@@ -176,6 +176,7 @@ public class Outtake {
 
     public void initOuttake(){
         if (GameField.opModeRunning == GameField.OP_MODE_RUNNING.HAZMAT_AUTONOMOUS) {
+            moveWrist(ARM_STATE.INIT);
             moveArm(ARM_STATE.INIT);
         } else {
             if (GameField.outtakeInParkPositionInAutonomous == true) {

@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.Vision;
+import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 
 
 /**
@@ -35,7 +36,7 @@ public class TeleOpModeThread extends LinearOpMode {
     public IntakeSlides intakeSlides;
     public IntakeOuttakeController intakeOuttakeController;
     public Outtake outtake;
-    public Vision vision;
+    public VisionLimeLight vision;
 
     //Static Class for knowing system state
 
