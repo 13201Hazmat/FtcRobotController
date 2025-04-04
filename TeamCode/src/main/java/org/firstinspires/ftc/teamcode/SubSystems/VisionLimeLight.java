@@ -98,12 +98,21 @@ public class VisionLimeLight {
             xPos = result[1];
             yPos = result[2];
 
-            //inchesToStrafe = (xPos - INTAKE_XPOS) * INCHES_PER_PIXEL;
-            inchesToStrafe = calculateInchesToStrafeFromLookUp(xPos);
-            yExtensionFactor = calculateYExtensionFactorFromLookUp(yPos);
-            if (yExtensionFactor < 0.1) {
-                yExtensionFactor = 0.514;
+            if (xPos > 51 && xPos < 599 && yPos > 41 && yPos < 403) {
+                targetBlobDetected = true;
+
+               //inchesToStrafe = (xPos - INTAKE_XPOS) * INCHES_PER_PIXEL*2.73;
+                inchesToStrafe = calculateInchesToStrafeFromLookUp(xPos);
+                yExtensionFactor = calculateYExtensionFactorFromLookUp(yPos);
+
+                if (yExtensionFactor < 0.1) {
+                    yExtensionFactor = 0.514;
+                }
+            } else {
+                targetBlobDetected = false;
             }
+        } else {
+            targetBlobDetected = false;
         }
     }
 
@@ -117,36 +126,17 @@ public class VisionLimeLight {
         double answer = 0;
 
         double[][] data = {
-                {0.926373, 599},      //0
-                {-1.158129, 575},     //1
-                {-3.049501, 525},    //2
-                {-4.439169, 466},     //3
-                {-6.75521, 414},      //4
-                {-10.846962, 359},    //5
-                {-12.738334, 305},    //6
-                {-13.780585, 244},    //7
-                {-15.787835, 188},    //8
-                {-18.142502, 134},    //9
-                {-18.914371, 103},    //9.5
-                {-20.20704, 71},      //10
-                {-19.763709, 50},     //10.5
-                {-20.651456, 34},     //11
-                {-21.230629, 18}     //11.5
-
-                /*
-                {0.258, 201},//6
-                {0.276, 170}, //7
-                {0.301, 158}, //8
-                {0.338, 129}, //9
-                {0.400, 112}, //10
-                {0.441, 95}, //11
-                {0.495, 77}, //12
-                {0.529, 64}, //13
-                {0.605, 50}, //14
-                {0.663, 39}, //15
-                {0.714, 28} , //16
-                {0.750, 22}  //1
-                 */
+                {2.50 , 595}, //0 Good
+                {0.29 , 556}, //1 Good
+                {-2.75 , 504}, //2 Good
+                {-5.95 , 441}, //3 Good
+                {-8.50 , 383}, //4 Good
+                {-9.50 , 345}, //5 Good
+                {-11.75 , 278}, //6 Good
+                {-12.95 , 220}, //7
+                {-14.40 , 159}, //8
+                {-15.50 , 96}, //9
+                {-16.20 , 53}, //10
         };
 
 

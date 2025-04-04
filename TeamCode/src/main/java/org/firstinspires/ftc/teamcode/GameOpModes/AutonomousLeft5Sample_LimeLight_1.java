@@ -48,7 +48,6 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -60,13 +59,12 @@ import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeSlides;
 import org.firstinspires.ftc.teamcode.SubSystems.Outtake;
 import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
-
+//FIX NULL POINT ERROR WHEN THERES NO SAMPLE DETECTED -ROHIT :(
 /**
  * Hazmat Autonomous
  */
-@Disabled
-@Autonomous(name = "Hazmat Auto LEFT 5 Sample LimeLight", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT 5 Sample LimeLight 1", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -154,17 +152,21 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(11.5, 20.5, Math.toRadians(-17.8));//18.28, 35.16, -26.5
+        firstBucket = new Pose2d(12.9, 24.6, Math.toRadians(-16.3));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(9.75, 23.1, Math.toRadians(-2.5));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(10.75, 25.1, Math.toRadians(-4));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
-        submersiblePrePick = new Pose2d(53, -16, Math.toRadians(-90));
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(-16));;//10, 27.5, -6.5
+        submersiblePrePick = new Pose2d(53, -20, Math.toRadians(-90));
         submersiblePick = submersiblePrePick;
-        submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
+        submersiblePrePark = new Pose2d(51.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
+
+        //Calib
+        //submersiblePrePick = initPose;
+        //submersiblePick = submersiblePrePick;
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -231,8 +233,6 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
                                 new SequentialAction(
                                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                                         trajBucketToYellowSampleMiddle
-
-
                                 ),
                                 new ParallelAction(
                                         intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
@@ -297,17 +297,29 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
                     vision.locateNearestSampleFromRobot();
                     safeWaitMilliSeconds(500);
 
-                    Actions.runBlocking(
-                            new SequentialAction(
-                                    strafeToSampleAction(submersiblePrePick),
-                                    //new SleepAction(0.5),
-                                    extendIntakeArmByVisionAction(),
-                                    //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(0.5),
-                                    intakeOuttakeController.pickupSequenceAction(),
-                                    sensePickUpAndDecisionAction()
-                            )
-                    );
+                    if (vision.targetBlobDetected) {
+                        Actions.runBlocking(
+                                new SequentialAction(
+                                        strafeToSampleAction(submersiblePrePick),
+                                        new SleepAction(0.5),
+                                        extendIntakeArmByVisionAction(),
+                                        intakeOuttakeController.moveOuttakeToPreTransferAction(),
+                                        //intakeOuttakeController.swivelByVisionAction(),
+                                        new SleepAction(0.5),
+                                        intakeOuttakeController.pickupSequenceAction(),
+                                        sensePickUpAndDecisionAction()
+                                )
+                        );
+                    } else {
+                        Actions.runBlocking(
+                                new SequentialAction(
+                                        new ParallelAction(
+                                                intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                        ),
+                                        new SleepAction(1)
+                                )
+                        );
+                    }
                 } else { // 4 Sample auto
                     Actions.runBlocking(
                             new SequentialAction(
@@ -336,6 +348,7 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 intakeArm.moveSwivelTo(vision.angle);
+                safeWaitMilliSeconds(500);
                 return false;
             }
         };
@@ -350,13 +363,15 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 submersiblePick = new Pose2d(submersiblePrePick.position.x - vision.inchesToStrafe ,
-                        submersiblePrePick.position.y, submersiblePrePick.heading.log());
+                        submersiblePrePick.position.y /*- vision.inchesToStrafe*/, submersiblePrePick.heading.log());
+
 
                 trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
                         .strafeTo(submersiblePick.position)
                         .build();
                 Actions.runBlocking(
                         new SequentialAction(
+                                new SleepAction(1),
                                 trajStrafeToBlock,
                                 new SleepAction(2)
                         )
@@ -375,7 +390,14 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
+                safeWaitMilliSeconds(200);
                 intakeArm.senseIntakeSampleColor();
+
+                trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
+                        .setTangent(160)
+                        .splineToLinearHeading(farBucket, Math.toRadians(-180))
+                        .build();
+
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
@@ -424,10 +446,6 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
         }
     }
 
-    public void debugOuttakeSlides(){
-        telemetry.addData("Outtake slides state", outtake.isOuttakeSlidesInState(Outtake.SLIDE_STATE.TRANSFER));
-        telemetry.update();
-    }
     public void initSubsystems(){
 
         telemetry.setAutoClear(true);
@@ -587,6 +605,9 @@ public class AutonomousLeft5Sample_LimeLight extends LinearOpMode {
             intakeArm.printDebugMessages();
             intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
+            vision.printDebugMessages();
+            telemetry.addData("Submerssible PrePick", toStringPose2d(submersiblePrePick));
+            telemetry.addData("Submerssible Pick", toStringPose2d(submersiblePick));
         }
         telemetry.update();
     }

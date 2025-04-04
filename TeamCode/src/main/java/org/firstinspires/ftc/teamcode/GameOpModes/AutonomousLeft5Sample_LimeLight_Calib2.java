@@ -300,17 +300,29 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
                     vision.locateNearestSampleFromRobot();
                     safeWaitMilliSeconds(500);
 
-                    Actions.runBlocking(
-                            new SequentialAction(
-                                    strafeToSampleAction(submersiblePrePick),
-                                    new SleepAction(0.5),
-                                    extendIntakeArmByVisionAction(),
-                                    //intakeOuttakeController.swivelByVisionAction(),
-                                    new SleepAction(0.5),
-                                    intakeOuttakeController.pickupSequenceAction(),
-                                    sensePickUpAndDecisionAction()
-                            )
-                    );
+                    if (vision.targetBlobDetected) {
+                        Actions.runBlocking(
+                                new SequentialAction(
+                                        strafeToSampleAction(submersiblePrePick),
+                                        new SleepAction(0.5),
+                                        extendIntakeArmByVisionAction(),
+                                        intakeOuttakeController.moveOuttakeToPreTransferAction(),
+                                        //intakeOuttakeController.swivelByVisionAction(),
+                                        new SleepAction(0.5),
+                                        intakeOuttakeController.pickupSequenceAction(),
+                                        sensePickUpAndDecisionAction()
+                                )
+                        );
+                    } else {
+                        Actions.runBlocking(
+                                new SequentialAction(
+                                        new ParallelAction(
+                                                intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
+                                        ),
+                                        new SleepAction(1)
+                                )
+                        );
+                    }
                 } else { // 4 Sample auto
                     Actions.runBlocking(
                             new SequentialAction(

@@ -574,6 +574,7 @@ public class IntakeOuttakeController {
 
 
     public void pickupSequence(){
+        moveOuttakeToPreTransfer();
         moveIntakeArm(IntakeArm.ARM_STATE.PICKUP);
         safeWaitMilliSeconds(200);
         intakeArm.closeGrip();
