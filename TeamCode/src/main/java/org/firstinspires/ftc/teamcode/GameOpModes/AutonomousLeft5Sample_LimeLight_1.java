@@ -152,10 +152,10 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12.9, 24.3, Math.toRadians(-17.2));//18.28, 35.16, -26.5
+        firstBucket = new Pose2d(12.9, 24, Math.toRadians(-17.2));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11.5, 25.1, Math.toRadians(-3));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(11.5, 25.1, Math.toRadians(-2.2));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-17));;//10, 27.5, -6.5
@@ -235,7 +235,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                                         trajBucketToYellowSampleMiddle
                                 ),
                                 new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.98, 0),
+                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
                                         new SequentialAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -293,9 +293,9 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                     );
 
                     outtake.extendVisionArm();
-                    safeWaitMilliSeconds(500);
+                    safeWaitMilliSeconds(10);
                     vision.locateNearestSampleFromRobot();
-                    safeWaitMilliSeconds(500);
+                    safeWaitMilliSeconds(10);
 
                     if (vision.targetBlobDetected) {
                         Actions.runBlocking(
@@ -348,7 +348,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 intakeArm.moveSwivelTo(vision.angle);
-                safeWaitMilliSeconds(500);
+                safeWaitMilliSeconds(20);
                 return false;
             }
         };
@@ -371,9 +371,9 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                         .build();
                 Actions.runBlocking(
                         new SequentialAction(
-                                new SleepAction(1),
+                                new SleepAction(0),
                                 trajStrafeToBlock,
-                                new SleepAction(2)
+                                new SleepAction(0)
                         )
                 );
                 return false;
@@ -390,7 +390,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                safeWaitMilliSeconds(200);
+                safeWaitMilliSeconds(100);
                 intakeArm.senseIntakeSampleColor();
 
                 trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
@@ -425,7 +425,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                         } else {
                             intakeArm.moveSwivelCentered();
                         }
-                        safeWaitMilliSeconds(200);
+                        safeWaitMilliSeconds(180);
                         intakeOuttakeController.pickupSequence();
                         counter++;
                         return true;
