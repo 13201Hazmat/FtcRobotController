@@ -152,14 +152,14 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12.9, 24.6, Math.toRadians(-16.3));//18.28, 35.16, -26.5
+        firstBucket = new Pose2d(12.9, 24.3, Math.toRadians(-17.2));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(10.75, 25.1, Math.toRadians(-4));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(11.5, 25.1, Math.toRadians(-3));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(11, 22.5, Math.toRadians(-16));;//10, 27.5, -6.5
-        submersiblePrePick = new Pose2d(53, -20, Math.toRadians(-90));
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(-17));;//10, 27.5, -6.5
+        submersiblePrePick = new Pose2d(56, -20, Math.toRadians(-90));
         submersiblePick = submersiblePrePick;
         submersiblePrePark = new Pose2d(51.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
@@ -235,7 +235,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                                         trajBucketToYellowSampleMiddle
                                 ),
                                 new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
+                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.98, 0),
                                         new SequentialAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
