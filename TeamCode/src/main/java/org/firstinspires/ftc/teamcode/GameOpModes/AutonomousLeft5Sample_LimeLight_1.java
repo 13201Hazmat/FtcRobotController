@@ -48,6 +48,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -286,16 +287,15 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                 //Bucket to Submersible Pick
 
                 if (autoOption == AUTO_OPTION.FIVE_SAMPLE_AUTO) {
+                    outtake.extendVisionArm();
                     Actions.runBlocking(
                             new SequentialAction(
                                     trajBucketToSubmersiblePrePick
                             )
                     );
-
-                    outtake.extendVisionArm();
-                    safeWaitMilliSeconds(10);
+                    safeWaitMilliSeconds(100);
                     vision.locateNearestSampleFromRobot();
-                    safeWaitMilliSeconds(10);
+                    safeWaitMilliSeconds(200);
 
                     if (vision.targetBlobDetected) {
                         Actions.runBlocking(
@@ -348,7 +348,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                 intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
                 intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
                 intakeArm.moveSwivelTo(vision.angle);
-                safeWaitMilliSeconds(20);
+                safeWaitMilliSeconds(300);
                 return false;
             }
         };
@@ -391,7 +391,8 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
             @Override
             public boolean run(TelemetryPacket packet) {
                 safeWaitMilliSeconds(100);
-                intakeArm.senseIntakeSampleColor();
+                //intakeArm.senseIntakeSampleColor();
+                intakeArm.intakeSampleSensed = true; // Avoid checking
 
                 trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
                         .setTangent(160)
@@ -508,7 +509,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
-        while (!isStopRequested()) {
+        /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
             telemetry.addData("Select Starting Position using XYAB on Logitech (or ▢ΔOX on Playstation) on gamepad 1:", "");
@@ -526,7 +527,7 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
             }
 
             telemetry.update();
-        }
+        }*/
 
         /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
@@ -550,13 +551,14 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
 
             telemetry.update();
         }*/
-
+        GameField.startPosition = GameField.START_POSITION.LEFT;
+        GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
         autoOption = AUTO_OPTION.FIVE_SAMPLE_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
-            telemetry.addData("Selected Alliance", GameField.allianceColor);
+            //telemetry.addData("Selected Alliance", GameField.allianceColor);
             telemetry.addData("Selected Starting Position", GameField.startPosition);
             telemetry.addData("Selected Auto Option", autoOption);
             telemetry.addData("---------------------------------------", "");

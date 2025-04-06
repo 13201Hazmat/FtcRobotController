@@ -93,7 +93,9 @@ public class VisionLimeLight {
 
     public void locateNearestSampleFromRobot() {
         result = limelight.getLatestResult().getPythonOutput();
-        if (result != null) {
+        if (result == null || result.length < 3)  {
+            targetBlobDetected = false;
+        } else {
             angle = result[0];
             xPos = result[1];
             yPos = result[2];
@@ -111,9 +113,7 @@ public class VisionLimeLight {
             } else {
                 targetBlobDetected = false;
             }
-        } else {
-            targetBlobDetected = false;
-        }
+        } 
     }
 
     public double calculateYExtensionFactorFromLookUp(double yPos) {
