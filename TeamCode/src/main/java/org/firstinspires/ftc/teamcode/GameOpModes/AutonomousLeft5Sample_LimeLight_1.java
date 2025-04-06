@@ -225,11 +225,12 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                                         new SequentialAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                                new ParallelAction(
+                                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                                        intakeOuttakeController.pickupSequenceAction()
+                                                )
                                         )
                                 ),
-                                //new SleepAction(0.13),
-                                intakeOuttakeController.pickupSequenceAction(),
                                 //Sample Near to Bucket
                                 new SequentialAction(
                                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
@@ -240,11 +241,12 @@ public class AutonomousLeft5Sample_LimeLight_1 extends LinearOpMode {
                                         new SequentialAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                                new ParallelAction(
+                                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+                                                        intakeOuttakeController.pickupSequenceAction()
+                                                )
                                         )
                                 ),
-
-                                intakeOuttakeController.pickupSequenceAction(),
 
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                                 new ParallelAction(
