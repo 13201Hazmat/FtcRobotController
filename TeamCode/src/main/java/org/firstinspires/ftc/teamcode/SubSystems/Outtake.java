@@ -34,9 +34,9 @@ public class Outtake {
     public DigitalChannel outtakeTouch;
 
     public enum GRIP_STATE {
-        OPEN(0.26), //0.41  0.52 max
-        OPEN_WIDE(0.42),//0.57
-        CLOSED(0.02);//0.17
+        OPEN(0.48), //0.41  0.52 max
+        OPEN_WIDE(0.55),//0.57
+        CLOSED(0.15);//0.12, 0.1 fully closed
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {
@@ -77,7 +77,7 @@ public class Outtake {
         AUTO_PRE_DROP(0.46),//0.68
         SPECIMEN_PICKUP(0.19),//0.2
         SPECIMEN_MAKE_DROP(0.75),
-        HIGH_CHAMBER(0.615),//0.92
+        HIGH_CHAMBER(0.6),//0.92
         HIGH_CHAMBER_LATCH(0.5),
         AUTO_PARK(0.27),
         DROP(0.58),//0.72

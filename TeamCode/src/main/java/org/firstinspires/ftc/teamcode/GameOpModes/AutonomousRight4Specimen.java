@@ -49,6 +49,7 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -171,7 +172,7 @@ public class AutonomousRight4Specimen extends LinearOpMode {
         colorSampleFar = new Pose2d(-21, 38.25, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(-0.50, 42, Math.toRadians(3));//-0.25,42,0
-        submersibleSpecimenOne = new Pose2d(-30.25, -6.25, Math.toRadians(0));//-6.75
+        submersibleSpecimenOne = new Pose2d(-31, -7.5, Math.toRadians(0));//-6.75
         pickupSpecimenTwo = new Pose2d(-0.3, 42, Math.toRadians(3));//-0.25,46,0
         submersibleSpecimenTwo = new Pose2d(-28.55, -9, Math.toRadians(0));
         pickupSpecimenPreload2 = new Pose2d(-0.5, 42, Math.toRadians(3));
@@ -319,7 +320,7 @@ public class AutonomousRight4Specimen extends LinearOpMode {
                         intakeOuttakeController.pickupSequenceAction(),
                         //new SleepAction(0.1),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.75, 90),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.75, 0),
                                 trajColorSampleMiddleToObservationDrop
                         ),
                         //new SleepAction(0.1),

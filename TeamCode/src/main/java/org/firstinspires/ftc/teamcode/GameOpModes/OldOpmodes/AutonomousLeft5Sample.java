@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.GameOpModes.OldOpmodes;
 
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.SECONDS;
@@ -53,6 +53,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controllers.GamepadController;
 import org.firstinspires.ftc.teamcode.Controllers.IntakeOuttakeController;
+import org.firstinspires.ftc.teamcode.GameOpModes.GameField;
 import org.firstinspires.ftc.teamcode.RRDrive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.SubSystems.IntakeArm;
@@ -63,8 +64,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 /**
  * Hazmat Autonomous
  */
-@Autonomous(name = "Hazmat Auto LEFT 5 Sample LimeLight Calib", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
-public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
+@Autonomous(name = "Hazmat Auto LEFT 5 Sample", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
+public class AutonomousLeft5Sample extends LinearOpMode {
 
     public GamepadController gamepadController;
     public IntakeOuttakeController intakeOuttakeController;
@@ -119,10 +120,9 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
         if (opModeIsActive() && !isStopRequested()) {
             gameTimer.reset();
             startTimer.reset();
-            vision.startLimelight();
+
             runAutonomousMode();
         }
-        vision.stopLimeLight();
     }   // end runOpMode()
 
     //List All Poses
@@ -134,7 +134,6 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
     Pose2d farBucket = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleMiddle = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d yellowSampleFar = new Pose2d(0, 0, Math.toRadians(0));
-    Pose2d submersiblePrePick = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePick = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePrePark = new Pose2d(0, 0, Math.toRadians(0));
     Pose2d submersiblePark = new Pose2d(0, 0, Math.toRadians(0));
@@ -145,9 +144,8 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
     Action trajInitToFirstBucket,
             trajBucketToYellowSampleMiddle,
             trajBucketToYellowSampleFar, trajYellowSampleFarToBucket,
-            trajBucketToSubmersiblePrePick, trajSubmersiblePickToBucket,
-            trajStrafeToBlock,
-            trajBucketToSubmersiblePark;
+            trajBucketToSubmersiblePick, trajSubmersiblePickToBucket,
+            trajBucketToSubmersiblePick1,trajBucketToSubmersiblePark;
 
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
@@ -159,14 +157,9 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
         farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
-        submersiblePrePick = new Pose2d(53, -16, Math.toRadians(-90));
-        submersiblePick = submersiblePrePick;
+        submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
         submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
-
-        //Calib
-        submersiblePrePick = initPose;
-        submersiblePick = submersiblePrePick;
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -192,9 +185,14 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
                         new TranslationalVelConstraint(27.0), new ProfileAccelConstraint(-18.0, 18.0))
                 .build();
 
-        trajBucketToSubmersiblePrePick = drive.actionBuilder(farBucket)
+        trajBucketToSubmersiblePick = drive.actionBuilder(farBucket)
                 .setTangent(Math.toRadians(15))
-                .splineToLinearHeading(submersiblePrePick, Math.toRadians(-90))
+                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
+                .build();
+
+        trajBucketToSubmersiblePick1 = drive.actionBuilder(farBucket)
+                .setTangent(Math.toRadians(15))
+                .splineToLinearHeading(submersiblePick, Math.toRadians(-90))
                 .build();
 
         trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
@@ -213,66 +211,68 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
     public void runAutonomousMode() {
         Actions.runBlocking(
                 new ParallelAction(
-                        printDebugMessagesAction(),
-                        new SequentialAction(
-                                /*new SleepAction(intialWaitTime),
-                                //Init to First Bucket
-                                trajInitToFirstBucket,
-                                new SleepAction(0.1),
-                                new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
-                                        new SequentialAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
-                                        )
-                                ),
-                                //new SleepAction(0.13),
-                                intakeOuttakeController.pickupSequenceAction(),
-                                //Sample Near to Bucket
+                    printDebugMessagesAction(),
+                    new SequentialAction(
+                        new SleepAction(intialWaitTime),
+                        //Init to First Bucket
+                        trajInitToFirstBucket,
+                        new SleepAction(0.1),
+                        new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
                                 new SequentialAction(
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()//,
-                                        trajBucketToYellowSampleMiddle
-                                ),
-                                new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
-                                        new SequentialAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
-                                        )
-                                ),
-
-                                //Bucket to Sample Middle
-                                //trajFarToMiddle,
-                                //new SleepAction(0.13),
-                                intakeOuttakeController.pickupSequenceAction(),
-
+                                        intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                )
+                        ),
+                        //new SleepAction(0.13),
+                        intakeOuttakeController.pickupSequenceAction(),
+                        //Sample Near to Bucket
+                        new SequentialAction(
                                 intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
-                                new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
-                                        new SequentialAction(
-                                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
-                                        )
-                                ),
-                                //Bucket to Sample Far
-                                //trajBucketToYellowSampleFar,
-                                new SleepAction(0.13),
-                                intakeOuttakeController.pickupSequenceAction(),
-                                //Sample Far to Bucket
-                                new ParallelAction(
-                                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()//,
-                                        //trajYellowSampleFarToBucket
-                                ),
-                                intakeOuttakeController.moveOuttakeHighBucketAction1(),
-                                intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
-                                intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
-*/
-                                //Five Sample Auto or Parking for 4 sample auto
-                                submersiblePickAndDropAction()
-                        )
+                                trajBucketToYellowSampleMiddle
+
+
+                        ),
+                        new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 0),
+                                new SequentialAction(
+                                        intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                )
+                        ),
+
+                        //Bucket to Sample Middle
+                        //trajFarToMiddle,
+                        //new SleepAction(0.13),
+                        intakeOuttakeController.pickupSequenceAction(),
+
+                        intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                        new ParallelAction(
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
+                                new SequentialAction(
+                                        intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1()
+                                )
+                        ),
+                        //Bucket to Sample Far
+                        trajBucketToYellowSampleFar,
+                        new SleepAction(0.13),
+                        intakeOuttakeController.pickupSequenceAction(),
+                        //Sample Far to Bucket
+                        new ParallelAction(
+                                intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                trajYellowSampleFarToBucket
+                        ),
+                        intakeOuttakeController.moveOuttakeHighBucketAction1(),
+                        intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
+                        intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
+
+                        //Five Sample Auto or Parking for 4 sample auto
+                        submersiblePickAndDropAction()
+                    )
                 )
         );
     }
@@ -287,46 +287,24 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
             public boolean run(TelemetryPacket packet) {
                 //*****************************
                 //Bucket to Submersible Pick
-
                 if (autoOption == AUTO_OPTION.FIVE_SAMPLE_AUTO) {
-                    outtake.extendVisionArm();
                     Actions.runBlocking(
                             new SequentialAction(
-                                    //trajBucketToSubmersiblePrePick
+                                    trajBucketToSubmersiblePick,
+                                    new SleepAction(0.9), //TODO:Adjust based on how much time camera takes to sense consitently
+                                    //intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(vision.yExtensionFactor, vision.angle),
+                                    intakeOuttakeController.extendIntakeArmByVisionAction(),
+                                    intakeOuttakeController.swivelByVisionAction(),
+                                    new SleepAction(1.5),
+                                    intakeOuttakeController.pickupSequenceAction(),
+                                    sensePickUpAndDecisionAction()
                             )
                     );
-                    safeWaitMilliSeconds(500);
-                    vision.locateNearestSampleFromRobot();
-                    safeWaitMilliSeconds(300);
-
-                    if (vision.targetBlobDetected) {
-                        Actions.runBlocking(
-                                new SequentialAction(
-                                        strafeToSampleAction(submersiblePrePick),
-                                        new SleepAction(0.3),
-                                        extendIntakeArmByVisionAction(),
-                                        intakeOuttakeController.moveOuttakeToPreTransferAction(),
-                                        //intakeOuttakeController.swivelByVisionAction(),
-                                        new SleepAction(0.5),
-                                        intakeOuttakeController.pickupSequenceAction(),
-                                        sensePickUpAndDecisionAction()
-                                )
-                        );
-                    } else {
-                        Actions.runBlocking(
-                                new SequentialAction(
-                                        new ParallelAction(
-                                                intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
-                                        ),
-                                        new SleepAction(1)
-                                )
-                        );
-                    }
                 } else { // 4 Sample auto
                     Actions.runBlocking(
                             new SequentialAction(
                                     new ParallelAction(
-                                            //trajBucketToSubmersiblePark,
+                                            trajBucketToSubmersiblePark,
                                             //new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
@@ -334,51 +312,6 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
                             )
                     );
                 }
-                return false;
-            }
-        };
-    }
-
-    public Action extendIntakeArmByVisionAction() {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                intakeSlides.moveIntakeSlidesToRange(vision.yExtensionFactor);
-                intakeOuttakeController.moveIntakeArm(IntakeArm.ARM_STATE.PRE_PICKUP);
-                intakeArm.moveSwivelTo(vision.angle);
-                safeWaitMilliSeconds(300);
-                return false;
-            }
-        };
-    }
-
-    public Action strafeToSampleAction(Pose2d submersiblePrePick) {
-        return new Action() {
-            @Override
-            public void preview(Canvas canvas) {
-            }
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                submersiblePick = new Pose2d(submersiblePrePick.position.x /*- vision.inchesToStrafe*/ ,
-                        submersiblePrePick.position.y - vision.inchesToStrafe, submersiblePrePick.heading.log());
-
-                //if (Math.abs(submersiblePick.position.x - submersiblePrePick.position.x) > 0.3) {
-                    trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
-                            .strafeTo(submersiblePick.position)
-                            .build();
-                    Actions.runBlocking(
-                            new SequentialAction(
-                                    new SleepAction(0.2),
-                                    trajStrafeToBlock,
-                                    new SleepAction(0.3)
-                            )
-                    );
-                //}
                 return false;
             }
         };
@@ -393,22 +326,20 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
 
             @Override
             public boolean run(TelemetryPacket packet) {
-                safeWaitMilliSeconds(100);
-                //intakeArm.senseIntakeSampleColor();
-                intakeArm.intakeSampleSensed = true; // Avoid checking
+                intakeArm.senseIntakeSampleColor();
                 if (intakeArm.intakeSampleSensed) {
                     Actions.runBlocking(
                             new SequentialAction(
                                     //Submersible Pick to Bucket
                                     new ParallelAction(
-                                            intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1()//,
-                                            //trajSubmersiblePickToBucket
+                                            intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
+                                            trajSubmersiblePickToBucket
                                     ),
                                     intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                     intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
                                     //intakeOuttakeController.moveOuttakeSlidesToTransferAction1(),
                                     new ParallelAction(
-                                            //trajBucketToSubmersiblePark,
+                                            trajBucketToSubmersiblePark,
                                             //new SleepAction(3),
                                             intakeOuttakeController.setToAutoEndStateSubmerssibleParkAction()
                                     ),
@@ -444,6 +375,10 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
         }
     }
 
+    public void debugOuttakeSlides(){
+        telemetry.addData("Outtake slides state", outtake.isOuttakeSlidesInState(Outtake.SLIDE_STATE.TRANSFER));
+        telemetry.update();
+    }
     public void initSubsystems(){
 
         telemetry.setAutoClear(true);
@@ -473,10 +408,10 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
         telemetry.addLine("IntakeSlides Initialized");
         telemetry.update();
 
-
         vision = new VisionLimeLight(hardwareMap, telemetry);
-        telemetry.addLine("Vision Limelight Initialized");
+        telemetry.addLine("Vision Initialized");
         telemetry.update();
+
 
         intakeOuttakeController = new IntakeOuttakeController(intakeArm, intakeSlides, outtake, vision,this);
         telemetry.addLine("IntakeController Initialized");
@@ -506,7 +441,7 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
         //telemetry.setAutoClear(true);
         telemetry.clearAll();
         //******select start pose*****
-        /*while (!isStopRequested()) {
+        while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
             telemetry.addData("Select Starting Position using XYAB on Logitech (or ▢ΔOX on Playstation) on gamepad 1:", "");
@@ -524,7 +459,7 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
             }
 
             telemetry.update();
-        }*/
+        }
 
         /*while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
@@ -549,14 +484,12 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
             telemetry.update();
         }*/
 
-        GameField.startPosition = GameField.START_POSITION.LEFT;
-        GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
         autoOption = AUTO_OPTION.FIVE_SAMPLE_AUTO;
 
         while (!isStopRequested()) {
             telemetry.addLine("Initializing Hazmat Autonomous Mode:");
             telemetry.addData("---------------------------------------", "");
-            //telemetry.addData("Selected Alliance", GameField.allianceColor);
+            telemetry.addData("Selected Alliance", GameField.allianceColor);
             telemetry.addData("Selected Starting Position", GameField.startPosition);
             telemetry.addData("Selected Auto Option", autoOption);
             telemetry.addData("---------------------------------------", "");
@@ -605,9 +538,6 @@ public class AutonomousLeft5Sample_LimeLight_Calib2 extends LinearOpMode {
             intakeArm.printDebugMessages();
             intakeSlides.printDebugMessages();
             outtake.printDebugMessages();
-            vision.printDebugMessages();
-            telemetry.addData("Submerssible PrePick", toStringPose2d(submersiblePrePick));
-            telemetry.addData("Submerssible Pick", toStringPose2d(submersiblePick));
         }
         telemetry.update();
     }

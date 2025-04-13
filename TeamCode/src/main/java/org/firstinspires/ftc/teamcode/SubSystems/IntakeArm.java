@@ -215,6 +215,11 @@ public class IntakeArm {
         intakeSwivelState = SWIVEL_STATE.DYNAMIC;
     }
 
+    public void moveSwivelToValue(double servoValue){
+        intakeSwivelServo.setPosition(servoValue);
+        intakeSwivelState = SWIVEL_STATE.DYNAMIC;
+    }
+
     public void moveSwivelCentered(){
         intakeSwivelServo.setPosition(SWIVEL_STATE.CENTERED.swivelPosition);
         intakeSwivelState = SWIVEL_STATE.CENTERED;
@@ -393,10 +398,10 @@ public class IntakeArm {
         if (intakeSensingActivated) {
             telemetry.addData("   intakeSensingDistance", intakeSensingDistance);
             telemetry.addData("   intakeSampleSensed", intakeSampleSensed);
-            if (intakeSampleSensed) {
+            /*if (intakeSampleSensed) {
                 telemetry.addData("    RGB","%.3f, %.3f, %.3f", sensedColor.red, sensedColor.green, sensedColor.blue);
                 telemetry.addData("    HSVA","%.3f, %.3f, %.3f, %.3f", sensedSampleHsvValues[0], sensedSampleHsvValues[1], sensedSampleHsvValues[2], sensedColor.alpha);
-            }
+            }*/
         }
         telemetry.addLine("=============");
     }

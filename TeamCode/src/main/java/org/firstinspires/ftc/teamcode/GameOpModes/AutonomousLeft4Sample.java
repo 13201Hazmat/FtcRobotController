@@ -149,17 +149,15 @@ public class AutonomousLeft4Sample extends LinearOpMode {
 
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
-        drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(11.5, 20.5, Math.toRadians(-17.8));//18.28, 35.16, -26.5
+        firstBucket = new Pose2d(12.9, 23.5, Math.toRadians(-20.2));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(9.75, 23.1, Math.toRadians(-2.5));;//10, 27.5, -6.5
+        yellowSampleMiddle = new Pose2d(11.3, 25.1, Math.toRadians(-4.5));;//10, 27.5, -6.5
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(24));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(11, 22.5, Math.toRadians(-7));;//10, 27.5, -6.5
-        submersiblePick = new Pose2d(53, -16, Math.toRadians(-90));
-        submersiblePrePark = new Pose2d(50.5, 0, Math.toRadians(-90));//47,11,60
-        submersiblePark = new Pose2d(51.5, -16.25, Math.toRadians(-90));
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(-17.3));;//10, 27.5, -6.5
+        submersiblePrePark = new Pose2d(58, -25, Math.toRadians(-90));//47,11,60
+        submersiblePark = new Pose2d(58, -16.25, Math.toRadians(-90));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
         telemetry.update();
@@ -218,7 +216,7 @@ public class AutonomousLeft4Sample extends LinearOpMode {
                         trajInitToFirstBucket,
                         new SleepAction(0.1),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 20),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, -23),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),
@@ -250,7 +248,7 @@ public class AutonomousLeft4Sample extends LinearOpMode {
 
                         intakeOuttakeController.transferSampleFromIntakePreTransferToOuttakeTransferAction1(),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 0),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.85, 20),
                                 new SequentialAction(
                                         intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                         intakeOuttakeController.dropSamplefromOuttakeAndMoveArmToPreTransferAction1(),

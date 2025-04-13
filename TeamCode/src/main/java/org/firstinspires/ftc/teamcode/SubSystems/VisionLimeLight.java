@@ -87,38 +87,42 @@ public class VisionLimeLight {
         limelight.stop();
     }
 
-    public double[] result;
+    public double[] result = {};
     public double xPos;
     public double yPos;
 
     public void locateNearestSampleFromRobot() {
-        result = limelight.getLatestResult().getPythonOutput();
-        if (result == null || result.length < 3)  {
-            targetBlobDetected = false;
-        } else {
-            angle = result[0];
-            xPos = result[1];
-            yPos = result[2];
-
-            if (xPos > 51 && xPos < 599 && yPos > 41 && yPos < 403) {
-                targetBlobDetected = true;
-
-               //inchesToStrafe = (xPos - INTAKE_XPOS) * INCHES_PER_PIXEL*2.73;
-                inchesToStrafe = calculateInchesToStrafeFromLookUp(xPos);
-                yExtensionFactor = calculateYExtensionFactorFromLookUp(yPos);
-
-                if (yExtensionFactor < 0.1) {
-                    yExtensionFactor = 0.514;
-                }
-            } else {
+        if (limelight.isRunning()) {
+            result = limelight.getLatestResult().getPythonOutput();
+            if (result == null || result.length < 3) {
                 targetBlobDetected = false;
+            } else {
+                angle = result[0];
+                xPos = result[1];
+                yPos = result[2];
+
+                if (xPos > 51 && xPos < 605 && yPos > 41 && yPos < 403) {
+                    targetBlobDetected = true;
+
+                    //inchesToStrafe = (xPos - INTAKE_XPOS) * INCHES_PER_PIXEL*2.73;
+                    inchesToStrafe = calculateInchesToStrafeFromLookUp(xPos);
+                    yExtensionFactor = calculateYExtensionFactorFromLookUp(yPos);
+
+                    if (yExtensionFactor < 0.1) {
+                        yExtensionFactor = 0.514;
+                    }
+                } else {
+                    targetBlobDetected = false;
+                }
             }
-        } 
+        } else {
+            targetBlobDetected = false;
+        }
     }
 
     public double calculateYExtensionFactorFromLookUp(double yPos) {
         double xtensionFactor = 0;
-        xtensionFactor = (-0.0006664865 * yPos) + 0.4476567575;
+        xtensionFactor = (-0.0006664865 * yPos) + 0.4476567575 - 0.02;
         return xtensionFactor;
     }
 
@@ -126,17 +130,18 @@ public class VisionLimeLight {
         double answer = 0;
 
         double[][] data = {
-                {2.50 , 595}, //0 Good
-                {0.29 , 556}, //1 Good
-                {-2.75 , 504}, //2 Good
-                {-5.95 , 441}, //3 Good
-                {-8.50 , 383}, //4 Good
-                {-9.50 , 345}, //5 Good
-                {-11.75 , 278}, //6 Good
-                {-12.95 , 220}, //7
-                {-14.40 , 159}, //8
-                {-15.50 , 96}, //9
-                {-16.20 , 53}, //10
+                {3.50 , 598}, //0 Good
+                {0.29 , 564}, //1 Good
+                {-4.40 , 507}, //2 Good
+                {-5.70 , 455}, //3 Good
+                {-8.25 , 390}, //4 Good
+                {-9.50 , 337}, //5 Good
+                {-11.25 , 285}, //6 Good
+                {-12.95 , 228}, //7 Good
+                {-13.75 , 164}, //8 good
+                {-14.50 , 112}, //9 Good
+                {-16.00 , 57}, //10 Good
+                {-17.50 , 18}
         };
 
 
