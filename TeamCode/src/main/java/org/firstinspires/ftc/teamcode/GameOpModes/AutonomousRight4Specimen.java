@@ -168,7 +168,7 @@ public class AutonomousRight4Specimen extends LinearOpMode {
         drive = new MecanumDrive(hardwareMap, initPose);
         submersibleSpecimenPreload = new Pose2d(-29.75, -1.2, Math.toRadians(0));
         colorSampleNear = new Pose2d(-16.5, 37.5, Math.toRadians(167));//-26
-        colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(146.5));//121
+        colorSampleMiddle = new Pose2d(-20, 37.5, Math.toRadians(145));//121
         colorSampleFar = new Pose2d(-21, 38.25, Math.toRadians(129));
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(-0.50, 42, Math.toRadians(3));//-0.25,42,0
@@ -296,7 +296,7 @@ public class AutonomousRight4Specimen extends LinearOpMode {
                                         intakeOuttakeController.moveOuttakeSlidesToAction(Outtake.SLIDE_STATE.SPECIMEN_PICKUP)
                                 ),
                                 intakeOuttakeController.openIntakeGripAction(),
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(1.0, 80)
+                                intakeOuttakeController.extendIntakeArmSwivelValueToPrePickupByExtensionFactorAction(1.0, 0.324)
                         ),
                         //*** Drop Specimen Preload to Move Color Sample Far to Observation Zone
                         new SleepAction(0.2),
@@ -304,7 +304,7 @@ public class AutonomousRight4Specimen extends LinearOpMode {
                         new SleepAction(0.1),
                         new ParallelAction(
                                 trajColorSampleFarToObservationDrop,
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.6, 90)
+                                intakeOuttakeController.extendIntakeArmSwivelValueToPrePickupByExtensionFactorAction(0.65, 0.324)
                         ),
                         //new SleepAction(0.1),
                         intakeOuttakeController.openIntakeGripAction(),
@@ -313,14 +313,14 @@ public class AutonomousRight4Specimen extends LinearOpMode {
 
                         //*** Move Color Sample Middle to Observation Zone
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 45),
+                                intakeOuttakeController.extendIntakeArmSwivelValueToPrePickupByExtensionFactorAction(0.65, 0.36),
                                 trajObservationDropToColorSampleMiddle
                         ),
                         new SleepAction(0.1),
                         intakeOuttakeController.pickupSequenceAction(),
                         //new SleepAction(0.1),
                         new ParallelAction(
-                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.75, 0),
+                                intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.65, 0),
                                 trajColorSampleMiddleToObservationDrop
                         ),
                         //new SleepAction(0.1),

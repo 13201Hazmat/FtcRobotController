@@ -48,6 +48,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -65,7 +66,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 /**
  * Hazmat Autonomous
  */
-
+@Disabled
 @Autonomous(name = "Hazmat Auto LEFT 5 Sample LimeLight Fast", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousLeft5Sample_LimeLight_Faster extends LinearOpMode {
 
