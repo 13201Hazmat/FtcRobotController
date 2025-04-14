@@ -402,7 +402,7 @@ public class IntakeOuttakeController {
 
     public void pickupSpecimenAndMoveOuttakeToHighChamber() {
         outtake.closeGrip();
-        safeWaitMilliSeconds(100);
+        safeWaitMilliSeconds(200);//100
         outtake.moveOuttakeSlides(Outtake.SLIDE_STATE.HIGH_CHAMBER);
         outtake.moveArm(Outtake.ARM_STATE.HIGH_CHAMBER);
     }
