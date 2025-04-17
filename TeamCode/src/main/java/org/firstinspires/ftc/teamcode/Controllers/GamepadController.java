@@ -349,6 +349,34 @@ public class GamepadController {
             }
         }
 
+         if(gp2GetCirclePress()) {
+            intakeOuttakeController.moveOuttakeToSpecimenPickUp();
+            //outtake.ascendToClimbLevel2(); // Uncomment this line for Level 2 climb
+            outtake.ascendToClimbLevel3(); // Uncomment this line for Level 3 climb
+        }
+
+        if (gp2GetRightBumperPress()) {
+            switch (outtake.climbState) {
+                case ASCENDED:
+                    intakeArm.moveArm(IntakeArm.ARM_STATE.LEVEL3_ASCEND);
+                    outtake.extendVisionArm();
+                    outtake.climbLevel3Part1();
+                    break;
+                case LOWERLEVEL:
+                    outtake.moveVisionArmClimb();
+                    outtake.climbLevel3Part2();
+                    break;
+                case EXTENDED:
+                    outtake.climbLevel3Part3();
+                    break;
+                case RETRACTED:
+                    break;
+            }
+        }
+
+
+        //level 2
+        /*
         if(gp2GetCirclePress()) {
             intakeOuttakeController.moveOuttakeToSpecimenPickUp();
             outtake.ascendToClimbLevel2(); // Uncomment this line for Level 2 climb
@@ -379,6 +407,8 @@ public class GamepadController {
                 }
             }
         }
+
+         */
 /*
         if(outtake.outtakeSlidesState == Outtake.SLIDE_STATE.LEVEL3_CLIMB ) {
             if(gp2GetRightBumperPress()) {

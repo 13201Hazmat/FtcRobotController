@@ -173,7 +173,7 @@ public class VisionLimeLight {
                 answer = interpolatedX;
             }
         }
-        return answer;
+        return answer - 0.3;
     }
 
     public void printDebugMessages() {

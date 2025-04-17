@@ -154,12 +154,12 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12.9, 22.5, Math.toRadians(-20.6));//12.9.23.5,-19
+        firstBucket = new Pose2d(11.9, 21.5, Math.toRadians(-20.6));//12.9.23.5,-19
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11.5, 24.6, Math.toRadians(-7));;//10, 27.5, -4
+        yellowSampleMiddle = new Pose2d(11.5, 23.5, Math.toRadians(-5));;//10, 27.5, -4
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
-        yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(25));//10.4, 20.7, 21.7
+        yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(31));//10.4, 20.7, 21.7
         farBucket = new Pose2d(9.5, 19, Math.toRadians(-24));;//10, 27.5, -6.5
         submerssibleDrop = new Pose2d(8.5, 12.5, Math.toRadians(-22));;//10, 27.5, -6.5
         submersiblePrePick = new Pose2d(61, -12.67, Math.toRadians(-90));
@@ -191,7 +191,7 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
                         new TranslationalVelConstraint(17.0), new ProfileAccelConstraint(-14.0, 14.0))
 
                  */
-                .strafeToSplineHeading(yellowSampleFar.position, yellowSampleFar.heading)
+                .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading)
                 .build();
 
         trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
