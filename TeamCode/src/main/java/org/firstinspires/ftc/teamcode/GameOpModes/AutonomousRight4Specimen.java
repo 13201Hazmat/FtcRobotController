@@ -167,18 +167,18 @@ public class AutonomousRight4Specimen extends LinearOpMode {
         //Initialize Pose2d as desired
         drive = new MecanumDrive(hardwareMap, initPose);
         submersibleSpecimenPreload = new Pose2d(-29.75, -1.2, Math.toRadians(0));
-        colorSampleNear = new Pose2d(-15.5, 37.5, Math.toRadians(167));//-16.5
-        colorSampleMiddle = new Pose2d(-19, 37.5, Math.toRadians(145));//-20. -146.6
+        colorSampleNear = new Pose2d(-15.5, 37.5, Math.toRadians(167.5));//-16.5
+        colorSampleMiddle = new Pose2d(-19, 37.5, Math.toRadians(145.25));//-20. -146.6
         colorSampleFar = new Pose2d(-18.5, 38.75, Math.toRadians(128));//19.5
         observationDrop = new Pose2d(-17, 36.7, Math.toRadians(30));
         pickupSpecimenOne = new Pose2d(-0.50, 42, Math.toRadians(3));//-0.25,42,0
-        submersibleSpecimenOne = new Pose2d(-31, -9, Math.toRadians(0));//-6.75
+        submersibleSpecimenOne = new Pose2d(-33, -12, Math.toRadians(0));//-6.75
         pickupSpecimenTwo = new Pose2d(-0.3, 42, Math.toRadians(3));//-0.25,46,0
-        submersibleSpecimenTwo = new Pose2d(-28.55, -12, Math.toRadians(0));
+        submersibleSpecimenTwo = new Pose2d(-30.55, -15, Math.toRadians(0));
         pickupSpecimenPreload2 = new Pose2d(-0.5, 42, Math.toRadians(3));
-        submersibleSpecimenPreload2 =  new Pose2d(-29, -15, Math.toRadians(0));
+        submersibleSpecimenPreload2 =  new Pose2d(-30.5, -18, Math.toRadians(0));
         pickupSpecimenThree = new Pose2d(-5.5, 55, Math.toRadians(3));//-1,47,0
-        submersibleSpecimenThree = new Pose2d(-26.2, -18, Math.toRadians(0));
+        submersibleSpecimenThree = new Pose2d(-27.2, -20, Math.toRadians(0));
         observationPark = new Pose2d(-6, 8.4, Math.toRadians(70));
 
         telemetry.addLine("+++++ After Pose Assignments ++++++");
