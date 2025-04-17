@@ -154,14 +154,14 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
         drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12.9, 24.5, Math.toRadians(-20.6));//12.9.23.5,-19
+        firstBucket = new Pose2d(12.9, 22.5, Math.toRadians(-20.6));//12.9.23.5,-19
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11.5, 24.6, Math.toRadians(-5.35));;//10, 27.5, -4
+        yellowSampleMiddle = new Pose2d(11.5, 24.6, Math.toRadians(-5.5));;//10, 27.5, -4
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(18.25));//10.4, 20.7, 21.7
         farBucket = new Pose2d(9.5, 19, Math.toRadians(-24));;//10, 27.5, -6.5
-        submerssibleDrop = new Pose2d(8.5, 15.5, Math.toRadians(-22));;//10, 27.5, -6.5
+        submerssibleDrop = new Pose2d(8.5, 12.5, Math.toRadians(-22));;//10, 27.5, -6.5
         submersiblePrePick = new Pose2d(63.5, -12.67, Math.toRadians(-90));
         submersiblePick = submersiblePrePick;
         submersiblePrePark = new Pose2d(61, -25, Math.toRadians(-90));//47,11,60
@@ -196,14 +196,14 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
                 .build();
 
         trajBucketToSubmersiblePrePick = drive.actionBuilder(farBucket)
-                .setTangent(Math.toRadians(-20))
+                .setTangent(Math.toRadians(5))
                 .splineToLinearHeading(submersiblePrePick, Math.toRadians(-110),
                         new TranslationalVelConstraint(35.0), new ProfileAccelConstraint(-45.0, 65.0))
                 .build();
 
         trajSubmersiblePickToBucket = drive.actionBuilder(submersiblePick)
                 .setTangent(-130)
-                .splineToLinearHeading(submerssibleDrop, Math.toRadians(80),
+                .splineToLinearHeading(submerssibleDrop, Math.toRadians(100),
                         new TranslationalVelConstraint(40.0), new ProfileAccelConstraint(-65.0, 85.0))
                 .build();
 
@@ -247,7 +247,7 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
                                         trajBucketToYellowSampleMiddle
                                 ),
                                 new ParallelAction(
-                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.80, 0),
+                                        intakeOuttakeController.extendIntakeArmSwivelToPrePickupByExtensionFactorAction(0.75, 0),
                                         new SequentialAction(
                                                 intakeOuttakeController.moveOuttakeHighBucketAction1(),
                                                 intakeOuttakeController.dropSamplefromOuttakeAction1()
