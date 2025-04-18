@@ -187,7 +187,7 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
 
         trajBucketToYellowSampleFar = drive.actionBuilder(middleBucket)
                 .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(24.0), new ProfileAccelConstraint(-12.0, 12.0))
+                        new TranslationalVelConstraint(24.0), new ProfileAccelConstraint(-14.0, 14.0))
                 .build();
 
         trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
