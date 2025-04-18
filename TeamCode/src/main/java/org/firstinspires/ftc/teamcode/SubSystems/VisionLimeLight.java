@@ -122,7 +122,7 @@ public class VisionLimeLight {
 
     public double calculateYExtensionFactorFromLookUp(double yPos) {
         double xtensionFactor = 0;
-        xtensionFactor = (-0.0006664865 * yPos) + 0.4476567575 - 0.02;
+        xtensionFactor = (-0.0006664865 * yPos) + 0.4476567575 + 0.03;
         return xtensionFactor;
     }
 
