@@ -157,7 +157,7 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
         firstBucket = new Pose2d(11.4, 20.5, Math.toRadians(-15));//12.9.23.5,-19
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11.5, 24, Math.toRadians(2));;//10, 27.5, -4
+        yellowSampleMiddle = new Pose2d(11.5, 22.5, Math.toRadians(-1));;//10, 27.5, -4
         middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
         yellowSampleFar = new Pose2d(11.5, 20.6, Math.toRadians(17));//10.4, 20.7, 21.7
         farBucket = new Pose2d(9.5, 19, Math.toRadians(-24));;//10, 27.5, -6.5
@@ -187,7 +187,7 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
 
         trajBucketToYellowSampleFar = drive.actionBuilder(middleBucket)
                 .strafeToLinearHeading(yellowSampleFar.position, yellowSampleFar.heading,
-                        new TranslationalVelConstraint(24.0), new ProfileAccelConstraint(-14.0, 14.0))
+                        new TranslationalVelConstraint(24.0), new ProfileAccelConstraint(-12.0, 12.0))
                 .build();
 
         trajYellowSampleFarToBucket = drive.actionBuilder(yellowSampleFar)
@@ -389,16 +389,16 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
                         submersiblePrePick.position.y /*- vision.inchesToStrafe*/, submersiblePrePick.heading.log());
 
                 //if (Math.abs(submersiblePrePick.position.y - submersiblePick.position.y) >0.3) {
-                    trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
-                            .strafeTo(submersiblePick.position)
-                            .build();
-                    Actions.runBlocking(
-                            new SequentialAction(
-                                    //new SleepAction(0),
-                                    trajStrafeToBlock//,
-                                    //new SleepAction(0)
-                            )
-                    );
+                trajStrafeToBlock = drive.actionBuilder(submersiblePrePick)
+                        .strafeTo(submersiblePick.position)
+                        .build();
+                Actions.runBlocking(
+                        new SequentialAction(
+                                //new SleepAction(0),
+                                trajStrafeToBlock//,
+                                //new SleepAction(0)
+                        )
+                );
                 //}
                 return false;
             }
