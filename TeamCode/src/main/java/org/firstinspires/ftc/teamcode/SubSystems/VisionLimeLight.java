@@ -136,12 +136,12 @@ public class VisionLimeLight {
                 {-5.70 , 455}, //3 Good
                 {-8.25 , 390}, //4 Good
                 {-9.50 , 337}, //5 Good
-                {-11.25 , 285}, //6 Good
-                {-12.95 , 228}, //7 Good
-                {-13.75 , 164}, //8 good
-                {-14.50 , 112}, //9 Good
-                {-16.00 , 57}, //10 Good
-                {-17.50 , 18}
+                {-10.55 , 285}, //6 Good
+                {-11.45 , 228}, //7 Good
+                {-12.25 , 164}, //8 good
+                {-13.50 , 112}, //9 Good
+                {-14.00 , 57}, //10 Good
+                {-15.10 , 18}
         };
 
 
@@ -173,7 +173,7 @@ public class VisionLimeLight {
                 answer = interpolatedX;
             }
         }
-        return answer;
+        return answer - 0.3;
     }
 
     public void printDebugMessages() {
