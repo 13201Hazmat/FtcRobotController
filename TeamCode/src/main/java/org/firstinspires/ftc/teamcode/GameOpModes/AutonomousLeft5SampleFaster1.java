@@ -153,17 +153,19 @@ public class AutonomousLeft5SampleFaster1 extends LinearOpMode {
 
     public void buildAutonoumousMode() {
         //If initial action is moves too much in
-        drive = new MecanumDrive(hardwareMap, initPose);
-        firstBucket = new Pose2d(12, 23.2, Math.toRadians(-15.8));//12.9.23.5,-19
+        //If initial action is moves too much in
+        firstBucket = new Pose2d(12.1, 23.7, Math.toRadians(-20.5));//18.28, 35.16, -26.5
         yellowSampleNear = firstBucket;
         nearBucket = firstBucket;
-        yellowSampleMiddle = new Pose2d(11.5, 16.5, Math.toRadians(-15.8));;//10, 27.5, -4
-        middleBucket = yellowSampleMiddle;//new Pose2d(10, 21, Math.toRadians(-11));
-        yellowSampleFar = new Pose2d(11.5, 17, Math.toRadians(13));//10.4, 20.7, 21.7
-        farBucket = new Pose2d(9.5, 19, Math.toRadians(-24));;//10, 27.5, -6.5
-        submerssibleDrop = new Pose2d(7.5, 12.2, Math.toRadians(-22));;//10, 27.5, -6.5
-        submersiblePrePick = new Pose2d(62.8, -12.67, Math.toRadians(-90));
-        submersiblePick = submersiblePrePick;
+        yellowSampleMiddle = new Pose2d(11, 25.1, Math.toRadians(-4.5));;//10, 27.5, -6.5
+        middleBucket = yellowSampleMiddle;
+        yellowSampleFar = new Pose2d(11.7, 20.6, Math.toRadians(16.5));//10.4, 20.7, 21.7
+        farBucket = new Pose2d(11, 22.5, Math.toRadians(-17.3));;//10, 27.5, -6.5
+        submersiblePrePark = new Pose2d(58, -25, Math.toRadians(-90));//47,11,60
+        submersiblePark = new Pose2d(58, -16.25, Math.toRadians(-90));
+
+        drive = new MecanumDrive(hardwareMap, initPose);
+
         submersiblePrePark = new Pose2d(61, -25, Math.toRadians(-90));//47,11,60
         submersiblePark = new Pose2d(61, -20.5, Math.toRadians(-90));
 
