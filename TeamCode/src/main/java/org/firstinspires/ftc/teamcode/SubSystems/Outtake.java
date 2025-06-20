@@ -36,7 +36,7 @@ public class Outtake {
     public enum GRIP_STATE {
         OPEN(0.48), //0.41  0.52 max
         OPEN_WIDE(0.55),//0.57
-        CLOSED(0.15);//0.12, 0.1 fully closed
+        CLOSED(0.12);//0.12, 0.1 fully closed
 
         private final double gripPosition;
         GRIP_STATE(double gripPosition) {

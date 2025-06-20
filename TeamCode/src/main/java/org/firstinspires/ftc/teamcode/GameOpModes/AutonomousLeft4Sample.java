@@ -65,7 +65,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.VisionLimeLight;
 /**
  * Hazmat Autonomous
  */
-@Disabled
 @Autonomous(name = "Hazmat Auto LEFT 4 Sample", group = "00-Autonomous", preselectTeleOp = "Hazmat TeleOp Thread")
 public class AutonomousLeft4Sample extends LinearOpMode {
 
